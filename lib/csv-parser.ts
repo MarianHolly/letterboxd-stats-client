@@ -244,7 +244,7 @@ function parseDiaryCSV(rows: DiaryCSVRow[]): ParseResult<Movie[]> {
       }
 
       const year = parseInt(String(row.Year), 10)
-      const rating = parseRating(row.Rating)
+      const rating = parseRating(row.Rating) || undefined
       const rewatch = parseRewatch(row.Rewatch)
       const tags = parseTags(row.Tags)
 
@@ -261,6 +261,8 @@ function parseDiaryCSV(rows: DiaryCSVRow[]): ParseResult<Movie[]> {
         return
       }
 
+      const ratingDate = rating ? (parseDate(row.Date) || undefined) : undefined
+
       const movie: Movie = {
         id: row['Letterboxd URI'],
         title: row.Name.trim(),
@@ -268,7 +270,7 @@ function parseDiaryCSV(rows: DiaryCSVRow[]): ParseResult<Movie[]> {
         watchedDate,
         dateMarkedWatched: parseDate(row.Date) || watchedDate,
         rating,
-        ratingDate: rating ? parseDate(row.Date) : undefined,
+        ratingDate,
         rewatch,
         tags: tags.length > 0 ? tags : undefined,
         decade: computeDecade(year),
@@ -481,16 +483,16 @@ function parseCSV(content: string, fileType: CSVType): ParseResult<Movie[]> {
     // Parse based on detected type
     switch (fileType) {
       case 'diary':
-        return parseDiaryCSV(rows as DiaryCSVRow[])
+        return parseDiaryCSV(rows as unknown as DiaryCSVRow[])
       case 'ratings':
-        return parseRatingsCSV(rows as RatingsCSVRow[])
+        return parseRatingsCSV(rows as unknown as RatingsCSVRow[])
       case 'films':
-        return parseFilmsCSV(rows as WatchedCSVRow[])
+        return parseFilmsCSV(rows as unknown as WatchedCSVRow[])
       case 'watchlist':
-        return parseWatchlistCSV(rows as WatchedCSVRow[])
+        return parseWatchlistCSV(rows as unknown as WatchedCSVRow[])
       case 'watched':
       default:
-        return parseWatchedCSV(rows as WatchedCSVRow[])
+        return parseWatchedCSV(rows as unknown as WatchedCSVRow[])
     }
   } catch (error) {
     return {
