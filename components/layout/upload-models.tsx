@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 interface UploadedFile {
   file: File;
-  type: "watched" | "ratings" | "diary" | "unknown";
+  type: "watched" | "ratings" | "diary" | "films" | "watchlist" | "unknown";
   status: "uploading" | "success" | "error";
   progress: number;
   error?: string;
