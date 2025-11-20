@@ -17,7 +17,15 @@ Charts are designed to work with CSV-only data from Letterboxd exports (diary, r
 ### V. Responsive, Modern, Dark-First Design
 All components render correctly on mobile, tablet, and desktop. Dark mode is the default design direction; light mode is the complement. Design is minimalistic and smooth. Clarity prioritizes readable information density. No bloat, no unnecessary decoration.
 
-### VI. Quality Standards (Mandatory Gates)
+### VI. Thoughtful Animation & Micro-Interactions
+Animations enhance user experience, not distract from it. Use animations to:
+- Provide feedback on user actions (hover, click states)
+- Guide attention to important elements
+- Smooth transitions between states
+- Create delightful micro-interactions on hero/landing pages
+Avoid unnecessary animations on data-heavy pages (dashboards, charts). Keep animations subtle and purposeful, not gratuitous.
+
+### VII. Quality Standards (Mandatory Gates)
 - Unit and integration tests required for all data transformation and chart logic
 - All charts must work with real CSV user data before shipping
 - Responsive testing on three breakpoints: mobile (375px), tablet (768px), desktop (1920px)
