@@ -84,26 +84,9 @@ export function AnalyticsEmptyState({ onUploadClick }: AnalyticsEmptyStateProps)
               3
             </span>
             <div className="flex-1">
-              <p className="text-white font-medium">TMDB Enrichment</p>
-              <p className="text-sm text-white/50">
-                Your data is automatically enriched with genres, directors, cast, and more from TMDB
-              </p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-            className="flex items-start gap-4 p-4 rounded-lg bg-white/5 border border-white/10"
-          >
-            <span className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold text-sm">
-              4
-            </span>
-            <div className="flex-1">
               <p className="text-white font-medium">Explore Analytics</p>
               <p className="text-sm text-white/50">
-                View detailed charts, trends, ratings, and personalized insights about your cinema journey
+                View interactive charts, trends, ratings, and insights about your cinema journey
               </p>
             </div>
           </motion.div>
