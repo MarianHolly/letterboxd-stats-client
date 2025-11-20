@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import ThemeToggle from "./theme-toggle";
 
 interface NavLink {
   label: string;
@@ -13,6 +14,7 @@ interface NavLink {
 const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
+  { label: "Guide", href: "/guide" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -41,9 +43,9 @@ export default function Navigation() {
   return (
     <nav className="sticky top-0 z-50 w-full bg-transparent backdrop-blur-xl border-b border-white/0 dark:border-slate-800/0">
       <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <div className="flex items-center justify-center h-12">
+        <div className="flex items-center justify-between h-12">
           {/* Desktop Navigation (centered) */}
-          <div className="hidden md:flex items-center justify-center">
+          <div className="hidden md:flex items-center justify-center flex-1">
             <div className="flex gap-2 items-center">
               {navLinks.map((link) => (
                 <Link
@@ -76,19 +78,25 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden absolute right-4">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-1.5 rounded-md text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/5 transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
-            </button>
+          {/* Right side: Theme toggle + Mobile menu button */}
+          <div className="flex items-center gap-2 ml-auto">
+            {/* Theme Toggle - visible on all sizes */}
+            <ThemeToggle />
+
+            {/* Mobile menu button - only on mobile */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-1.5 rounded-md text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/5 transition-colors"
+                aria-label="Toggle menu"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-5 w-5" />
+                ) : (
+                  <Menu className="h-5 w-5" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
