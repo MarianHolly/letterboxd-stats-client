@@ -22,25 +22,37 @@ type UploadModalProps = {
 };
 
 const FILE_TYPES = {
-  "watched.csv": "watched",
-  "ratings.csv": "ratings",
   "diary.csv": "diary",
+  "ratings.csv": "ratings",
+  "watched.csv": "watched",
+  "films.csv": "films",
+  "watchlist.csv": "watchlist",
 } as const;
 
 const FILE_DESCRIPTIONS = {
-  watched: {
-    label: "Watched Movies",
-    description: "Required - Your complete watch list",
-    required: true,
+  diary: {
+    label: "Diary",
+    description: "Recommended - Viewing dates and your ratings",
+    required: false,
   },
   ratings: {
     label: "Ratings",
-    description: "Optional - Your movie ratings",
+    description: "Optional - All your rated movies",
     required: false,
   },
-  diary: {
-    label: "Diary",
-    description: "Optional - Viewing dates and notes",
+  watched: {
+    label: "Watched Movies",
+    description: "Optional - Your complete watch list",
+    required: false,
+  },
+  films: {
+    label: "Films",
+    description: "Optional - Complete watched history",
+    required: false,
+  },
+  watchlist: {
+    label: "Watchlist",
+    description: "Optional - Movies you want to watch",
     required: false,
   },
 };
@@ -103,11 +115,11 @@ export function UploadModal({
   };
 
   const handleContinue = () => {
-    const hasWatchedFile = uploadedFiles.some((f) => f.type === "watched");
+    const hasAnyFile = uploadedFiles.length > 0;
     const hasErrors = uploadedFiles.some((f) => f.status === "error");
 
-    if (!hasWatchedFile) {
-      alert("Please upload at least the 'watched.csv' file");
+    if (!hasAnyFile) {
+      alert("Please upload at least one CSV file");
       return;
     }
 
@@ -143,7 +155,7 @@ export function UploadModal({
             Upload Your Letterboxd Data
           </DialogTitle>
           <p className="text-sm text-white/60 mt-2">
-            Upload your CSV exports from Letterboxd. The 'watched.csv' file is required.
+            Upload your CSV exports from Letterboxd. Upload at least one file to get started.
           </p>
         </DialogHeader>
 
@@ -283,7 +295,6 @@ export function UploadModal({
               onClick={handleContinue}
               disabled={
                 uploadedFiles.length === 0 ||
-                !uploadedFiles.some((f) => f.type === "watched") ||
                 uploadedFiles.some((f) => f.status === "error")
               }
               className="bg-indigo-600 hover:bg-indigo-700 text-white"
