@@ -1,36 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Letterboxd Stats
 
-## Getting Started
+Transform your Letterboxd movie data into beautiful, interactive analytics.
 
-First, run the development server:
+## What It Does
+
+Upload your Letterboxd CSV export. Instantly see:
+- **When** you watched movies (timelines, trends, patterns)
+- **What** you rated (distribution, favorites, ratings over time)
+- **Which decades** dominate your taste (classic vs contemporary)
+- **Your viewing habits** (rewatches, most active periods, marathon weekends)
+
+All processing happens in your browser. Your data never leaves your device.
+
+## Key Features
+
+✅ **Upload & Analyze** — Drag-drop CSV files, instant results
+✅ **Six Core Charts** — Release year, ratings, timeline, decades, rewatches, calendar heatmap
+✅ **Responsive Design** — Works on phone, tablet, desktop
+✅ **Dark Mode** — Easy on the eyes, night viewing friendly
+✅ **Privacy First** — All data stays in your browser, localStorage only
+✅ **No Account Needed** — Upload, analyze, done
+
+## Try It Now
+
+[Live Demo](https://letterboxd-stats.vercel.app) (Coming soon)
+
+Or run locally:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## How to Use
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Export from Letterboxd**
+   - Go to [Letterboxd Settings → Data](https://letterboxd.com/settings/data/)
+   - Download your CSV files (diary.csv, ratings.csv, etc.)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Upload Here**
+   - Drag and drop files or click to select
+   - Multiple files supported (we'll merge them automatically)
 
-## Learn More
+3. **Explore**
+   - Charts render instantly
+   - Hover for details, click to interact
+   - Dark/light mode toggle in top right
 
-To learn more about Next.js, take a look at the following resources:
+## Architecture
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Client-Side Only**
+- Built with React (Next.js)
+- Charts via Recharts
+- State: Zustand + localStorage
+- No backend, no database, no API calls
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**What's Included**
+- CSV parser (handles all Letterboxd formats)
+- Data merger (smart conflict resolution)
+- Analytics engine (statistics, aggregations)
+- Responsive chart components
+- Dark/light theme system
 
-## Deploy on Vercel
+**What's Not**
+- User accounts or login
+- TMDB enrichment (no genre/director data)
+- Cloud storage or sharing
+- Export/PDF functionality
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19 + Next.js 15 |
+| Language | TypeScript |
+| Styling | Tailwind CSS 4 |
+| Components | shadcn/ui |
+| Charts | Recharts |
+| State | Zustand |
+| CSV Parser | PapaParse |
+| Testing | Playwright, Vitest |
+
+## Development
+
+### Setup
+```bash
+git clone <repo>
+cd letterboxd-stats-client
+npm install
+npm run dev
+```
+
+### Commands
+```bash
+npm run dev          # Start dev server
+npm run build        # Production build
+npm run test         # Run tests
+npm run test:e2e     # End-to-end tests
+npm run test:coverage # Coverage report
+npm run lint         # Check code style
+```
+
+### Project Structure
+```
+app/                 # Pages (landing, dashboard, about)
+components/          # React components
+  ├── layout/        # Navigation, footer, theme
+  ├── dashboard/     # Charts and stats
+  └── ui/            # shadcn/ui components
+lib/                 # Core logic
+  ├── csv-parser.ts  # Parse Letterboxd CSVs
+  ├── data-merger.ts # Merge multiple files
+  ├── analytics-engine.ts  # Statistics
+  └── types.ts       # TypeScript types
+hooks/               # Custom hooks (state, analytics)
+tests/               # Test files
+```
+
+## Quality Standards
+
+✅ **Test-Driven Development** — Every feature tested first
+✅ **Real Data Validation** — Tested with actual Letterboxd exports
+✅ **Responsive Testing** — Mobile (375px), tablet (768px), desktop (1920px)
+✅ **Error Handling** — Loading states, error messages, empty states
+✅ **Zero Console Errors** — Production ready
+
+## Design Philosophy
+
+**Minimalistic** — Remove everything unnecessary
+**Clear** — Readable information density, no clutter
+**Smooth** — Fade-in animations, responsive interactions
+**Dark-First** — Designed for dark mode, light mode is verified inverse
+**Modular** — Each component independent, reusable, testable
+
+## Contributing
+
+This is a portfolio project. Suggestions welcome via GitHub issues.
+
+## License
+
+MIT
+
+---
+
+**Built with React, TypeScript, and a love for movies.**
+
+Questions? Open an issue or check out the [architecture docs](./LETTERBOXD_STATS_CONSTITUTION.md).
