@@ -248,23 +248,34 @@ export function UploadModal({
 
           {/* File Requirements */}
           <div className="space-y-2">
-            <p className="text-sm font-semibold text-white">Required & Optional Files:</p>
+            <p className="text-sm font-semibold text-white">Upload Files:</p>
             <div className="grid md:grid-cols-3 gap-3">
               {Object.entries(FILE_DESCRIPTIONS).map(([key, info]) => {
-                const hasFile = uploadedFiles.some((f) => f.type === key);
+                const fileEntry = uploadedFiles.find((f) => f.type === key);
+                const hasFile = fileEntry && fileEntry.status !== "error";
+                const hasError = fileEntry?.status === "error";
+
                 return (
                   <div
                     key={key}
                     className={cn(
-                      "p-3 rounded-lg border text-sm",
+                      "p-3 rounded-lg border text-sm transition-all",
                       hasFile
                         ? "border-green-500/50 bg-green-500/10"
-                        : info.required
+                        : hasError
                         ? "border-red-500/50 bg-red-500/10"
                         : "border-white/10 bg-white/5"
                     )}
                   >
-                    <p className="font-medium text-white">{info.label}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium text-white">{info.label}</p>
+                      {hasFile && (
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      )}
+                      {hasError && (
+                        <AlertCircle className="w-4 h-4 text-red-500" />
+                      )}
+                    </div>
                     <p className="text-white/60 text-xs mt-1">{info.description}</p>
                   </div>
                 );

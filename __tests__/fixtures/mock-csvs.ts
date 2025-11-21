@@ -35,12 +35,13 @@ export const MOCK_DIARY_CSV = `Date,Name,Year,Letterboxd URI,Rating,Rewatch,Tags
 2025-11-12,Rookies Run Amok,1971,https://boxd.it/bGf77J,4,Yes,,2021-01-05
 2025-11-12,The Platform,2019,https://boxd.it/bGd1zt,4,,,2021-01-08
 2025-11-12,The Brain,1969,https://boxd.it/bGd2CN,4,Yes,,2021-01-16
-2025-11-12,How to Pull Out a Whale's Tooth,1977,https://boxd.it/bGf7wT,,,,2021-02-06
+2025-11-12,How to Pull Out a Whale's Tooth,1977,https://boxd.it/bGf7wT,3,,,2021-02-06
 2025-11-12,The Shawshank Redemption,1994,https://boxd.it/2aHi,5,Yes,"drama,classic",2021-03-20
 2025-11-12,Inception,2010,https://boxd.it/1skk,5,Yes,"sci-fi",2021-04-15
 2025-11-12,The Dark Knight,2008,https://boxd.it/2b0k,5,,"action",2021-05-10
 2025-11-12,Rear Window,1954,https://boxd.it/2a6Q,5,,"thriller",2021-06-01
-2025-11-12,Forrest Gump,1994,https://boxd.it/2aKf,4,,"drama"`
+2025-11-12,Forrest Gump,1994,https://boxd.it/2aKf,4,,"drama",2021-07-15
+2025-11-12,Unrated Movie,2015,https://boxd.it/unrated1,,,,2021-08-20`
 
 // ============================================================================
 // MOCK ratings.csv DATA
@@ -52,7 +53,7 @@ export const MOCK_RATINGS_CSV = `Date,Name,Year,Letterboxd URI,Rating
 2022-01-21,Once Upon a Time in the West,1968,https://boxd.it/2az4,5
 2022-01-23,Split,2016,https://boxd.it/dgSy,4
 2022-01-26,Lore,2012,https://boxd.it/41Cs,3.5
-2022-02-04,The Good, the Bad and the Ugly,1966,https://boxd.it/2ape,5
+2022-02-04,"The Good, the Bad and the Ugly",1966,https://boxd.it/2ape,5
 2022-02-04,Rear Window,1954,https://boxd.it/2a6Q,5
 2022-02-04,The Shawshank Redemption,1994,https://boxd.it/2aHi,5
 2022-02-04,Ocean's Eleven,2001,https://boxd.it/2aZm,4

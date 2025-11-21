@@ -331,7 +331,8 @@ describe('CSV Parser', () => {
 
   describe('parseLetterboxdCSV (async)', () => {
     it('should parse File object', async () => {
-      const file = new File([MOCK_WATCHED_CSV], 'watched.csv', { type: 'text/csv' })
+      const csvContent = MOCK_WATCHED_CSV
+      const file = new File([csvContent], 'watched.csv', { type: 'text/csv' })
       const result = await parseLetterboxdCSV(file)
 
       expect(result.success).toBe(true)

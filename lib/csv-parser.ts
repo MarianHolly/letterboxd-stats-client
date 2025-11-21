@@ -92,19 +92,12 @@ export function validateCSV(headers: string[]): ValidationError[] {
     return errors
   }
 
-  const type = detectCSVType(headers)
-
-  if (type === 'unknown') {
-    errors.push({
-      field: 'headers',
-      message: 'Unknown CSV type - missing required columns (Date, Name, Year, Letterboxd URI)',
-    })
-    return errors
-  }
-
-  // Check all expected columns are present
   const normalized = headers.map((h) => h.trim())
-  const expectedCols = EXPECTED_COLUMNS[type]
+  const type = detectCSVType(normalized)
+
+  // Check all expected columns for detected type
+  // If unknown, check base columns
+  const expectedCols = type === 'unknown' ? EXPECTED_COLUMNS.watched : EXPECTED_COLUMNS[type]
 
   for (const col of expectedCols) {
     if (!normalized.includes(col)) {
@@ -113,6 +106,14 @@ export function validateCSV(headers: string[]): ValidationError[] {
         message: `Missing required column: ${col}`,
       })
     }
+  }
+
+  // If still no specific errors but type is unknown, add a generic error
+  if (errors.length === 0 && type === 'unknown') {
+    errors.push({
+      field: 'headers',
+      message: 'Unknown CSV type - missing required columns (Date, Name, Year, Letterboxd URI)',
+    })
   }
 
   return errors
@@ -534,8 +535,35 @@ export async function parseLetterboxdCSV(file: File): Promise<ParseResult<Movie[
   }
 
   try {
-    const content = await file.text()
-    const type = detectCSVType(content.split('\n')[0].split(',').map((h) => h.trim()))
+    // Read file content using FileReader (works in both browser and test environment)
+    const content = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => resolve(e.target?.result as string)
+      reader.onerror = () => reject(new Error('Failed to read file'))
+      reader.readAsText(file)
+    })
+
+    // Try to detect type from filename first
+    const fileName = file.name.toLowerCase()
+    let type: CSVType = 'unknown'
+
+    if (fileName === 'watched.csv') {
+      type = 'watched'
+    } else if (fileName === 'diary.csv') {
+      type = 'diary'
+    } else if (fileName === 'ratings.csv') {
+      type = 'ratings'
+    } else if (fileName === 'films.csv') {
+      type = 'films'
+    } else if (fileName === 'watchlist.csv') {
+      type = 'watchlist'
+    } else {
+      // Fall back to header detection
+      const headerLine = content.split('\n')[0]
+      // Simple split that handles quoted fields better
+      const headers = headerLine.split(',').map((h) => h.trim().replace(/^"|"$/g, ''))
+      type = detectCSVType(headers)
+    }
 
     if (type === 'unknown') {
       return {
