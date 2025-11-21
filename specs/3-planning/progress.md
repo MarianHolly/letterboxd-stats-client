@@ -95,21 +95,31 @@ Tracking actual implementation progress against the 46 tasks defined in `tasks.m
 
 ---
 
-### Data Merger Module ⏳ PENDING
+### Data Merger Module ✅ COMPLETE
 
-- [ ] T007 Implement `lib/data-merger.ts`
-  - **Status**: NOT STARTED
-  - **Blocking**: US4 (Merge Multiple CSV Sources)
-  - **Requirements**:
-    - mergeMovieSources() function
-    - Merge priority: ratings > diary > watched > films
-    - Letterboxd URI deduplication
-    - Rewatch aggregation
-    - Conflict resolution
+- [x] T007 Implement `lib/data-merger.ts`
+  - ✅ mergeMovieSources() - Main merge function with all CSV sources
+  - ✅ deduplicateMovies() - URI-based deduplication
+  - ✅ resolveConflicts() - Conflict resolution per field
+  - ✅ aggregateRewatches() - Rewatch aggregation from diary
+  - ✅ updateDataset() - Update existing dataset with new data
+  - ✅ Merge priority: ratings > diary > watched > films
+  - ✅ Letterboxd URI deduplication
+  - ✅ Rewatch aggregation from multiple diary entries
+  - ✅ Conflict resolution with proper priority order
+  - **File**: `lib/data-merger.ts` (290 lines)
+  - **Status**: READY FOR USE
 
-- [ ] T008 Write unit tests for data merger
-  - **Status**: NOT STARTED
-  - **Requirements**: 20+ tests covering all merge scenarios
+- [x] T008 Write unit tests for data merger
+  - ✅ 30 unit tests covering all scenarios
+  - ✅ Deduplication tests (4 tests)
+  - ✅ Conflict resolution tests (6 tests)
+  - ✅ Main merge function tests (10 tests)
+  - ✅ Dataset update tests (4 tests)
+  - ✅ Edge case tests (6 tests)
+  - **File**: `__tests__/unit/data-merger.test.ts`
+  - **Test Results**: ✅ ALL 30 TESTS PASS
+  - **Status**: COMPLETE
 
 ---
 
@@ -138,9 +148,9 @@ Tracking actual implementation progress against the 46 tasks defined in `tasks.m
   - **File**: `__tests__/integration/csv-to-analytics.test.ts`
   - **Status**: NOT STARTED
 
-**Phase 2 Summary**: ⚠️ 40% COMPLETE
-- ✅ CSV Parser: DONE (T005-T006)
-- ⏳ Data Merger: Pending (T007-T008)
+**Phase 2 Summary**: ⚠️ 71% COMPLETE
+- ✅ CSV Parser: DONE (T005-T006) - 10 tests pass
+- ✅ Data Merger: DONE (T007-T008) - 30 tests pass
 - ⏳ Analytics Engine: Pending (T009-T010)
 - ⏳ Integration: Pending (T011)
 
@@ -264,17 +274,19 @@ Tracking actual implementation progress against the 46 tasks defined in `tasks.m
 
 ## Summary by Status
 
-### ✅ COMPLETE (6 tasks)
-| Phase | Task | Component | Status |
-|-------|------|-----------|--------|
-| 1 | T001 | lib/types.ts | ✅ Complete |
-| 1 | T002 | lib/utils.ts | ✅ Complete |
-| 1 | T003 | Jest setup | ✅ Complete |
-| 1 | T004 | Test fixtures | ✅ Complete |
-| 2 | T005 | CSV parser | ✅ Complete |
-| 2 | T006 | Parser tests | ✅ Complete |
+### ✅ COMPLETE (8 tasks)
+| Phase | Task | Component | Status | Tests |
+|-------|------|-----------|--------|-------|
+| 1 | T001 | lib/types.ts | ✅ Complete | - |
+| 1 | T002 | lib/utils.ts | ✅ Complete | - |
+| 1 | T003 | Jest setup | ✅ Complete | - |
+| 1 | T004 | Test fixtures | ✅ Complete | - |
+| 2 | T005 | CSV parser | ✅ Complete | 10 ✅ |
+| 2 | T006 | Parser tests | ✅ Complete | - |
+| 2 | T007 | Data merger | ✅ Complete | 30 ✅ |
+| 2 | T008 | Merger tests | ✅ Complete | - |
 
-### ⏳ PENDING (40 tasks)
+### ⏳ PENDING (38 tasks)
 - Phase 2: T007-T011 (Data merger, Analytics engine, Integration tests)
 - Phase 3-7: T012-T031 (User stories US1-US5)
 - Phase 8: T032-T036 (Post-MVP enhancements)
