@@ -213,7 +213,7 @@ export const useAnalyticsStore = create<AnalyticsStoreType>()(
           // Compute analytics
           const analytics = computeAnalytics(dataset.watched)
 
-          // Update state
+          // Update state (will trigger localStorage save via middleware)
           set({
             dataset,
             analytics,
@@ -222,6 +222,18 @@ export const useAnalyticsStore = create<AnalyticsStoreType>()(
             loading: false,
             error: errors.length > 0 ? errors.join('; ') : null,
           })
+
+          // Check storage quota after update
+          const quotaResult = handleStorageQuota()
+          if (quotaResult.warning) {
+            // Update error to include warning
+            const currentState = get()
+            set({
+              error: currentState.error
+                ? `${currentState.error}; ${quotaResult.warning}`
+                : quotaResult.warning,
+            })
+          }
         } catch (err) {
           set({
             error: err instanceof Error ? err.message : 'Unknown error during upload',
