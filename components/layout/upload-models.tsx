@@ -6,6 +6,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Upload, File, X, CheckCircle2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { parseLetterboxdCSV } from "@/lib/csv-parser";
+import { mergeMovieSources } from "@/lib/data-merger";
+import type { Movie, MovieDataset } from "@/lib/types";
 
 interface UploadedFile {
   file: File;
@@ -13,12 +16,13 @@ interface UploadedFile {
   status: "uploading" | "success" | "error";
   progress: number;
   error?: string;
+  parsedData?: Movie[];
 }
 
 type UploadModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onUploadComplete?: (files: UploadedFile[]) => void;
+  onUploadComplete?: (dataset: MovieDataset) => void;
 };
 
 const FILE_TYPES = {
@@ -73,8 +77,10 @@ export function UploadModal({
   };
 
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      const newFiles = acceptedFiles.map((file) => {
+    async (acceptedFiles: File[]) => {
+      const newFiles: UploadedFile[] = [];
+
+      for (const file of acceptedFiles) {
         const fileName = file.name.toLowerCase();
         let fileType: UploadedFile["type"] = "unknown";
 
@@ -85,17 +91,49 @@ export function UploadModal({
           }
         }
 
-        return {
+        if (fileType === "unknown") {
+          newFiles.push({
+            file,
+            type: fileType,
+            status: "error" as const,
+            progress: 100,
+            error: `Unknown file type. Expected: ${Object.keys(FILE_TYPES).join(", ")}`,
+          });
+          continue;
+        }
+
+        // Parse the CSV file
+        const uploadedFile: UploadedFile = {
           file,
           type: fileType,
-          status: "success" as const,
-          progress: 100,
-          ...(fileType === "unknown" && {
-            error: `Unknown file type. Expected: ${Object.keys(FILE_TYPES).join(", ")}`,
-            status: "error" as const,
-          }),
+          status: "uploading" as const,
+          progress: 50,
         };
-      });
+
+        try {
+          const result = await parseLetterboxdCSV(file);
+
+          if (result.success && result.data) {
+            uploadedFile.status = "success";
+            uploadedFile.progress = 100;
+            uploadedFile.parsedData = result.data;
+          } else {
+            uploadedFile.status = "error";
+            uploadedFile.progress = 100;
+            uploadedFile.error =
+              result.errors.length > 0
+                ? `${result.errors.length} row(s) failed: ${result.errors[0].message}`
+                : "Failed to parse CSV";
+          }
+        } catch (err) {
+          uploadedFile.status = "error";
+          uploadedFile.progress = 100;
+          uploadedFile.error =
+            err instanceof Error ? err.message : "Unknown error while parsing";
+        }
+
+        newFiles.push(uploadedFile);
+      }
 
       setUploadedFiles((prev) => [...prev, ...newFiles]);
     },
@@ -117,9 +155,15 @@ export function UploadModal({
   const handleContinue = () => {
     const hasAnyFile = uploadedFiles.length > 0;
     const hasErrors = uploadedFiles.some((f) => f.status === "error");
+    const hasWatched = uploadedFiles.some((f) => f.type === "watched" && !f.error);
 
     if (!hasAnyFile) {
       alert("Please upload at least one CSV file");
+      return;
+    }
+
+    if (!hasWatched) {
+      alert("watched.csv is required to continue");
       return;
     }
 
@@ -128,8 +172,26 @@ export function UploadModal({
       return;
     }
 
-    onUploadComplete?.(uploadedFiles);
-    onOpenChange(false);
+    // Merge all parsed data
+    try {
+      const watched = uploadedFiles
+        .find((f) => f.type === "watched")?.parsedData || [];
+      const diary = uploadedFiles.find((f) => f.type === "diary")?.parsedData;
+      const ratings = uploadedFiles
+        .find((f) => f.type === "ratings")?.parsedData;
+      const films = uploadedFiles.find((f) => f.type === "films")?.parsedData;
+      const watchlist = uploadedFiles
+        .find((f) => f.type === "watchlist")?.parsedData;
+
+      const dataset = mergeMovieSources(watched, diary, ratings, films, watchlist);
+
+      onUploadComplete?.(dataset);
+      onOpenChange(false);
+    } catch (err) {
+      alert(
+        `Error merging data: ${err instanceof Error ? err.message : "Unknown error"}`
+      );
+    }
   };
 
   const handleReset = () => {
@@ -295,7 +357,8 @@ export function UploadModal({
               onClick={handleContinue}
               disabled={
                 uploadedFiles.length === 0 ||
-                uploadedFiles.some((f) => f.status === "error")
+                uploadedFiles.some((f) => f.status === "error") ||
+                !uploadedFiles.some((f) => f.type === "watched" && f.status !== "error")
               }
               className="bg-indigo-600 hover:bg-indigo-700 text-white"
             >
