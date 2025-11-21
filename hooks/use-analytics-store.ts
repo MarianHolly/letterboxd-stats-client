@@ -46,6 +46,74 @@ interface StoreActions {
 type AnalyticsStoreType = StoreState & StoreActions
 
 // ============================================================================
+// STORAGE UTILS
+// ============================================================================
+
+/**
+ * Get approximate size of object in bytes
+ */
+function getStorageSize(obj: any): number {
+  const str = JSON.stringify(obj)
+  return new Blob([str]).size
+}
+
+/**
+ * Get current localStorage usage in bytes
+ */
+function getLocalStorageUsage(): number {
+  let total = 0
+  for (const key in localStorage) {
+    if (localStorage.hasOwnProperty(key)) {
+      total += localStorage[key].length + key.length
+    }
+  }
+  return total
+}
+
+/**
+ * Get estimated localStorage quota (typically 5-10MB per domain)
+ */
+function getLocalStorageQuota(): number {
+  // Most browsers: 5-10MB per domain
+  // We use 10MB as a safe estimate
+  return 10 * 1024 * 1024
+}
+
+/**
+ * Check if storage quota is exceeded and clear old sessions if needed
+ */
+function handleStorageQuota(): { success: boolean; warning?: string } {
+  const currentUsage = getLocalStorageUsage()
+  const quota = getLocalStorageQuota()
+  const usage80Percent = quota * 0.8
+
+  // Warn at 80% usage
+  if (currentUsage > usage80Percent && currentUsage < quota) {
+    const warningMsg = `Storage usage at ${Math.round((currentUsage / quota) * 100)}% - consider clearing old data`
+    console.warn('[Analytics Store]', warningMsg)
+    return { success: true, warning: warningMsg }
+  }
+
+  // If over quota, try to clear old sessions
+  if (currentUsage > quota) {
+    console.warn('[Analytics Store] Storage quota exceeded, attempting to clear old data')
+
+    // Try to remove the oldest backup (if exists)
+    const storeKey = 'letterboxd-analytics-store'
+    try {
+      localStorage.removeItem(storeKey)
+      return { success: true, warning: 'Cleared old analytics data to free storage' }
+    } catch (err) {
+      const errorMsg = `Failed to clear storage: ${err instanceof Error ? err.message : 'Unknown error'}`
+      console.error('[Analytics Store]', errorMsg)
+      return { success: false }
+    }
+  }
+
+  return { success: true }
+}
+
+// ============================================================================
 // ZUSTAND STORE
 // ============================================================================
 
