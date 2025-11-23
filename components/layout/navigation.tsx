@@ -40,8 +40,8 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo / Brand */}
           <div className="flex items-center gap-2 pr-8 flex-shrink-0">
@@ -49,7 +49,7 @@ export default function Navigation() {
               href="/"
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
-              <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-600 to-rose-600">
+              <div className="p-2 rounded-sm bg-gradient-to-br from-indigo-600 to-rose-600">
                 <BarChart3 className="w-4 h-4 text-white" />
               </div>
               <div className="flex flex-col gap-0.5 leading-none">
@@ -64,15 +64,15 @@ export default function Navigation() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-2">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                className={`px-3 py-1.5 rounded-sm text-sm font-medium transition-all duration-200 border ${
                   isActive(link.href)
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent/10"
+                    ? "border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-50"
+                    : "border-transparent text-slate-600 dark:text-slate-400 hover:border-slate-200 dark:hover:border-slate-800"
                 }`}
               >
                 {link.label}
@@ -81,10 +81,13 @@ export default function Navigation() {
           </div>
 
           {/* Right side: Analytics button + Theme toggle + Mobile menu button */}
-          <div className="flex items-center gap-3 ml-auto">
+          <div className="flex items-center gap-2 ml-auto">
             {/* Analytics Button */}
             <Link href="/analytics">
-              <Button variant="default" size="sm">
+              <Button
+                size="sm"
+                className="bg-slate-950 hover:bg-slate-900 text-white dark:bg-slate-50 dark:hover:bg-slate-100 dark:text-slate-950 rounded-sm font-semibold px-4 py-1.5 border-0"
+              >
                 Analytics
               </Button>
             </Link>
@@ -95,7 +98,7 @@ export default function Navigation() {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-md text-foreground hover:bg-accent/10 transition-colors"
+              className="md:hidden p-1.5 rounded-sm border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? (
@@ -109,16 +112,16 @@ export default function Navigation() {
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-border pb-4 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="md:hidden border-t border-slate-200 dark:border-slate-800 pb-4 animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="space-y-1 pt-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`block px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                  className={`block px-3 py-1.5 rounded-sm text-sm font-medium transition-all duration-200 border ${
                     isActive(link.href)
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent/10"
+                      ? "border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-50"
+                      : "border-transparent text-slate-600 dark:text-slate-400 hover:border-slate-200 dark:hover:border-slate-800"
                   }`}
                 >
                   {link.label}
