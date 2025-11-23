@@ -15,6 +15,12 @@ import {
   PencilIcon,
   LogOut,
   Home,
+  Zap,
+  Star,
+  Calendar,
+  RotateCcw,
+  Clock,
+  Sparkles,
 } from "lucide-react";
 
 import {
@@ -46,47 +52,53 @@ export interface NavGroup {
 const data = {
   navMain: [
     {
-      title: "General Analytics",
+      title: "Your Cinematic Journey",
       href: "#",
       items: [
         {
-          title: "Overview",
+          title: "At a Glance",
           href: "#analytics-overview",
-          icon: <BarChart3 className="w-5 h-5" />,
-          description: "Key statistics and metrics",
+          icon: <Zap className="w-5 h-5" />,
+          description: "Key metrics snapshot",
         },
         {
-          title: "Viewing Patterns",
-          href: "#analytics-patterns",
+          title: "Rating Patterns",
+          href: "#analytics-ratings",
+          icon: <Star className="w-5 h-5" />,
+          description: "How you rate films",
+        },
+        {
+          title: "Viewing Trends",
+          href: "#analytics-timeline",
           icon: <TrendingUp className="w-5 h-5" />,
-          description: "Trends and time-series analysis",
+          description: "When you watch most",
         },
         {
-          title: "Genres & Directors",
+          title: "Seasonal Rhythms",
+          href: "#analytics-seasonal",
+          icon: <Calendar className="w-5 h-5" />,
+          description: "Monthly viewing cycles",
+        },
+        {
+          title: "Cinema Through Time",
+          href: "#analytics-decades",
+          icon: <Clock className="w-5 h-5" />,
+          description: "Films by era",
+        },
+        {
+          title: "Taste Profile",
           href: "#analytics-genres",
           icon: <Film className="w-5 h-5" />,
-          description: "Genre breakdown and directors",
-        },
-      ],
-    },
-    {
-      title: "Personal Analytics",
-      href: "#",
-      items: [
-        {
-          title: "Favorite Directors",
-          href: "#analytics-directors",
-          icon: <User2 className="w-5 h-5" />,
-          description: "Your most watched directors",
+          description: "Genres & filmmakers",
         },
         {
-          title: "Decade Analysis",
-          href: "#analytics-decades",
-          icon: <TrendingUp className="w-5 h-5" />,
-          description: "Movies by decade and era",
-        },
+          title: "Treasured Rewatches",
+          href: "#analytics-rewatches",
+          icon: <Sparkles className="w-5 h-5" />,
+          description: "Favorites & repeats",
+        }
       ],
-    },
+    }
   ],
   footerNav: [
     {
@@ -132,53 +144,71 @@ export function AnalyticsSidebar({
   React.useEffect(() => {
     const sections = [
       "analytics-overview",
-      "analytics-patterns",
-      "analytics-genres",
-      "analytics-directors",
+      "analytics-ratings",
+      "analytics-timeline",
+      "analytics-seasonal",
       "analytics-decades",
+      "analytics-genres",
+      "analytics-rewatches",
     ];
 
-    // Create Intersection Observer
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Find the first (topmost) visible section
-        const visibleSections = entries.filter((entry) => entry.isIntersecting);
+    // Wait for DOM to be fully rendered
+    const timer = setTimeout(() => {
+      // Find the scrollable container (SidebarInset which is <main>)
+      const scrollContainer = document.querySelector(
+        '[data-slot="sidebar-inset"]'
+      ) as HTMLElement;
 
-        if (visibleSections.length > 0) {
-          // Sort by position in viewport (top to bottom)
-          const topMostSection = visibleSections.reduce((prev, current) => {
-            return prev.boundingClientRect.top > current.boundingClientRect.top
-              ? current
-              : prev;
-          });
+      if (!scrollContainer) return;
 
-          setActiveSection(`#${topMostSection.target.id}`);
+      const observer = new IntersectionObserver(
+        (entries) => {
+          // Get the topmost visible section
+          let topMostSection: IntersectionObserverEntry | null = null;
+
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              if (!topMostSection) {
+                topMostSection = entry;
+              } else if (
+                entry.boundingClientRect.top <
+                topMostSection.boundingClientRect.top
+              ) {
+                topMostSection = entry;
+              }
+            }
+          }
+
+          if (topMostSection) {
+            setActiveSection(`#${topMostSection.target.id}`);
+          }
+        },
+        {
+          root: scrollContainer,
+          rootMargin: "-50px 0px -80% 0px", // Trigger when section enters top of viewport
+          threshold: 0,
         }
-      },
-      {
-        root: document.querySelector("main"),
-        rootMargin: "-20% 0px -80% 0px", // Trigger when section is in top 20% of viewport
-        threshold: 0, // Trigger as soon as section enters
-      }
-    );
+      );
 
-    // Observe all sections
-    sections.forEach((section) => {
-      const element = document.getElementById(section);
-      if (element) {
-        observer.observe(element);
-      }
-    });
-
-    // Cleanup
-    return () => {
+      // Observe all sections
       sections.forEach((section) => {
         const element = document.getElementById(section);
         if (element) {
-          observer.unobserve(element);
+          observer.observe(element);
         }
       });
-      observer.disconnect();
+
+      // Store observer for cleanup
+      const observerInstance = observer;
+
+      // Cleanup
+      return () => {
+        observerInstance.disconnect();
+      };
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
     };
   }, []);
 
@@ -200,8 +230,8 @@ export function AnalyticsSidebar({
       className="bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 border-r border-gray-200 dark:border-white/10"
       {...props}
     >
-      <SidebarHeader className="pb-0 bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950">
-        <div className="flex items-center gap-2 px-2 py-3">
+      <SidebarHeader className="pb-0 bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 h-16">
+        <div className="flex items-center gap-2 px-2 py-2">
           <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-600 to-rose-600">
             <BarChart3 className="w-4 h-4 text-white" />
           </div>
