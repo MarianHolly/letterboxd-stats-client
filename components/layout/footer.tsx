@@ -1,3 +1,6 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { Github, Mail, Heart } from "lucide-react";
 import Link from "next/link";
@@ -40,6 +43,13 @@ const footerSections: FooterSection[] = [
 ];
 
 const Footer = () => {
+  const pathname = usePathname();
+
+  // Don't show footer on analytics page
+  if (pathname.startsWith("/analytics")) {
+    return null;
+  }
+
   return (
     <footer className="border-t mt-20">
       <div className="max-w-7xl mx-auto">
