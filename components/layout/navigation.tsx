@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, BarChart3 } from "lucide-react";
 import ThemeToggle from "./theme-toggle";
+import { Button } from "@/components/ui/button";
 
 interface NavLink {
   label: string;
@@ -17,8 +18,6 @@ const navLinks: NavLink[] = [
   { label: "Guide", href: "/guide" },
   { label: "Contact", href: "/contact" },
 ];
-
-const analyticsLink = { label: "Analytics", href: "/analytics" };
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -41,97 +40,90 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-transparent backdrop-blur-xl border-b border-white/0 dark:border-slate-800/0">
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <div className="flex items-center justify-between h-12">
-          {/* Desktop Navigation (centered) */}
-          <div className="hidden md:flex items-center justify-center flex-1">
-            <div className="flex gap-2 items-center">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
-                    isActive(link.href)
-                      ? "bg-white/20 dark:bg-white/10 text-slate-900 dark:text-white backdrop-blur-md"
-                      : "text-slate-700 dark:text-slate-300 hover:bg-white/10 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-
-              {/* Separator */}
-              <div className="w-px h-6 bg-slate-300 dark:bg-slate-600 mx-1" />
-
-              {/* Analytics Link */}
-              <Link
-                href={analyticsLink.href}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
-                  isActive(analyticsLink.href)
-                    ? "bg-white/20 dark:bg-white/10 text-slate-900 dark:text-white backdrop-blur-md"
-                    : "text-slate-700 dark:text-slate-300 hover:bg-white/10 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
-                }`}
-              >
-                {analyticsLink.label}
-              </Link>
-            </div>
+    <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo / Brand */}
+          <div className="flex items-center gap-2 pr-8 flex-shrink-0">
+            <Link
+              href="/"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            >
+              <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-600 to-rose-600">
+                <BarChart3 className="w-4 h-4 text-white" />
+              </div>
+              <div className="flex flex-col gap-0.5 leading-none">
+                <span className="font-bold text-sm text-foreground">
+                  Letterboxd
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  Stats
+                </span>
+              </div>
+            </Link>
           </div>
 
-          {/* Right side: Theme toggle + Mobile menu button */}
-          <div className="flex items-center gap-2 ml-auto">
-            {/* Theme Toggle - visible on all sizes */}
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                  isActive(link.href)
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/10"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+          {/* Right side: Analytics button + Theme toggle + Mobile menu button */}
+          <div className="flex items-center gap-3 ml-auto">
+            {/* Analytics Button */}
+            <Link href="/analytics">
+              <Button variant="default" size="sm">
+                Analytics
+              </Button>
+            </Link>
+
+            {/* Theme Toggle */}
             <ThemeToggle />
 
-            {/* Mobile menu button - only on mobile */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-1.5 rounded-md text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/5 transition-colors"
-                aria-label="Toggle menu"
-              >
-                {isMobileMenuOpen ? (
-                  <X className="h-5 w-5" />
-                ) : (
-                  <Menu className="h-5 w-5" />
-                )}
-              </button>
-            </div>
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 rounded-md text-foreground hover:bg-accent/10 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
           </div>
         </div>
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden pb-3 animate-in fade-in slide-in-from-top-2 duration-200">
-            <div className="space-y-1">
+          <div className="md:hidden border-t border-border pb-4 animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="space-y-1 pt-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`block px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                  className={`block px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                     isActive(link.href)
-                      ? "bg-white/20 dark:bg-white/10 text-slate-900 dark:text-white"
-                      : "text-slate-700 dark:text-slate-300 hover:bg-white/10 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/10"
                   }`}
                 >
                   {link.label}
                 </Link>
               ))}
-
-              {/* Separator */}
-              <div className="my-2 h-px bg-slate-300 dark:bg-slate-600" />
-
-              {/* Analytics Link */}
-              <Link
-                href={analyticsLink.href}
-                className={`block px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
-                  isActive(analyticsLink.href)
-                    ? "bg-white/20 dark:bg-white/10 text-slate-900 dark:text-white"
-                    : "text-slate-700 dark:text-slate-300 hover:bg-white/10 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
-                }`}
-              >
-                {analyticsLink.label}
-              </Link>
             </div>
           </div>
         )}
