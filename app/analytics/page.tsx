@@ -31,7 +31,7 @@ export default function AnalyticsPage() {
               onUploadClick={() => setIsUploadModalOpen(true)}
             />
           ) : (
-            <main className="flex-1 overflow-auto scroll-smooth">
+            <div className="flex-1 overflow-auto scroll-smooth">
               <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full">
                 {/* Overview Section */}
                 <section id="analytics-overview">
@@ -127,7 +127,7 @@ export default function AnalyticsPage() {
                   </div>
                 </section>
               </div>
-            </main>
+            </div>
           )}
         </div>
         {/* Upload Modal */}

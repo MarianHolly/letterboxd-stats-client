@@ -18,8 +18,8 @@ export function AnalyticsHeader({
   const { toggleSidebar } = useSidebar();
 
   return (
-    <header className="flex flex-col border-b border-gray-200 dark:border-white/10 bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 px-4 py-4">
-      <div className="flex items-center justify-between gap-2">
+    <header className="sticky top-0 z-40 h-16 flex items-center border-b border-gray-200 dark:border-white/10 bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 px-4">
+      <div className="flex items-center justify-between gap-2 w-full">
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -35,11 +35,11 @@ export function AnalyticsHeader({
             className="h-6 bg-gray-200 dark:bg-white/10"
           />
           <div>
-            <h1 className="text-xl font-semibold text-foreground dark:text-white">
+            <h1 className="text-lg font-semibold text-foreground dark:text-white">
               {title}
             </h1>
             {description && (
-              <p className="text-sm text-gray-600 dark:text-white/60">
+              <p className="text-xs text-gray-600 dark:text-white/60 hidden sm:block">
                 {description}
               </p>
             )}

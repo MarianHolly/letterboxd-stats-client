@@ -94,22 +94,22 @@ const data = {
       href: "#",
       items: [
         {
-          title: "Create Custom Analytics",
-          href: "#",
-          icon: <PencilIcon className="w-5 h-5" />,
-          description: "Design your own analytics",
-        },
-        {
-          title: "Preferences",
-          href: "/dashboard/settings",
-          icon: <Settings className="w-5 h-5" />,
-          description: "App settings and preferences",
-        },
-        {
           title: "Upload New Data",
           href: "/dashboard/upload",
           icon: <Upload className="w-5 h-5" />,
           description: "Upload new CSV files",
+        },
+        {
+          title: "Clear Data",
+          href: "/dashboard/clear",
+          icon: <LogOut className="w-4 h-4 mr-2" />,
+          description: "Clear all uploaded data",
+        },
+        {
+          title: "Go to Home",
+          href: "/#",
+          icon: <Home className="w-4 h-4" />,
+          description: "Return to homepage",
         },
       ],
     },
@@ -290,7 +290,9 @@ export function AnalyticsSidebar({
                         {item.icon}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">{item.title}</p>
+                        <p className="font-medium text-sm truncate">
+                          {item.title}
+                        </p>
                         <p className="text-xs truncate text-gray-500 dark:text-white/50">
                           {item.description}
                         </p>
@@ -321,7 +323,9 @@ export function AnalyticsSidebar({
                       {item.icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{item.title}</p>
+                      <p className="font-medium text-sm truncate">
+                        {item.title}
+                      </p>
                       <p
                         className={cn(
                           "text-xs truncate",
@@ -339,25 +343,6 @@ export function AnalyticsSidebar({
             </div>
           </SidebarGroup>
         ))}
-        <div className="pt-2 mt-2 border-t border-gray-200 dark:border-white/10 space-y-1">
-          <Button
-            variant="ghost"
-            className="w-full justify-start text-gray-700 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Clear Data
-          </Button>
-          <Link
-            href="/"
-            className={cn(
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 w-full text-left",
-              "text-gray-700 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 border border-transparent"
-            )}
-          >
-            <Home className="w-4 h-4" />
-            <span className="font-medium text-sm truncate">Go to Home</span>
-          </Link>
-        </div>
       </SidebarFooter>
     </Sidebar>
   );
