@@ -89,6 +89,7 @@ interface CustomTooltipProps {
     name: string;
     value: number;
     dataKey: string;
+    color?: string;
   }>;
   label?: string;
 }
