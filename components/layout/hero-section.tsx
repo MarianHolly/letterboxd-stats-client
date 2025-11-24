@@ -91,9 +91,7 @@ const HeroSection = () => {
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-white dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 pb-20 md:pb-32">
-      <div
-        className="absolute inset-0 dark:bg-gradient-to-br dark:from-indigo-500/[0.05] dark:via-transparent dark:to-rose-500/[0.05] dark:blur-3xl"
-      />
+      <div className="absolute inset-0 dark:bg-gradient-to-br dark:from-indigo-500/[0.05] dark:via-transparent dark:to-rose-500/[0.05] dark:blur-3xl" />
 
       <div className="absolute inset-0 overflow-hidden">
         <ElegantShape
@@ -159,7 +157,7 @@ const HeroSection = () => {
             initial="hidden"
             animate="visible"
           >
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 md:mb-8 tracking-tight text-slate-950 dark:text-white">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-6 md:mb-8 tracking-tight text-slate-950 dark:text-white">
               Discover Your True Cinematic Identity
             </h1>
           </motion.div>
@@ -187,13 +185,15 @@ const HeroSection = () => {
             <Link href="/analytics">
               <Button
                 size="lg"
-                className="bg-slate-950 hover:bg-slate-900 text-white font-semibold px-8 py-6 rounded-sm text-lg transition-all duration-200 shadow-lg hover:cursor-pointer flex items-center"
+                className="
+                text-white bg-slate-950 hover:bg-slate-900/95
+                dark:text-white dark:border dark:border-slate-700 hover:dark:bg-slate-900 
+                rounded-sm font-semibold px-8 py-6 rounded-sm text-lg transition-all duration-200 shadow-lg hover:cursor-pointer flex items-center"
               >
                 Begin My Discovery
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            
           </motion.div>
 
           <motion.div

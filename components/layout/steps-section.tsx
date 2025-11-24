@@ -78,15 +78,20 @@ const StepsSection = () => {
               </h2>
             </div>
             <p className="text-foreground/60 text-base leading-relaxed max-w-md">
-              Transform your Letterboxd data into beautiful analytics in just four simple steps. No complicated setup, no data collection—just pure insights.
+              Transform your Letterboxd data into beautiful analytics in just
+              four simple steps. No complicated setup, no data collection—just
+              pure insights.
             </p>
 
             <Link href="/analytics">
               <Button
                 variant="ghost"
-                className="flex items-center justify-start gap-2 text-slate-900 dark:text-slate-100 hover:text-slate-950 dark:hover:text-white"
+                className="inline-flex text-slate-900 dark:text-slate-100 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/50 dark:hover:text-slate-300 font-semibold transition-colors py-1 px-3 border border-slate-300 dark:border-slate-700 rounded-md"
               >
-                <ArrowRight className="text-slate-900 dark:text-slate-100" size={18} />
+                <ArrowRight
+                  className="text-slate-900 dark:text-slate-100"
+                  size={18}
+                />
                 Start Analyzing
               </Button>
             </Link>

@@ -54,7 +54,11 @@ const FAQSection = () => {
         <div className="flex flex-col-reverse md:flex-row items-start gap-x-16 gap-y-10 md:gap-y-0">
           {/* Left: Accordion */}
           <div className="flex-1 w-full">
-            <Accordion type="single" defaultValue="question-0" className="w-full">
+            <Accordion
+              type="single"
+              defaultValue="question-0"
+              className="w-full"
+            >
               {faqs.map(({ question, answer }, index) => (
                 <AccordionItem
                   key={index}
@@ -72,13 +76,13 @@ const FAQSection = () => {
             </Accordion>
 
             {/* Help CTA */}
-            <div className="mt-12 pt-8 border-t border-slate-300 dark:border-slate-700">
-              <p className="text-slate-600 dark:text-slate-400 font-medium mb-3">
+            <div className="mt-12 pt-8 border-t border-slate-300 dark:border-slate-700 flex flex-row items-center justify-between gap-4">
+              <p className="text-slate-600 dark:text-slate-400 font-medium">
                 Can't find what you're looking for?
               </p>
               <a
                 href="/contact"
-                className="inline-flex text-slate-900 dark:text-slate-100 hover:text-slate-700 dark:hover:text-slate-300 font-semibold transition-colors"
+                className="inline-flex text-slate-900 dark:text-slate-100 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/50 dark:hover:text-slate-300 font-semibold transition-colors py-1 px-3 border border-slate-300 dark:border-slate-700 rounded-md"
               >
                 Get in touch with us →
               </a>
