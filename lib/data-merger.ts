@@ -233,13 +233,9 @@ export function mergeMovieSources(
       return movie
     })
 
-    // Add diary entries that aren't in watched (shouldn't happen, but handle it)
-    const watchedIds = new Set(watched.map((m) => m.id))
-    aggregated.forEach((movie) => {
-      if (!watchedIds.has(movie.id)) {
-        merged.push(movie)
-      }
-    })
+    // Note: We do NOT add diary entries that aren't in watched.csv
+    // All movies in diary.csv should already exist in watched.csv
+    // If they don't, they are data errors and should be skipped
   }
 
   // Merge ratings.csv (highest priority for ratings)
@@ -255,13 +251,9 @@ export function mergeMovieSources(
       return movie
     })
 
-    // Add ratings entries that aren't in watched (shouldn't happen, but handle it)
-    const watchedIds = new Set(watched.map((m) => m.id))
-    ratings.forEach((movie) => {
-      if (!watchedIds.has(movie.id)) {
-        merged.push(movie)
-      }
-    })
+    // Note: We do NOT add ratings entries that aren't in watched.csv
+    // All movies in ratings.csv should already exist in watched.csv
+    // If they don't, they are data errors and should be skipped
   }
 
   // Separate watchlist from watched
