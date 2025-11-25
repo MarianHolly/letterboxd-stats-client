@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useAnalyticsStore } from "@/hooks/use-analytics-store";
+import { computeAnalytics } from "@/lib/analytics-engine";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AnalyticsHeader } from "@/components/analytics/analytics-header";
 import { AnalyticsSidebar } from "@/components/analytics/analytics-sidebar";
 import { AnalyticsDashboard } from "@/components/analytics/analytics-dashboard";
 import { UploadModal } from "@/components/layout/upload-models";
+import type { MovieDataset } from "@/lib/types";
 
 export default function AnalyticsPage() {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -17,8 +19,21 @@ export default function AnalyticsPage() {
     setIsHydrated(true);
   }, []);
 
-  const handleUploadComplete = () => {
-    // Logic to handle after upload is complete
+  const handleUploadComplete = (dataset: MovieDataset) => {
+    // Save the merged dataset to the store
+    const analytics = computeAnalytics(dataset.watched);
+
+    // Update store state directly
+    useAnalyticsStore.setState({
+      dataset,
+      analytics,
+      uploadedFiles: [],
+      lastUpdated: new Date().toISOString(),
+      loading: false,
+      error: null,
+    });
+
+    setIsUploadModalOpen(false);
   };
 
   if (!isHydrated) {
@@ -35,7 +50,7 @@ export default function AnalyticsPage() {
             description="Discover and explore your personality through Letterboxd statistics"
           />
 
-          <AnalyticsDashboard />
+          <AnalyticsDashboard onUploadClick={() => setIsUploadModalOpen(true)} />
         </div>
         {/* Upload Modal */}
         <UploadModal
