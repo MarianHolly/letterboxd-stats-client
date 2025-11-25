@@ -465,3 +465,92 @@ export function computeRatingConsistency(movies: Movie[]): number {
 
   return Math.round(stdDev * 100) / 100
 }
+
+// ============================================================================
+// MONTHLY RADAR CHART DATA
+// ============================================================================
+
+/**
+ * Month names for radar chart
+ */
+const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+interface MonthData {
+  month: string
+  count: number
+}
+
+interface YearMonthData {
+  year: number
+  data: MonthData[]
+}
+
+/**
+ * Convert date string to Date object if needed
+ */
+function ensureDate(date: Date | string | undefined): Date | undefined {
+  if (!date) return undefined
+  if (date instanceof Date) return date
+  if (typeof date === 'string') {
+    const parsed = new Date(date)
+    return isNaN(parsed.getTime()) ? undefined : parsed
+  }
+  return undefined
+}
+
+/**
+ * Generate monthly viewing patterns data for radar chart
+ * Groups movies by year and month
+ */
+export function computeMonthlyRadarData(movies: Movie[]): YearMonthData[] {
+  if (movies.length === 0) {
+    return []
+  }
+
+  // Group movies by year
+  const moviesByYear = groupBy(movies, (m) => {
+    const watchedDate = ensureDate(m.watchedDate)
+    const markedDate = ensureDate(m.dateMarkedWatched)
+    const date = watchedDate || markedDate
+    return date ? String(date.getFullYear()) : 'unknown'
+  })
+
+  // Only process years with complete data (all 12 months tracked)
+  const yearData: YearMonthData[] = []
+
+  moviesByYear.forEach((yearMovies, year) => {
+    if (year === 'unknown') return
+
+    // Group movies by month within the year
+    const moviesByMonth: Record<number, number> = {}
+    for (let i = 0; i < 12; i++) {
+      moviesByMonth[i] = 0
+    }
+
+    yearMovies.forEach((movie) => {
+      const watchedDate = ensureDate(movie.watchedDate)
+      const markedDate = ensureDate(movie.dateMarkedWatched)
+      const date = watchedDate || markedDate
+      if (date) {
+        const monthIndex = date.getMonth()
+        moviesByMonth[monthIndex]++
+      }
+    })
+
+    // Create month data array
+    const monthData: MonthData[] = monthNames.map((month, index) => ({
+      month,
+      count: moviesByMonth[index],
+    }))
+
+    yearData.push({
+      year: parseInt(year, 10),
+      data: monthData,
+    })
+  })
+
+  // Sort by year ascending
+  yearData.sort((a, b) => a.year - b.year)
+
+  return yearData
+}
