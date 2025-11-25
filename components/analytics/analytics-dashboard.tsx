@@ -11,7 +11,11 @@ import { AnalyticsSkeleton } from './analytics-skeleton'
 // ANALYTICS DASHBOARD COMPONENT
 // ============================================================================
 
-export function AnalyticsDashboard() {
+interface AnalyticsDashboardProps {
+  onUploadClick?: () => void
+}
+
+export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   // Subscribe to store
   const dataset = useAnalyticsStore((state) => state.dataset)
   const analytics = useAnalyticsStore((state) => state.analytics)
@@ -33,7 +37,7 @@ export function AnalyticsDashboard() {
 
   // No data state
   if (!hasData) {
-    return <AnalyticsEmptyState />
+    return <AnalyticsEmptyState onUploadClick={onUploadClick} />
   }
 
   // Error state
