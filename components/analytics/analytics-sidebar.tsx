@@ -130,10 +130,12 @@ const data = {
 
 interface AnalyticsSidebarProps extends React.ComponentProps<typeof Sidebar> {
   onUploadClick?: () => void;
+  onClearClick?: () => void;
 }
 
 export function AnalyticsSidebar({
   onUploadClick,
+  onClearClick,
   ...props
 }: AnalyticsSidebarProps) {
   const pathname = usePathname();
@@ -311,6 +313,32 @@ export function AnalyticsSidebar({
                     <button
                       key={item.href}
                       onClick={onUploadClick}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 scroll-smooth text-left",
+                        "text-gray-700 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 border border-transparent"
+                      )}
+                    >
+                      <div className="flex-shrink-0 text-gray-600 dark:text-white/70">
+                        {item.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">
+                          {item.title}
+                        </p>
+                        <p className="text-xs truncate text-gray-500 dark:text-white/50">
+                          {item.description}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                }
+
+                // Special handling for "Clear Data" to trigger clear action instead of navigate
+                if (item.title === "Clear Data") {
+                  return (
+                    <button
+                      key={item.href}
+                      onClick={onClearClick}
                       className={cn(
                         "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 scroll-smooth text-left",
                         "text-gray-700 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 border border-transparent"
