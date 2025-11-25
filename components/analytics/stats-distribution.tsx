@@ -1,8 +1,10 @@
 'use client'
 
-import type { AnalyticsOverview } from '@/lib/types'
+import type { AnalyticsOverview, Movie } from '@/lib/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { DiaryMonthlyRadarChart } from '@/components/charts/diary-monthly-radar-chart'
+import { computeMonthlyRadarData } from '@/lib/analytics-engine'
 import {
   BarChart,
   Bar,
@@ -277,16 +279,20 @@ function YearlyWatching({ data, isLoading = false }: YearlyWatchingProps) {
 
 interface StatsDistributionProps {
   analytics: AnalyticsOverview | null
+  movies?: Movie[] | null
   isLoading?: boolean
 }
 
-export function StatsDistribution({ analytics, isLoading = false }: StatsDistributionProps) {
+export function StatsDistribution({ analytics, movies, isLoading = false }: StatsDistributionProps) {
+  // Generate monthly radar data from movies
+  const monthlyRadarData = movies ? computeMonthlyRadarData(movies) : []
+
   return (
     <section className="space-y-4">
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Distributions</h2>
         <p className="text-muted-foreground">
-          Breakdown of your movies by rating, decade, and year
+          Breakdown of your movies by rating, decade, year, and monthly patterns
         </p>
       </div>
 
@@ -303,6 +309,31 @@ export function StatsDistribution({ analytics, isLoading = false }: StatsDistrib
 
       {/* Yearly Watching - Full Width */}
       <YearlyWatching data={analytics?.yearlyWatching ?? null} isLoading={isLoading} />
+
+      {/* Monthly Patterns Radar Chart - Full Width */}
+      {isLoading ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Monthly Patterns by Year</CardTitle>
+            <CardDescription>Which months you watch the most movies</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="w-full h-96" />
+          </CardContent>
+        </Card>
+      ) : monthlyRadarData.length > 0 ? (
+        <DiaryMonthlyRadarChart data={monthlyRadarData} size="large" />
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Monthly Patterns by Year</CardTitle>
+            <CardDescription>Which months you watch the most movies</CardDescription>
+          </CardHeader>
+          <CardContent className="flex items-center justify-center h-96 text-muted-foreground">
+            No monthly pattern data available. Watch dates are needed to show this chart.
+          </CardContent>
+        </Card>
+      )}
     </section>
   )
 }
