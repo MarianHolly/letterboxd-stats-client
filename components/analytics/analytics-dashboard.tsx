@@ -49,12 +49,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
             <h3 className="font-semibold text-destructive mb-2">Error</h3>
             <p className="text-sm text-destructive/90">{error}</p>
           </div>
-          {analytics && (
-            <>
-              <StatsOverview analytics={analytics} isLoading={false} />
-              <StatsDistribution analytics={analytics} isLoading={false} />
-            </>
-          )}
+          {analytics && <StatsOverview analytics={analytics} isLoading={false} />}
         </div>
       </div>
     )
@@ -64,11 +59,8 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   return (
     <div className="flex-1 overflow-auto scroll-smooth">
       <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full">
-        {/* Overview Section */}
+        {/* Overview Section - Full Width */}
         <StatsOverview analytics={analytics} isLoading={!analytics} />
-
-        {/* Distribution Section */}
-        <StatsDistribution analytics={analytics} isLoading={!analytics} />
       </div>
     </div>
   )
