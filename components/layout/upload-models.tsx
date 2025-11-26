@@ -3,9 +3,10 @@
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { useTheme } from "next-themes";
+import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Upload, File, X, CheckCircle2, AlertCircle } from "lucide-react";
+import { Upload, File, X, CheckCircle2, AlertCircle, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { parseLetterboxdCSV } from "@/lib/csv-parser";
 import { mergeMovieSources } from "@/lib/data-merger";
@@ -18,6 +19,8 @@ interface UploadedFile {
   progress: number;
   error?: string;
   parsedData?: Movie[];
+  isReplaced?: boolean;
+  replacedPreviousFile?: boolean;
 }
 
 type UploadModalProps = {
@@ -82,6 +85,7 @@ export function UploadModal({
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       const newFiles: UploadedFile[] = [];
+      const replacedFiles: string[] = [];
 
       for (const file of acceptedFiles) {
         const fileName = file.name.toLowerCase();
@@ -138,7 +142,39 @@ export function UploadModal({
         newFiles.push(uploadedFile);
       }
 
-      setUploadedFiles((prev) => [...prev, ...newFiles]);
+      // Handle duplicates: replace old file of same type
+      setUploadedFiles((prev) => {
+        const updated = [...prev];
+        const newFilesCopy = [...newFiles];
+
+        for (let i = 0; i < newFilesCopy.length; i++) {
+          const newFile = newFilesCopy[i];
+          const existingIndex = updated.findIndex((f) => f.type === newFile.type && f.type !== "unknown");
+
+          if (existingIndex !== -1) {
+            const oldFile = updated[existingIndex];
+            replacedFiles.push(newFile.type);
+
+            // Mark old file as replaced
+            updated[existingIndex].isReplaced = true;
+
+            // Mark new file as replacing previous
+            newFile.replacedPreviousFile = true;
+
+            // Remove the old file and add the new one
+            updated.splice(existingIndex, 1);
+          }
+        }
+
+        return [...updated, ...newFilesCopy];
+      });
+
+      // Show notifications for each replaced file
+      replacedFiles.forEach((fileType) => {
+        toast.warning(`⚠️ ${fileType}.csv already uploaded. Replacing with new file.`, {
+          duration: 4000,
+        });
+      });
     },
     []
   );
@@ -214,7 +250,7 @@ export function UploadModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className={`!max-w-sm sm:!max-w-2xl md:!max-w-4xl lg:!max-w-6xl ${isDark ? "bg-slate-950 border-white/10" : "bg-white border-slate-200"} border flex flex-col max-h-[90vh]`}>
+      <DialogContent className={`!max-w-sm sm:!max-w-xl md:!max-w-2xl lg:!max-w-6xl ${isDark ? "bg-slate-950 border-white/10" : "bg-white border-slate-200"} border flex flex-col max-h-[90vh]`}>
         <DialogHeader className="flex-shrink-0 overflow-hidden">
           <DialogTitle className={`text-2xl ${isDark ? "text-white" : "text-slate-900"} truncate`}>
             Upload Your Letterboxd Data
@@ -295,17 +331,31 @@ export function UploadModal({
           {/* Uploaded Files - Hidden on mobile */}
           {uploadedFiles.length > 0 && (
             <div className="space-y-3 hidden md:block">
-              <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
-                Files ({uploadedFiles.length})
-              </p>
+              <div className="flex items-center justify-between">
+                <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
+                  Files ({uploadedFiles.filter((f) => !f.isReplaced).length})
+                </p>
+                {uploadedFiles.some((f) => f.replacedPreviousFile) && (
+                  <div className={`text-xs px-3 py-1 rounded-full flex items-center gap-2 ${
+                    isDark
+                      ? "bg-amber-500/20 text-amber-300"
+                      : "bg-amber-100 text-amber-800"
+                  }`}>
+                    <AlertTriangle className="w-3 h-3" />
+                    <span>Some files replaced previous versions</span>
+                  </div>
+                )}
+              </div>
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {uploadedFiles.map((file, index) => {
                   const fileInfo = FILE_DESCRIPTIONS[file.type as keyof typeof FILE_DESCRIPTIONS];
                   return (
                     <div
                       key={index}
-                      className={`flex flex-col gap-2 p-3 rounded-lg border transition-all ${
-                        file.status === "success"
+                      className={`flex flex-col gap-2 p-3 rounded-lg border-2 transition-all ${
+                        file.replacedPreviousFile
+                          ? "border-amber-500 bg-amber-500/10"
+                          : file.status === "success"
                           ? "bg-green-500/10 border-green-500/50"
                           : file.status === "error"
                           ? isDark
@@ -328,9 +378,16 @@ export function UploadModal({
                               : "text-slate-600"
                           }`} />
                           <div className="min-w-0 flex-1">
-                            <p className={`text-sm font-medium truncate ${isDark ? "text-white" : "text-slate-900"}`}>
-                              {file.file.name}
-                            </p>
+                            <div className="flex items-center gap-2">
+                              <p className={`text-sm font-medium truncate ${isDark ? "text-white" : "text-slate-900"}`}>
+                                {file.file.name}
+                              </p>
+                              {file.replacedPreviousFile && (
+                                <span className="flex-shrink-0 px-2 py-0.5 rounded text-xs font-semibold bg-amber-500/30 text-amber-700 dark:text-amber-300">
+                                  REPLACED
+                                </span>
+                              )}
+                            </div>
                             <p className={`text-xs ${isDark ? "text-white/50" : "text-slate-600"}`}>
                               {(file.file.size / 1024).toFixed(1)} KB
                             </p>
@@ -350,7 +407,12 @@ export function UploadModal({
 
                         {/* Status */}
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          {file.status === "success" && (
+                          {file.replacedPreviousFile && (
+                            <div title="This file replaced a previously uploaded file">
+                              <AlertTriangle className="w-5 h-5 text-amber-500" />
+                            </div>
+                          )}
+                          {file.status === "success" && !file.replacedPreviousFile && (
                             <CheckCircle2 className="w-5 h-5 text-green-500" />
                           )}
                           {file.status === "error" && (
