@@ -321,7 +321,7 @@ export function UploadModal({
                         <AlertCircle className="w-4 h-4 text-red-500" />
                       )}
                     </div>
-                    <p className={`text-xs hidden sm:block mt-1 ${isDark ? "text-white/60" : "text-slate-600"}`}>{info.description}</p>
+                    <p className={`text-xs hidden md:block mt-1 ${isDark ? "text-white/60" : "text-slate-600"}`}>{info.description}</p>
                   </div>
                 );
               })}
@@ -392,7 +392,7 @@ export function UploadModal({
                               {(file.file.size / 1024).toFixed(1)} KB
                             </p>
                           </div>
-                          <div className={`flex-shrink-0 px-2 py-1 rounded text-xs ${
+                          <div className={`flex-shrink-0 px-2 py-1 rounded hidden lg:block text-xs ${
                             file.status === "success"
                               ? "bg-green-500/20 text-green-700"
                               : file.status === "error"
@@ -433,7 +433,7 @@ export function UploadModal({
 
                       {/* File Description */}
                       {fileInfo && (
-                        <p className={`text-xs ${isDark ? "text-white/60" : "text-slate-600"}`}>
+                        <p className={`text-xs hidden lg:block ${isDark ? "text-white/60" : "text-slate-600"}`}>
                           {fileInfo.description}
                         </p>
                       )}
