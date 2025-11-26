@@ -269,7 +269,7 @@ export function UploadModal({
               <div
                 {...getRootProps()}
                 className={cn(
-                  "relative border-2 border-dashed rounded-sm p-8 transition-all duration-300 cursor-pointer",
+                  "relative border-2 border-dashed rounded-sm p-8 transition-all duration-300 cursor-pointer aspect-square flex items-center justify-center",
                   isDragActive
                     ? isDark
                       ? "border-slate-400 bg-slate-500/10"
@@ -296,51 +296,11 @@ export function UploadModal({
 
             {/* Right Column: File Requirements and Uploaded Files */}
             <div className="space-y-6">
-              {/* File Requirements */}
+              {/* Combined File Requirements and Uploaded Files List */}
               <div className="space-y-2">
-                <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>Upload Files:</p>
-                <div className="grid grid-cols-1 gap-3">
-                  {Object.entries(FILE_DESCRIPTIONS).map(([key, info]) => {
-                    const fileEntry = uploadedFiles.find((f) => f.type === key);
-                    const hasFile = fileEntry && fileEntry.status !== "error";
-                    const hasError = fileEntry?.status === "error";
-
-                    return (
-                      <div
-                        key={key}
-                        className={cn(
-                          "p-3 rounded-sm border text-sm transition-all",
-                          hasFile
-                            ? "border-green-500/50 bg-green-500/10"
-                            : hasError
-                            ? "border-red-500/50 bg-red-500/10"
-                            : isDark
-                            ? "border-white/10 bg-white/5"
-                            : "border-slate-300 bg-slate-50"
-                        )}
-                      >
-                        <div className="flex items-center justify-between">
-                          <p className={`font-medium ${isDark ? "text-white" : "text-slate-900"}`}>{info.label}</p>
-                          {hasFile && (
-                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                          )}
-                          {hasError && (
-                            <AlertCircle className="w-4 h-4 text-red-500" />
-                          )}
-                        </div>
-                        <p className={`text-xs mt-1 ${isDark ? "text-white/60" : "text-slate-600"}`}>{info.description}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Uploaded Files */}
-              {uploadedFiles.length > 0 && (
-                <div className="space-y-3">
-              <div className="flex items-center justify-between">
                 <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
-                  Files ({uploadedFiles.filter((f) => !f.isReplaced).length})
+                  {uploadedFiles.length > 0 ? "Files" : "Upload Files"}
+                  {uploadedFiles.length > 0 && ` (${uploadedFiles.filter((f) => !f.isReplaced).length})`}
                 </p>
                 {uploadedFiles.some((f) => f.replacedPreviousFile) && (
                   <div className={`text-xs px-3 py-1 rounded-full flex items-center gap-2 ${
@@ -352,118 +312,138 @@ export function UploadModal({
                     <span>Some files replaced previous versions</span>
                   </div>
                 )}
-              </div>
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {uploadedFiles.map((file, index) => {
-                  const fileInfo = FILE_DESCRIPTIONS[file.type as keyof typeof FILE_DESCRIPTIONS];
-                  return (
-                    <div
-                      key={index}
-                      className={`flex flex-col gap-2 p-3 rounded-sm border-2 transition-all ${
-                        file.replacedPreviousFile
-                          ? "border-amber-500 bg-amber-500/10"
-                          : file.status === "success"
-                          ? "bg-green-500/10 border-green-500/50"
-                          : file.status === "error"
-                          ? isDark
-                            ? "bg-red-500/10 border-red-500/50"
-                            : "bg-red-50 border-red-300"
-                          : isDark
-                          ? "bg-white/5 border-white/10"
-                          : "bg-slate-50 border-slate-300"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <File className={`w-5 h-5 flex-shrink-0 ${
-                            file.status === "success"
-                              ? "text-green-600"
-                              : file.status === "error"
-                              ? "text-red-600"
+                <div className="grid grid-cols-1 gap-2 overflow-y-auto">
+                  {Object.entries(FILE_DESCRIPTIONS).map(([key, info]) => {
+                    const fileEntry = uploadedFiles.find((f) => f.type === key && !f.isReplaced);
+                    const hasFile = fileEntry && fileEntry.status !== "error";
+                    const hasError = fileEntry?.status === "error";
+
+                    // Show uploaded file content if file exists
+                    if (fileEntry) {
+                      return (
+                        <div
+                          key={key}
+                          className={`flex flex-col gap-2 p-2 rounded-sm border-2 transition-all ${
+                            fileEntry.replacedPreviousFile
+                              ? "border-amber-500 bg-amber-500/10"
+                              : fileEntry.status === "success"
+                              ? "bg-green-500/10 border-green-500/50"
+                              : fileEntry.status === "error"
+                              ? isDark
+                                ? "bg-red-500/10 border-red-500/50"
+                                : "bg-red-50 border-red-300"
                               : isDark
-                              ? "text-white/60"
-                              : "text-slate-600"
-                          }`} />
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
-                              <p className={`text-sm font-medium truncate ${isDark ? "text-white" : "text-slate-900"}`}>
-                                {file.file.name}
-                              </p>
-                              {file.replacedPreviousFile && (
-                                <span className="flex-shrink-0 px-2 py-0.5 rounded text-xs font-semibold bg-amber-500/30 text-amber-700 dark:text-amber-300">
-                                  REPLACED
-                                </span>
+                              ? "bg-white/5 border-white/10"
+                              : "bg-slate-50 border-slate-300"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                              <File className={`w-5 h-5 flex-shrink-0 ${
+                                fileEntry.status === "success"
+                                  ? "text-green-600"
+                                  : fileEntry.status === "error"
+                                  ? "text-red-600"
+                                  : isDark
+                                  ? "text-white/60"
+                                  : "text-slate-600"
+                              }`} />
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2">
+                                  <p className={`text-sm font-medium truncate ${isDark ? "text-white" : "text-slate-900"}`}>
+                                    {fileEntry.file.name}
+                                  </p>
+                                  {fileEntry.replacedPreviousFile && (
+                                    <span className="flex-shrink-0 px-2 py-0.5 rounded text-xs font-semibold bg-amber-500/30 text-amber-700 dark:text-amber-300">
+                                      REPLACED
+                                    </span>
+                                  )}
+                                </div>
+                                <p className={`text-xs ${isDark ? "text-white/50" : "text-slate-600"}`}>
+                                  {(fileEntry.file.size / 1024).toFixed(1)} KB
+                                </p>
+                              </div>
+                              <div className={`flex-shrink-0 px-2 py-1 rounded hidden lg:block text-xs ${
+                                fileEntry.status === "success"
+                                  ? "bg-green-500/20 text-green-700"
+                                  : fileEntry.status === "error"
+                                  ? "bg-red-500/20 text-red-700"
+                                  : isDark
+                                  ? "bg-white/10 text-white/70"
+                                  : "bg-slate-200 text-slate-700"
+                              }`}>
+                                {fileEntry.type}
+                              </div>
+                            </div>
+
+                            {/* Status */}
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              {fileEntry.replacedPreviousFile && (
+                                <div title="This file replaced a previously uploaded file">
+                                  <AlertTriangle className="w-5 h-5 text-amber-500" />
+                                </div>
                               )}
+                              {fileEntry.status === "success" && !fileEntry.replacedPreviousFile && (
+                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                              )}
+                              {fileEntry.status === "error" && (
+                                <AlertCircle className="w-5 h-5 text-red-500" />
+                              )}
+                              <button
+                                onClick={() => handleRemoveFile(uploadedFiles.indexOf(fileEntry))}
+                                className={`p-1 rounded transition-colors ${
+                                  isDark
+                                    ? "hover:bg-white/10"
+                                    : "hover:bg-slate-200"
+                                }`}
+                              >
+                                <X className={`w-4 h-4 ${isDark ? "text-white/60 hover:text-white" : "text-slate-600 hover:text-slate-900"}`} />
+                              </button>
                             </div>
-                            <p className={`text-xs ${isDark ? "text-white/50" : "text-slate-600"}`}>
-                              {(file.file.size / 1024).toFixed(1)} KB
-                            </p>
                           </div>
-                          <div className={`flex-shrink-0 px-2 py-1 rounded hidden lg:block text-xs ${
-                            file.status === "success"
-                              ? "bg-green-500/20 text-green-700"
-                              : file.status === "error"
-                              ? "bg-red-500/20 text-red-700"
-                              : isDark
-                              ? "bg-white/10 text-white/70"
-                              : "bg-slate-200 text-slate-700"
-                          }`}>
-                            {file.type}
-                          </div>
-                        </div>
 
-                        {/* Status */}
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          {file.replacedPreviousFile && (
-                            <div title="This file replaced a previously uploaded file">
-                              <AlertTriangle className="w-5 h-5 text-amber-500" />
-                            </div>
-                          )}
-                          {file.status === "success" && !file.replacedPreviousFile && (
-                            <CheckCircle2 className="w-5 h-5 text-green-500" />
-                          )}
-                          {file.status === "error" && (
-                            <AlertCircle className="w-5 h-5 text-red-500" />
-                          )}
-                          <button
-                            onClick={() => handleRemoveFile(index)}
-                            className={`p-1 rounded transition-colors ${
-                              isDark
-                                ? "hover:bg-white/10"
-                                : "hover:bg-slate-200"
-                            }`}
-                          >
-                            <X className={`w-4 h-4 ${isDark ? "text-white/60 hover:text-white" : "text-slate-600 hover:text-slate-900"}`} />
-                          </button>
+                          {/* File Description */}
+                          <p className={`text-xs ${isDark ? "text-white/60" : "text-slate-600"}`}>
+                            {info.description}
+                          </p>
                         </div>
+                      );
+                    }
+
+                    // Show file requirement placeholder if no file uploaded
+                    return (
+                      <div
+                        key={key}
+                        className={cn(
+                          "p-2 rounded-sm border text-sm transition-all",
+                          isDark
+                            ? "border-white/10 bg-white/5"
+                            : "border-slate-300 bg-slate-50"
+                        )}
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className={`font-medium ${isDark ? "text-white" : "text-slate-900"}`}>{info.label}</p>
+                        </div>
+                        <p className={`text-xs mt-1 ${isDark ? "text-white/60" : "text-slate-600"}`}>{info.description}</p>
                       </div>
-
-                      {/* File Description */}
-                      {fileInfo && (
-                        <p className={`text-xs hidden lg:block ${isDark ? "text-white/60" : "text-slate-600"}`}>
-                          {fileInfo.description}
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Error Messages */}
-              {uploadedFiles.some((f) => f.error) && (
-                <div className="p-3 rounded-sm bg-red-500/10 border border-red-500/20">
-                  <p className="text-sm text-red-400">Errors found:</p>
-                  {uploadedFiles
-                    .filter((f) => f.error)
-                    .map((f, i) => (
-                      <p key={i} className="text-xs text-red-400/80 mt-1">
-                        • {f.file.name}: {f.error}
-                      </p>
-                    ))}
+                    );
+                  })}
                 </div>
-              )}
+
+                {/* Error Messages */}
+                {uploadedFiles.some((f) => f.error) && (
+                  <div className="p-2 rounded-sm bg-red-500/10 border border-red-500/20">
+                    <p className="text-sm text-red-400">Errors found:</p>
+                    {uploadedFiles
+                      .filter((f) => f.error)
+                      .map((f, i) => (
+                        <p key={i} className="text-xs text-red-400/80 mt-1">
+                          • {f.file.name}: {f.error}
+                        </p>
+                      ))}
+                  </div>
+                )}
               </div>
-            )}
             </div>
           </div>
 
