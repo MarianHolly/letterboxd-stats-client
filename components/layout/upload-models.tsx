@@ -6,10 +6,11 @@ import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Upload, File, X, CheckCircle2, AlertCircle, AlertTriangle } from "lucide-react";
+import { Upload, File, X, CheckCircle2, AlertCircle, AlertTriangle, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { parseLetterboxdCSV } from "@/lib/csv-parser";
 import { mergeMovieSources } from "@/lib/data-merger";
+import { categorizeError, type ErrorCategory } from "@/lib/error-messages";
 import type { Movie, MovieDataset } from "@/lib/types";
 
 interface UploadedFile {
@@ -18,6 +19,8 @@ interface UploadedFile {
   status: "uploading" | "success" | "error";
   progress: number;
   error?: string;
+  errorCategory?: ErrorCategory;
+  errorGuidance?: string;
   parsedData?: Movie[];
   isReplaced?: boolean;
   replacedPreviousFile?: boolean;
@@ -99,12 +102,16 @@ export function UploadModal({
         }
 
         if (fileType === "unknown") {
+          const errorMsg = `Unknown file type. Expected: ${Object.keys(FILE_TYPES).join(", ")}`;
+          const categorized = categorizeError(errorMsg, file.name);
           newFiles.push({
             file,
             type: fileType,
             status: "error" as const,
             progress: 100,
-            error: `Unknown file type. Expected: ${Object.keys(FILE_TYPES).join(", ")}`,
+            error: categorized.userMessage,
+            errorCategory: categorized.category,
+            errorGuidance: categorized.guidance,
           });
           continue;
         }
@@ -127,16 +134,23 @@ export function UploadModal({
           } else {
             uploadedFile.status = "error";
             uploadedFile.progress = 100;
-            uploadedFile.error =
+            const errorMsg =
               result.errors.length > 0
-                ? `${result.errors.length} row(s) failed: ${result.errors[0].message}`
+                ? result.errors[0].message
                 : "Failed to parse CSV";
+            const categorized = categorizeError(errorMsg, file.name, fileType);
+            uploadedFile.error = categorized.userMessage;
+            uploadedFile.errorCategory = categorized.category;
+            uploadedFile.errorGuidance = categorized.guidance;
           }
         } catch (err) {
           uploadedFile.status = "error";
           uploadedFile.progress = 100;
-          uploadedFile.error =
-            err instanceof Error ? err.message : "Unknown error while parsing";
+          const errorMsg = err instanceof Error ? err.message : "Unknown error while parsing";
+          const categorized = categorizeError(errorMsg, file.name, fileType);
+          uploadedFile.error = categorized.userMessage;
+          uploadedFile.errorCategory = categorized.category;
+          uploadedFile.errorGuidance = categorized.guidance;
         }
 
         newFiles.push(uploadedFile);
@@ -173,6 +187,24 @@ export function UploadModal({
       replacedFiles.forEach((fileType) => {
         toast.warning(`⚠️ ${fileType}.csv already uploaded. Replacing with new file.`, {
           duration: 4000,
+        });
+      });
+
+      // Show notifications for file type errors
+      const unknownFiles = newFiles.filter((f) => f.type === "unknown" && f.status === "error");
+      unknownFiles.forEach((file) => {
+        toast.error(`📁 ${file.error}`, {
+          description: file.errorGuidance,
+          duration: 5000,
+        });
+      });
+
+      // Show notifications for parsing errors
+      const parseErrors = newFiles.filter((f) => f.type !== "unknown" && f.status === "error");
+      parseErrors.forEach((file) => {
+        toast.error(`⚠️ Error parsing ${file.file.name}`, {
+          description: file.errorGuidance,
+          duration: 5000,
         });
       });
     },
@@ -402,10 +434,24 @@ export function UploadModal({
                             </div>
                           </div>
 
-                          {/* File Description */}
-                          <p className={`text-xs ${isDark ? "text-white/60" : "text-slate-600"}`}>
-                            {info.description}
-                          </p>
+                          {/* File Description or Error Guidance */}
+                          {fileEntry.status === "error" && fileEntry.errorGuidance ? (
+                            <div className={`text-xs p-2 rounded flex gap-2 ${
+                              isDark
+                                ? "bg-red-500/10 text-red-300"
+                                : "bg-red-50 text-red-700"
+                            }`}>
+                              <HelpCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                              <div>
+                                <p className="font-medium">{fileEntry.error}</p>
+                                <p className="text-xs mt-1 opacity-90">{fileEntry.errorGuidance}</p>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className={`text-xs ${isDark ? "text-white/60" : "text-slate-600"}`}>
+                              {info.description}
+                            </p>
+                          )}
                         </div>
                       );
                     }
@@ -430,19 +476,6 @@ export function UploadModal({
                   })}
                 </div>
 
-                {/* Error Messages */}
-                {uploadedFiles.some((f) => f.error) && (
-                  <div className="p-2 rounded-sm bg-red-500/10 border border-red-500/20">
-                    <p className="text-sm text-red-400">Errors found:</p>
-                    {uploadedFiles
-                      .filter((f) => f.error)
-                      .map((f, i) => (
-                        <p key={i} className="text-xs text-red-400/80 mt-1">
-                          • {f.file.name}: {f.error}
-                        </p>
-                      ))}
-                  </div>
-                )}
               </div>
             </div>
           </div>
