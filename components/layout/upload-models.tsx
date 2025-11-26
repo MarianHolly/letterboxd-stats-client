@@ -250,7 +250,7 @@ export function UploadModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className={`!max-w-sm sm:!max-w-xl md:!max-w-2xl lg:!max-w-6xl ${isDark ? "bg-slate-950 border-white/10" : "bg-white border-slate-200"} border flex flex-col max-h-[90vh]`}>
+      <DialogContent className={`!max-w-sm sm:!max-w-xl md:!max-w-2xl lg:!max-w-4xl ${isDark ? "bg-slate-950 border-white/10" : "bg-white border-slate-200"} border flex flex-col max-h-[90vh]`}>
         <DialogHeader className="flex-shrink-0 overflow-hidden">
           <DialogTitle className={`text-2xl ${isDark ? "text-white" : "text-slate-900"} truncate`}>
             Upload Your Letterboxd Data
@@ -261,76 +261,83 @@ export function UploadModal({
         </DialogHeader>
 
         <div className="space-y-6 flex-1 overflow-y-auto">
-          {/* Dropzone */}
-          <div
-            {...getRootProps()}
-            className={cn(
-              "relative border-2 border-dashed rounded-lg p-8 transition-all duration-300 cursor-pointer",
-              isDragActive
-                ? isDark
-                  ? "border-slate-400 bg-slate-500/10"
-                  : "border-slate-400 bg-slate-50"
-                : isDark
-                ? "border-white/20 bg-white/5 hover:border-white/40 hover:bg-white/10"
-                : "border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100"
-            )}
-          >
-            <input {...getInputProps()} />
-            <div className="flex flex-col items-center justify-center space-y-3">
-              <Upload className={`w-8 h-8 ${isDark ? "text-slate-400" : "text-slate-600"}`} />
-              <div className="text-center">
-                <p className={`font-medium ${isDark ? "text-white" : "text-slate-900"}`}>
-                  {isDragActive ? "Drop files here" : "Drag CSV files here or click to select"}
-                </p>
-                <p className={`text-sm mt-1 ${isDark ? "text-white/50" : "text-slate-600"}`}>
-                  Supported: watched.csv, ratings.csv, diary.csv
-                </p>
+          {/* Two Column Layout: Dropzone on left, File Requirements and Uploaded Files on right */}
+          <div className="grid lg:grid-cols-2 gap-6">
+            {/* Left Column: Dropzone */}
+            <div className="space-y-6">
+              {/* Dropzone */}
+              <div
+                {...getRootProps()}
+                className={cn(
+                  "relative border-2 border-dashed rounded-sm p-8 transition-all duration-300 cursor-pointer",
+                  isDragActive
+                    ? isDark
+                      ? "border-slate-400 bg-slate-500/10"
+                      : "border-slate-400 bg-slate-50"
+                    : isDark
+                    ? "border-white/20 bg-white/5 hover:border-white/40 hover:bg-white/10"
+                    : "border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100"
+                )}
+              >
+                <input {...getInputProps()} />
+                <div className="flex flex-col items-center justify-center space-y-3">
+                  <Upload className={`w-8 h-8 ${isDark ? "text-slate-400" : "text-slate-600"}`} />
+                  <div className="text-center">
+                    <p className={`font-medium ${isDark ? "text-white" : "text-slate-900"}`}>
+                      {isDragActive ? "Drop files here" : "Drag CSV files here or click to select"}
+                    </p>
+                    <p className={`text-sm mt-1 ${isDark ? "text-white/50" : "text-slate-600"}`}>
+                      Supported: watched.csv, ratings.csv, diary.csv
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* File Requirements */}
-          <div className="space-y-2">
-            <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>Upload Files:</p>
-            <div className="grid md:grid-cols-3 gap-3">
-              {Object.entries(FILE_DESCRIPTIONS).map(([key, info]) => {
-                const fileEntry = uploadedFiles.find((f) => f.type === key);
-                const hasFile = fileEntry && fileEntry.status !== "error";
-                const hasError = fileEntry?.status === "error";
+            {/* Right Column: File Requirements and Uploaded Files */}
+            <div className="space-y-6">
+              {/* File Requirements */}
+              <div className="space-y-2">
+                <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>Upload Files:</p>
+                <div className="grid grid-cols-1 gap-3">
+                  {Object.entries(FILE_DESCRIPTIONS).map(([key, info]) => {
+                    const fileEntry = uploadedFiles.find((f) => f.type === key);
+                    const hasFile = fileEntry && fileEntry.status !== "error";
+                    const hasError = fileEntry?.status === "error";
 
-                return (
-                  <div
-                    key={key}
-                    className={cn(
-                      "p-3 rounded-lg border text-sm transition-all",
-                      hasFile
-                        ? "border-green-500/50 bg-green-500/10"
-                        : hasError
-                        ? "border-red-500/50 bg-red-500/10"
-                        : isDark
-                        ? "border-white/10 bg-white/5"
-                        : "border-slate-300 bg-slate-50"
-                    )}
-                  >
-                    <div className="flex items-center justify-between">
-                      <p className={`font-medium ${isDark ? "text-white" : "text-slate-900"}`}>{info.label}</p>
-                      {hasFile && (
-                        <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      )}
-                      {hasError && (
-                        <AlertCircle className="w-4 h-4 text-red-500" />
-                      )}
-                    </div>
-                    <p className={`text-xs hidden md:block mt-1 ${isDark ? "text-white/60" : "text-slate-600"}`}>{info.description}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+                    return (
+                      <div
+                        key={key}
+                        className={cn(
+                          "p-3 rounded-sm border text-sm transition-all",
+                          hasFile
+                            ? "border-green-500/50 bg-green-500/10"
+                            : hasError
+                            ? "border-red-500/50 bg-red-500/10"
+                            : isDark
+                            ? "border-white/10 bg-white/5"
+                            : "border-slate-300 bg-slate-50"
+                        )}
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className={`font-medium ${isDark ? "text-white" : "text-slate-900"}`}>{info.label}</p>
+                          {hasFile && (
+                            <CheckCircle2 className="w-4 h-4 text-green-500" />
+                          )}
+                          {hasError && (
+                            <AlertCircle className="w-4 h-4 text-red-500" />
+                          )}
+                        </div>
+                        <p className={`text-xs mt-1 ${isDark ? "text-white/60" : "text-slate-600"}`}>{info.description}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
 
-          {/* Uploaded Files - Hidden on mobile */}
-          {uploadedFiles.length > 0 && (
-            <div className="space-y-3 hidden md:block">
+              {/* Uploaded Files */}
+              {uploadedFiles.length > 0 && (
+                <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
                   Files ({uploadedFiles.filter((f) => !f.isReplaced).length})
@@ -352,7 +359,7 @@ export function UploadModal({
                   return (
                     <div
                       key={index}
-                      className={`flex flex-col gap-2 p-3 rounded-lg border-2 transition-all ${
+                      className={`flex flex-col gap-2 p-3 rounded-sm border-2 transition-all ${
                         file.replacedPreviousFile
                           ? "border-amber-500 bg-amber-500/10"
                           : file.status === "success"
@@ -444,7 +451,7 @@ export function UploadModal({
 
               {/* Error Messages */}
               {uploadedFiles.some((f) => f.error) && (
-                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                <div className="p-3 rounded-sm bg-red-500/10 border border-red-500/20">
                   <p className="text-sm text-red-400">Errors found:</p>
                   {uploadedFiles
                     .filter((f) => f.error)
@@ -455,8 +462,10 @@ export function UploadModal({
                     ))}
                 </div>
               )}
+              </div>
+            )}
             </div>
-          )}
+          </div>
 
           {/* Action Buttons */}
           <div className="flex gap-1 md:gap-3 pt-4 flex-shrink-0 flex-col sm:flex-row">
