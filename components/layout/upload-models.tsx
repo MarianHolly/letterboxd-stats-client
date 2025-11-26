@@ -211,7 +211,7 @@ export function UploadModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-2xl bg-slate-950 border border-white/10">
+      <DialogContent className="max-w-4xl bg-slate-950 border border-white/10">
         <DialogHeader>
           <DialogTitle className="text-2xl text-white">
             Upload Your Letterboxd Data

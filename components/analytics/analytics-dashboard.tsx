@@ -61,6 +61,13 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
       <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full">
         {/* Overview Section - Full Width */}
         <StatsOverview analytics={analytics} isLoading={!analytics} />
+
+
+        {/* General Stats 
+        
+        */}
+
+
       </div>
     </div>
   )
