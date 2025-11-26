@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
+import { useTheme } from "next-themes";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Upload, File, X, CheckCircle2, AlertCircle } from "lucide-react";
@@ -66,6 +67,8 @@ export function UploadModal({
   onOpenChange,
   onUploadComplete,
 }: UploadModalProps) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
   // Reset files when modal closes
@@ -211,12 +214,12 @@ export function UploadModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-4xl bg-slate-950 border border-white/10">
+      <DialogContent className={`max-w-4xl ${isDark ? "bg-slate-950 border-white/10" : "bg-white border-slate-200"} border`}>
         <DialogHeader>
-          <DialogTitle className="text-2xl text-white">
+          <DialogTitle className={`text-2xl ${isDark ? "text-white" : "text-slate-900"}`}>
             Upload Your Letterboxd Data
           </DialogTitle>
-          <p className="text-sm text-white/60 mt-2">
+          <p className={`text-sm mt-2 ${isDark ? "text-white/60" : "text-slate-600"}`}>
             Upload your CSV exports from Letterboxd. Upload at least one file to get started.
           </p>
         </DialogHeader>
@@ -228,18 +231,22 @@ export function UploadModal({
             className={cn(
               "relative border-2 border-dashed rounded-lg p-8 transition-all duration-300 cursor-pointer",
               isDragActive
-                ? "border-indigo-500 bg-indigo-500/10"
-                : "border-white/20 bg-white/5 hover:border-white/40 hover:bg-white/10"
+                ? isDark
+                  ? "border-slate-400 bg-slate-500/10"
+                  : "border-slate-400 bg-slate-50"
+                : isDark
+                ? "border-white/20 bg-white/5 hover:border-white/40 hover:bg-white/10"
+                : "border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100"
             )}
           >
             <input {...getInputProps()} />
             <div className="flex flex-col items-center justify-center space-y-3">
-              <Upload className="w-8 h-8 text-indigo-400" />
+              <Upload className={`w-8 h-8 ${isDark ? "text-slate-400" : "text-slate-600"}`} />
               <div className="text-center">
-                <p className="text-white font-medium">
+                <p className={`font-medium ${isDark ? "text-white" : "text-slate-900"}`}>
                   {isDragActive ? "Drop files here" : "Drag CSV files here or click to select"}
                 </p>
-                <p className="text-sm text-white/50 mt-1">
+                <p className={`text-sm mt-1 ${isDark ? "text-white/50" : "text-slate-600"}`}>
                   Supported: watched.csv, ratings.csv, diary.csv
                 </p>
               </div>
@@ -248,7 +255,7 @@ export function UploadModal({
 
           {/* File Requirements */}
           <div className="space-y-2">
-            <p className="text-sm font-semibold text-white">Upload Files:</p>
+            <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>Upload Files:</p>
             <div className="grid md:grid-cols-3 gap-3">
               {Object.entries(FILE_DESCRIPTIONS).map(([key, info]) => {
                 const fileEntry = uploadedFiles.find((f) => f.type === key);
@@ -264,11 +271,13 @@ export function UploadModal({
                         ? "border-green-500/50 bg-green-500/10"
                         : hasError
                         ? "border-red-500/50 bg-red-500/10"
-                        : "border-white/10 bg-white/5"
+                        : isDark
+                        ? "border-white/10 bg-white/5"
+                        : "border-slate-300 bg-slate-50"
                     )}
                   >
                     <div className="flex items-center justify-between">
-                      <p className="font-medium text-white">{info.label}</p>
+                      <p className={`font-medium ${isDark ? "text-white" : "text-slate-900"}`}>{info.label}</p>
                       {hasFile && (
                         <CheckCircle2 className="w-4 h-4 text-green-500" />
                       )}
@@ -276,7 +285,7 @@ export function UploadModal({
                         <AlertCircle className="w-4 h-4 text-red-500" />
                       )}
                     </div>
-                    <p className="text-white/60 text-xs mt-1">{info.description}</p>
+                    <p className={`text-xs mt-1 ${isDark ? "text-white/60" : "text-slate-600"}`}>{info.description}</p>
                   </div>
                 );
               })}
@@ -286,26 +295,30 @@ export function UploadModal({
           {/* Uploaded Files */}
           {uploadedFiles.length > 0 && (
             <div className="space-y-3">
-              <p className="text-sm font-semibold text-white">
+              <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
                 Files ({uploadedFiles.length})
               </p>
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {uploadedFiles.map((file, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10"
+                    className={`flex items-center justify-between p-3 rounded-lg border ${
+                      isDark ? "bg-white/5 border-white/10" : "bg-slate-50 border-slate-300"
+                    }`}
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <File className="w-5 h-5 text-white/60 flex-shrink-0" />
+                      <File className={`w-5 h-5 flex-shrink-0 ${isDark ? "text-white/60" : "text-slate-600"}`} />
                       <div className="min-w-0 flex-1">
-                        <p className="text-white text-sm font-medium truncate">
+                        <p className={`text-sm font-medium truncate ${isDark ? "text-white" : "text-slate-900"}`}>
                           {file.file.name}
                         </p>
-                        <p className="text-white/50 text-xs">
+                        <p className={`text-xs ${isDark ? "text-white/50" : "text-slate-600"}`}>
                           {(file.file.size / 1024).toFixed(1)} KB
                         </p>
                       </div>
-                      <div className="flex-shrink-0 px-2 py-1 rounded text-xs bg-white/10 text-white/70">
+                      <div className={`flex-shrink-0 px-2 py-1 rounded text-xs ${
+                        isDark ? "bg-white/10 text-white/70" : "bg-slate-200 text-slate-700"
+                      }`}>
                         {file.type}
                       </div>
                     </div>
@@ -320,9 +333,13 @@ export function UploadModal({
                       )}
                       <button
                         onClick={() => handleRemoveFile(index)}
-                        className="p-1 hover:bg-white/10 rounded transition-colors"
+                        className={`p-1 rounded transition-colors ${
+                          isDark
+                            ? "hover:bg-white/10"
+                            : "hover:bg-slate-200"
+                        }`}
                       >
-                        <X className="w-4 h-4 text-white/60 hover:text-white" />
+                        <X className={`w-4 h-4 ${isDark ? "text-white/60 hover:text-white" : "text-slate-600 hover:text-slate-900"}`} />
                       </button>
                     </div>
                   </div>
@@ -351,7 +368,7 @@ export function UploadModal({
               <Button
                 variant="outline"
                 onClick={handleReset}
-                className="border-white/20 text-white hover:bg-white/10"
+                className={isDark ? "border-white/20 text-white hover:bg-white/10" : "border-slate-300 text-slate-900 hover:bg-slate-100"}
               >
                 Clear All
               </Button>
@@ -360,7 +377,7 @@ export function UploadModal({
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="border-white/20 text-white hover:bg-white/10"
+              className={isDark ? "border-white/20 text-white hover:bg-white/10" : "border-slate-300 text-slate-900 hover:bg-slate-100"}
             >
               Cancel
             </Button>
@@ -371,7 +388,7 @@ export function UploadModal({
                 uploadedFiles.some((f) => f.status === "error") ||
                 !uploadedFiles.some((f) => f.type === "watched" && f.status !== "error")
               }
-              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="bg-slate-950 hover:bg-slate-900/95 dark:text-white dark:border dark:border-slate-700 hover:dark:bg-slate-900 rounded-sm font-semibold px-8 py-2 text-white"
             >
               Continue to Dashboard
             </Button>
