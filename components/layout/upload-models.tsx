@@ -214,17 +214,17 @@ export function UploadModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className={`max-w-4xl ${isDark ? "bg-slate-950 border-white/10" : "bg-white border-slate-200"} border`}>
-        <DialogHeader>
-          <DialogTitle className={`text-2xl ${isDark ? "text-white" : "text-slate-900"}`}>
+      <DialogContent className={`!max-w-sm sm:!max-w-2xl md:!max-w-4xl lg:!max-w-6xl ${isDark ? "bg-slate-950 border-white/10" : "bg-white border-slate-200"} border flex flex-col max-h-[90vh]`}>
+        <DialogHeader className="flex-shrink-0 overflow-hidden">
+          <DialogTitle className={`text-2xl ${isDark ? "text-white" : "text-slate-900"} truncate`}>
             Upload Your Letterboxd Data
           </DialogTitle>
-          <p className={`text-sm mt-2 ${isDark ? "text-white/60" : "text-slate-600"}`}>
+          <p className={`text-sm mt-2 ${isDark ? "text-white/60" : "text-slate-600"} line-clamp-2`}>
             Upload your CSV exports from Letterboxd. Upload at least one file to get started.
           </p>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-6 flex-1 overflow-y-auto">
           {/* Dropzone */}
           <div
             {...getRootProps()}
@@ -285,65 +285,99 @@ export function UploadModal({
                         <AlertCircle className="w-4 h-4 text-red-500" />
                       )}
                     </div>
-                    <p className={`text-xs mt-1 ${isDark ? "text-white/60" : "text-slate-600"}`}>{info.description}</p>
+                    <p className={`text-xs hidden sm:block mt-1 ${isDark ? "text-white/60" : "text-slate-600"}`}>{info.description}</p>
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* Uploaded Files */}
+          {/* Uploaded Files - Hidden on mobile */}
           {uploadedFiles.length > 0 && (
-            <div className="space-y-3">
+            <div className="space-y-3 hidden md:block">
               <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
                 Files ({uploadedFiles.length})
               </p>
-              <div className="space-y-2 max-h-48 overflow-y-auto">
-                {uploadedFiles.map((file, index) => (
-                  <div
-                    key={index}
-                    className={`flex items-center justify-between p-3 rounded-lg border ${
-                      isDark ? "bg-white/5 border-white/10" : "bg-slate-50 border-slate-300"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <File className={`w-5 h-5 flex-shrink-0 ${isDark ? "text-white/60" : "text-slate-600"}`} />
-                      <div className="min-w-0 flex-1">
-                        <p className={`text-sm font-medium truncate ${isDark ? "text-white" : "text-slate-900"}`}>
-                          {file.file.name}
-                        </p>
-                        <p className={`text-xs ${isDark ? "text-white/50" : "text-slate-600"}`}>
-                          {(file.file.size / 1024).toFixed(1)} KB
-                        </p>
-                      </div>
-                      <div className={`flex-shrink-0 px-2 py-1 rounded text-xs ${
-                        isDark ? "bg-white/10 text-white/70" : "bg-slate-200 text-slate-700"
-                      }`}>
-                        {file.type}
-                      </div>
-                    </div>
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                {uploadedFiles.map((file, index) => {
+                  const fileInfo = FILE_DESCRIPTIONS[file.type as keyof typeof FILE_DESCRIPTIONS];
+                  return (
+                    <div
+                      key={index}
+                      className={`flex flex-col gap-2 p-3 rounded-lg border transition-all ${
+                        file.status === "success"
+                          ? "bg-green-500/10 border-green-500/50"
+                          : file.status === "error"
+                          ? isDark
+                            ? "bg-red-500/10 border-red-500/50"
+                            : "bg-red-50 border-red-300"
+                          : isDark
+                          ? "bg-white/5 border-white/10"
+                          : "bg-slate-50 border-slate-300"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <File className={`w-5 h-5 flex-shrink-0 ${
+                            file.status === "success"
+                              ? "text-green-600"
+                              : file.status === "error"
+                              ? "text-red-600"
+                              : isDark
+                              ? "text-white/60"
+                              : "text-slate-600"
+                          }`} />
+                          <div className="min-w-0 flex-1">
+                            <p className={`text-sm font-medium truncate ${isDark ? "text-white" : "text-slate-900"}`}>
+                              {file.file.name}
+                            </p>
+                            <p className={`text-xs ${isDark ? "text-white/50" : "text-slate-600"}`}>
+                              {(file.file.size / 1024).toFixed(1)} KB
+                            </p>
+                          </div>
+                          <div className={`flex-shrink-0 px-2 py-1 rounded text-xs ${
+                            file.status === "success"
+                              ? "bg-green-500/20 text-green-700"
+                              : file.status === "error"
+                              ? "bg-red-500/20 text-red-700"
+                              : isDark
+                              ? "bg-white/10 text-white/70"
+                              : "bg-slate-200 text-slate-700"
+                          }`}>
+                            {file.type}
+                          </div>
+                        </div>
 
-                    {/* Status */}
-                    <div className="flex items-center gap-2 ml-3">
-                      {file.status === "success" && (
-                        <CheckCircle2 className="w-5 h-5 text-green-500" />
+                        {/* Status */}
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          {file.status === "success" && (
+                            <CheckCircle2 className="w-5 h-5 text-green-500" />
+                          )}
+                          {file.status === "error" && (
+                            <AlertCircle className="w-5 h-5 text-red-500" />
+                          )}
+                          <button
+                            onClick={() => handleRemoveFile(index)}
+                            className={`p-1 rounded transition-colors ${
+                              isDark
+                                ? "hover:bg-white/10"
+                                : "hover:bg-slate-200"
+                            }`}
+                          >
+                            <X className={`w-4 h-4 ${isDark ? "text-white/60 hover:text-white" : "text-slate-600 hover:text-slate-900"}`} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* File Description */}
+                      {fileInfo && (
+                        <p className={`text-xs ${isDark ? "text-white/60" : "text-slate-600"}`}>
+                          {fileInfo.description}
+                        </p>
                       )}
-                      {file.status === "error" && (
-                        <AlertCircle className="w-5 h-5 text-red-500" />
-                      )}
-                      <button
-                        onClick={() => handleRemoveFile(index)}
-                        className={`p-1 rounded transition-colors ${
-                          isDark
-                            ? "hover:bg-white/10"
-                            : "hover:bg-slate-200"
-                        }`}
-                      >
-                        <X className={`w-4 h-4 ${isDark ? "text-white/60 hover:text-white" : "text-slate-600 hover:text-slate-900"}`} />
-                      </button>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Error Messages */}
@@ -363,7 +397,7 @@ export function UploadModal({
           )}
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-1 md:gap-3 pt-4 flex-shrink-0 flex-col sm:flex-row">
             {uploadedFiles.length > 0 && (
               <Button
                 variant="outline"
@@ -388,7 +422,7 @@ export function UploadModal({
                 uploadedFiles.some((f) => f.status === "error") ||
                 !uploadedFiles.some((f) => f.type === "watched" && f.status !== "error")
               }
-              className="bg-slate-950 hover:bg-slate-900/95 dark:text-white dark:border dark:border-slate-700 hover:dark:bg-slate-900 rounded-sm font-semibold px-8 py-2 text-white"
+              className="bg-slate-950 hover:bg-slate-900/95 dark:text-white dark:border dark:border-slate-700 hover:dark:bg-slate-900 rounded-sm font-semibold md:px-8 py-2 text-white"
             >
               Continue to Dashboard
             </Button>
