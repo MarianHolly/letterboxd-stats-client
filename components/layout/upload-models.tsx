@@ -94,6 +94,7 @@ export function UploadModal({
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [showInvalidWarning, setShowInvalidWarning] = useState(false);
 
   // Reset files when modal closes
   const handleOpenChange = (newOpen: boolean) => {
@@ -252,10 +253,9 @@ export function UploadModal({
 
   const handleContinue = () => {
     const hasAnyFile = uploadedFiles.length > 0;
-    const hasErrors = uploadedFiles.some((f) => f.status === "error");
-    const hasWatched = uploadedFiles.some(
-      (f) => f.type === "watched" && !f.error
-    );
+    const validFiles = uploadedFiles.filter((f) => f.status === "success");
+    const invalidFiles = uploadedFiles.filter((f) => f.status === "error");
+    const hasWatched = validFiles.some((f) => f.type === "watched");
 
     if (!hasAnyFile) {
       alert("Please upload at least one CSV file");
@@ -267,21 +267,22 @@ export function UploadModal({
       return;
     }
 
-    if (hasErrors) {
-      alert("Please fix the errors before continuing");
-      return;
+    // Remove invalid files from state
+    if (invalidFiles.length > 0) {
+      setUploadedFiles(validFiles);
+      setShowInvalidWarning(true);
     }
 
     // Merge all parsed data
     try {
       const watched =
-        uploadedFiles.find((f) => f.type === "watched")?.parsedData || [];
-      const diary = uploadedFiles.find((f) => f.type === "diary")?.parsedData;
-      const ratings = uploadedFiles.find(
+        validFiles.find((f) => f.type === "watched")?.parsedData || [];
+      const diary = validFiles.find((f) => f.type === "diary")?.parsedData;
+      const ratings = validFiles.find(
         (f) => f.type === "ratings"
       )?.parsedData;
-      const films = uploadedFiles.find((f) => f.type === "films")?.parsedData;
-      const watchlist = uploadedFiles.find(
+      const films = validFiles.find((f) => f.type === "films")?.parsedData;
+      const watchlist = validFiles.find(
         (f) => f.type === "watchlist"
       )?.parsedData;
 
@@ -412,6 +413,18 @@ export function UploadModal({
                   >
                     <AlertTriangle className="w-3 h-3" />
                     <span>Some files replaced previous versions</span>
+                  </div>
+                )}
+                {showInvalidWarning && (
+                  <div
+                    className={`text-xs px-3 py-1 rounded-full flex items-center gap-2 ${
+                      isDark
+                        ? "bg-red-500/20 text-red-300"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    <AlertTriangle className="w-3 h-3" />
+                    <span>Invalid files were removed. Proceeding with valid data only.</span>
                   </div>
                 )}
                 <div className="grid grid-cols-1 gap-2 overflow-y-auto">
@@ -661,9 +674,8 @@ export function UploadModal({
               onClick={handleContinue}
               disabled={
                 uploadedFiles.length === 0 ||
-                uploadedFiles.some((f) => f.status === "error") ||
                 !uploadedFiles.some(
-                  (f) => f.type === "watched" && f.status !== "error"
+                  (f) => f.type === "watched" && f.status === "success"
                 )
               }
               className="bg-slate-950 hover:bg-slate-900/95 dark:text-white dark:border dark:border-slate-700 hover:dark:bg-slate-900 rounded-sm font-semibold md:px-8 py-2 text-white"
