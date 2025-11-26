@@ -141,6 +141,10 @@ export function resolveConflicts(
 /**
  * Aggregate rewatches from multiple diary entries
  * Groups entries by URI and counts rewatches
+ *
+ * Handles two cases:
+ * 1. Multiple entries for same movie = each entry is a watch/rewatch
+ * 2. Single entry with Rewatch: Yes = explicitly marked as rewatch, count = 1
  */
 function aggregateRewatches(diaryMovies: Movie[]): Movie[] {
   const grouped = groupBy(diaryMovies, (movie) => movie.id)
@@ -165,6 +169,14 @@ function aggregateRewatches(diaryMovies: Movie[]): Movie[] {
       if (allDates.length > 0) {
         base.watchedDate = allDates[0] // Earliest date
         base.rewatchDates = allDates.slice(1) // Remaining are rewatches
+      }
+    } else if (entries.length === 1 && entries[0].rewatch) {
+      // Single entry explicitly marked as Rewatch: Yes
+      // Count is already set to 1 during parsing, just keep it
+      base.rewatch = true
+      // rewatchCount should already be set from parsing, or default to 1
+      if (!base.rewatchCount) {
+        base.rewatchCount = 1
       }
     }
 

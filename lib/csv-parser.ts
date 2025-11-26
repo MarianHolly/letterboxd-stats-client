@@ -273,6 +273,7 @@ function parseDiaryCSV(rows: DiaryCSVRow[]): ParseResult<Movie[]> {
         rating,
         ratingDate,
         rewatch,
+        rewatchCount: rewatch ? 1 : undefined, // If marked as Rewatch: Yes, count at least 1
         tags: tags.length > 0 ? tags : undefined,
         decade: computeDecade(year),
         era: classifyEra(year),
