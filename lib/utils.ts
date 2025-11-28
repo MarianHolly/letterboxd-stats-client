@@ -308,3 +308,90 @@ export function formatRating(rating: number | undefined | null): string {
 export function formatNumber(num: number): string {
   return num.toLocaleString()
 }
+
+// ============================================================================
+// PROFILE UTILITIES
+// ============================================================================
+
+/**
+ * Validate Letterboxd favorite film URI format
+ * Format: https://boxd.it/XXXXX (where X is alphanumeric)
+ */
+export function isValidLetterboxdFavoriteUri(uri: string): boolean {
+  if (!uri || typeof uri !== "string") {
+    return false
+  }
+
+  return /^https:\/\/boxd\.it\/[a-zA-Z0-9]+$/.test(uri.trim())
+}
+
+/**
+ * Parse comma-separated favorite film URIs
+ * Trims whitespace, filters empty strings
+ */
+export function parseFavoriteFilmsString(csvStr: string | null | undefined): string[] {
+  if (!csvStr || csvStr.trim() === "") {
+    return []
+  }
+
+  return csvStr
+    .split(",")
+    .map((uri) => uri.trim())
+    .filter((uri) => uri.length > 0)
+}
+
+/**
+ * Limit favorite films to maximum (default 4)
+ * Logs warning if truncated
+ */
+export function limitFavoriteFilms(films: string[], max: number = 4): string[] {
+  if (films.length > max) {
+    console.warn(
+      `Profile has ${films.length} favorite films, limiting to first ${max}`
+    )
+    return films.slice(0, max)
+  }
+  return films
+}
+
+/**
+ * Format full name from first and last name
+ * Falls back to username if name not available
+ */
+export function formatProfileFullName(
+  firstName: string | undefined,
+  lastName: string | undefined,
+  username: string
+): string {
+  if (firstName && lastName) {
+    return `${firstName} ${lastName}`
+  }
+
+  if (firstName || lastName) {
+    return (firstName || lastName || username).trim()
+  }
+
+  return username
+}
+
+/**
+ * Validate profile username (required, non-empty)
+ */
+export function validateProfileUsername(username: string | null | undefined): {
+  valid: boolean
+  error?: string
+} {
+  if (!username || typeof username !== "string") {
+    return { valid: false, error: "Username is required" }
+  }
+
+  if (username.trim().length === 0) {
+    return { valid: false, error: "Username cannot be empty" }
+  }
+
+  if (username.trim().length > 255) {
+    return { valid: false, error: "Username is too long (max 255 characters)" }
+  }
+
+  return { valid: true }
+}
