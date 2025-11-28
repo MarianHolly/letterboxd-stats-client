@@ -107,8 +107,8 @@ describe('CSV to Analytics Pipeline', () => {
       // Merge
       const dataset = mergeMovieSources(watchedResult.data!, diaryResult.data!)
 
-      // Should have 4 movies (3 from watched + 1 new from diary)
-      expect(dataset.watched).toHaveLength(4)
+      // Should have 3 movies (merged watched with diary data, diary-only entries not included)
+      expect(dataset.watched).toHaveLength(3)
       expect(dataset.uploadedFiles).toContain('watched')
       expect(dataset.uploadedFiles).toContain('diary')
 
@@ -236,17 +236,17 @@ describe('Analytics Computation', () => {
     const analytics = computeAnalytics(dataset.watched)
 
     // Verify counts
-    expect(analytics.totalMoviesWatched).toBe(4) // 3 from watched + 1 new from diary
-    expect(analytics.moviesRated).toBe(4) // All have ratings after merge
-    expect(analytics.ratingCoverage).toBe(100)
+    expect(analytics.totalMoviesWatched).toBe(3) // 3 from watched, merged with diary data
+    expect(analytics.moviesRated).toBe(3) // All have ratings after merge (movie1, movie2 from diary, movie3 from ratings)
+    expect(analytics.ratingCoverage).toBe(100) // All movies have ratings
 
     // Verify ratings are correctly applied
     expect(analytics.averageRating).toBeGreaterThan(0)
     expect(analytics.medianRating).toBeGreaterThan(0)
 
     // Verify decade breakdown
-    expect(analytics.decadeBreakdown['1970s']).toBe(1)
-    expect(analytics.decadeBreakdown['1990s']).toBe(2)
+    expect(analytics.decadeBreakdown['1970s']).toBe(1) // The Godfather (1972)
+    expect(analytics.decadeBreakdown['1990s']).toBe(1) // The Shawshank Redemption (1994)
     expect(analytics.decadeBreakdown['2010s']).toBe(1)
   })
 
