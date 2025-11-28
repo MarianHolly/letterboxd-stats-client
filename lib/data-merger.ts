@@ -9,7 +9,7 @@
  * 4. films.csv - Liked movies (only for 'liked' flag)
  */
 
-import type { Movie, MovieDataset } from './types'
+import type { Movie, MovieDataset, UserProfile } from './types'
 import { groupBy } from './utils'
 
 // ============================================================================
@@ -194,6 +194,7 @@ function aggregateRewatches(diaryMovies: Movie[]): Movie[] {
  * Merge multiple CSV sources into unified Movie dataset
  *
  * Priority order: ratings.csv > diary.csv > watched.csv > films.csv
+ * Profile is stored as singleton (one-to-one with dataset)
  *
  * Letterboxd URI is used as unique identifier for deduplication
  */
@@ -202,7 +203,8 @@ export function mergeMovieSources(
   diary?: Movie[],
   ratings?: Movie[],
   films?: Movie[],
-  watchlist?: Movie[]
+  watchlist?: Movie[],
+  profile?: UserProfile
 ): MovieDataset {
   // Validate watched.csv is provided (mandatory)
   if (!watched || watched.length === 0) {
@@ -293,12 +295,18 @@ export function mergeMovieSources(
     })
   }
 
+  // Add profile if provided
+  if (profile) {
+    uploadedFiles.push('profile')
+  }
+
   // Final deduplication on watched movies
   const watchedDeduplicated = deduplicateMovies(watchedFinal)
 
   return {
     watched: watchedDeduplicated,
     watchlist: deduplicateMovies(watchlistFinal),
+    userProfile: profile,
     uploadedFiles,
     lastUpdated: new Date(),
   }
@@ -314,7 +322,8 @@ export function updateDataset(
   newDiary?: Movie[],
   newRatings?: Movie[],
   newFilms?: Movie[],
-  newWatchlist?: Movie[]
+  newWatchlist?: Movie[],
+  newProfile?: UserProfile
 ): MovieDataset {
   // Use new data if provided, otherwise use existing
   const watched = newWatched || current.watched
@@ -322,8 +331,9 @@ export function updateDataset(
   const ratings = newRatings
   const films = newFilms
   const watchlist = newWatchlist || current.watchlist
+  const profile = newProfile !== undefined ? newProfile : current.userProfile
 
-  return mergeMovieSources(watched, diary, ratings, films, watchlist)
+  return mergeMovieSources(watched, diary, ratings, films, watchlist, profile)
 }
 
 /**

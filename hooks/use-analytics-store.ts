@@ -5,8 +5,8 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Movie, MovieDataset, AnalyticsOverview, AnalyticsStore } from '@/lib/types'
-import { parseLetterboxdCSV } from '@/lib/csv-parser'
+import type { Movie, MovieDataset, AnalyticsOverview, AnalyticsStore, UserProfile } from '@/lib/types'
+import { parseLetterboxdCSV, parseProfileCSV } from '@/lib/csv-parser'
 import { mergeMovieSources, deduplicateMovies } from '@/lib/data-merger'
 import { computeAnalytics } from '@/lib/analytics-engine'
 
@@ -155,6 +155,7 @@ export const useAnalyticsStore = create<AnalyticsStoreType>()(
           let ratingsMovies: Movie[] = []
           let filmsMovies: Movie[] = []
           let watchlistMovies: Movie[] = []
+          let userProfile: UserProfile | undefined
 
           const uploadedFileNames: string[] = []
           const errors: string[] = []
@@ -162,26 +163,41 @@ export const useAnalyticsStore = create<AnalyticsStoreType>()(
           // Parse each file
           for (const file of files) {
             try {
-              const result = await parseLetterboxdCSV(file)
+              const fileName = file.name.toLowerCase()
 
-              if (result.success && result.data) {
-                uploadedFileNames.push(file.name)
+              // Handle profile.csv separately (returns UserProfile, not Movie[])
+              if (fileName === 'profile.csv') {
+                const content = await file.text()
+                const profileResult = parseProfileCSV(content)
 
-                // Categorize by filename
-                const fileName = file.name.toLowerCase()
-                if (fileName === 'watched.csv') {
-                  watchedMovies = result.data
-                } else if (fileName === 'diary.csv') {
-                  diaryMovies = result.data
-                } else if (fileName === 'ratings.csv') {
-                  ratingsMovies = result.data
-                } else if (fileName === 'films.csv') {
-                  filmsMovies = result.data
-                } else if (fileName === 'watchlist.csv') {
-                  watchlistMovies = result.data
+                if (profileResult.success && profileResult.data) {
+                  uploadedFileNames.push(file.name)
+                  userProfile = profileResult.data
+                } else {
+                  errors.push(`${file.name}: ${profileResult.errors[0]?.message || 'Unknown error'}`)
                 }
               } else {
-                errors.push(`${file.name}: ${result.errors[0]?.message || 'Unknown error'}`)
+                // Handle movie CSVs
+                const result = await parseLetterboxdCSV(file)
+
+                if (result.success && result.data) {
+                  uploadedFileNames.push(file.name)
+
+                  // Categorize by filename
+                  if (fileName === 'watched.csv') {
+                    watchedMovies = result.data
+                  } else if (fileName === 'diary.csv') {
+                    diaryMovies = result.data
+                  } else if (fileName === 'ratings.csv') {
+                    ratingsMovies = result.data
+                  } else if (fileName === 'films.csv') {
+                    filmsMovies = result.data
+                  } else if (fileName === 'watchlist.csv') {
+                    watchlistMovies = result.data
+                  }
+                } else {
+                  errors.push(`${file.name}: ${result.errors[0]?.message || 'Unknown error'}`)
+                }
               }
             } catch (err) {
               errors.push(
@@ -201,13 +217,14 @@ export const useAnalyticsStore = create<AnalyticsStoreType>()(
             return
           }
 
-          // Merge all sources
+          // Merge all sources (including profile if provided)
           const dataset = mergeMovieSources(
             watchedMovies,
             diaryMovies.length > 0 ? diaryMovies : undefined,
             ratingsMovies.length > 0 ? ratingsMovies : undefined,
             filmsMovies.length > 0 ? filmsMovies : undefined,
-            watchlistMovies.length > 0 ? watchlistMovies : undefined
+            watchlistMovies.length > 0 ? watchlistMovies : undefined,
+            userProfile
           )
 
           // Compute analytics
