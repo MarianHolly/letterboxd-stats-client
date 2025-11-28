@@ -21,20 +21,23 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { parseLetterboxdCSV } from "@/lib/csv-parser";
+import { parseLetterboxdCSV, parseProfileCSVFile } from "@/lib/csv-parser";
 import { mergeMovieSources } from "@/lib/data-merger";
 import { categorizeError, type ErrorCategory } from "@/lib/error-messages";
-import type { Movie, MovieDataset } from "@/lib/types";
+import { useAnalyticsStore } from "@/hooks/use-analytics-store";
+import { ProfileReplaceConfirm } from "@/components/dialogs/profile-replace-confirm";
+import type { Movie, MovieDataset, UserProfile } from "@/lib/types";
 
 interface UploadedFile {
   file: File;
-  type: "watched" | "ratings" | "diary" | "films" | "watchlist" | "unknown";
+  type: "watched" | "ratings" | "diary" | "films" | "watchlist" | "profile" | "unknown";
   status: "uploading" | "success" | "error";
   progress: number;
   error?: string;
   errorCategory?: ErrorCategory;
   errorGuidance?: string;
   parsedData?: Movie[];
+  profileData?: any;
   isReplaced?: boolean;
   replacedPreviousFile?: boolean;
 }
@@ -51,6 +54,7 @@ const FILE_TYPES = {
   "watched.csv": "watched",
   "films.csv": "films",
   "watchlist.csv": "watchlist",
+  "profile.csv": "profile",
 } as const;
 
 const FILE_DESCRIPTIONS = {
@@ -84,6 +88,12 @@ const FILE_DESCRIPTIONS = {
     uploadedDescription: "Your queue of movies to discover",
     required: false,
   },
+  profile: {
+    label: "User Profile",
+    description: "Optional - Your username, name, and favorite films",
+    uploadedDescription: "Your profile data loaded",
+    required: false,
+  },
 };
 
 export function UploadModal({
@@ -95,11 +105,18 @@ export function UploadModal({
   const isDark = theme === "dark";
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [showInvalidWarning, setShowInvalidWarning] = useState(false);
+  const [showProfileConfirm, setShowProfileConfirm] = useState(false);
+  const [pendingProfileFile, setPendingProfileFile] = useState<UploadedFile | null>(null);
+
+  const { dataset } = useAnalyticsStore();
+  const currentProfile = dataset?.userProfile;
 
   // Reset files when modal closes
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
       setUploadedFiles([]);
+      setShowProfileConfirm(false);
+      setPendingProfileFile(null);
     }
     onOpenChange(newOpen);
   };
@@ -145,23 +162,46 @@ export function UploadModal({
       };
 
       try {
-        const result = await parseLetterboxdCSV(file);
+        // Handle profile.csv separately
+        if (fileType === "profile") {
+          const result = await parseProfileCSVFile(file);
 
-        if (result.success && result.data) {
-          uploadedFile.status = "success";
-          uploadedFile.progress = 100;
-          uploadedFile.parsedData = result.data;
+          if (result.success && result.data) {
+            uploadedFile.status = "success";
+            uploadedFile.progress = 100;
+            uploadedFile.profileData = result.data;
+          } else {
+            uploadedFile.status = "error";
+            uploadedFile.progress = 100;
+            const errorMsg =
+              result.errors && result.errors.length > 0
+                ? result.errors[0].message
+                : "Failed to parse profile CSV";
+            const categorized = categorizeError(errorMsg, file.name, fileType);
+            uploadedFile.error = categorized.userMessage;
+            uploadedFile.errorCategory = categorized.category;
+            uploadedFile.errorGuidance = categorized.guidance;
+          }
         } else {
-          uploadedFile.status = "error";
-          uploadedFile.progress = 100;
-          const errorMsg =
-            result.errors.length > 0
-              ? result.errors[0].message
-              : "Failed to parse CSV";
-          const categorized = categorizeError(errorMsg, file.name, fileType);
-          uploadedFile.error = categorized.userMessage;
-          uploadedFile.errorCategory = categorized.category;
-          uploadedFile.errorGuidance = categorized.guidance;
+          // Handle regular movie CSVs
+          const result = await parseLetterboxdCSV(file);
+
+          if (result.success && result.data) {
+            uploadedFile.status = "success";
+            uploadedFile.progress = 100;
+            uploadedFile.parsedData = result.data;
+          } else {
+            uploadedFile.status = "error";
+            uploadedFile.progress = 100;
+            const errorMsg =
+              result.errors.length > 0
+                ? result.errors[0].message
+                : "Failed to parse CSV";
+            const categorized = categorizeError(errorMsg, file.name, fileType);
+            uploadedFile.error = categorized.userMessage;
+            uploadedFile.errorCategory = categorized.category;
+            uploadedFile.errorGuidance = categorized.guidance;
+          }
         }
       } catch (err) {
         uploadedFile.status = "error";
@@ -178,6 +218,15 @@ export function UploadModal({
     }
 
     // Handle duplicates: replace old file of same type
+    // Special handling for profile: check if replacing existing profile from store
+    const profileFile = newFiles.find((f) => f.type === "profile");
+    if (profileFile && profileFile.status === "success" && currentProfile) {
+      // Profile is being replaced from store - show confirmation dialog
+      setPendingProfileFile(profileFile);
+      setShowProfileConfirm(true);
+      return; // Don't add to uploadedFiles yet
+    }
+
     setUploadedFiles((prev) => {
       const updated = [...prev];
       const newFilesCopy = [...newFiles];
@@ -285,13 +334,17 @@ export function UploadModal({
       const watchlist = validFiles.find(
         (f) => f.type === "watchlist"
       )?.parsedData;
+      const profile = validFiles.find(
+        (f) => f.type === "profile"
+      )?.profileData;
 
       const dataset = mergeMovieSources(
         watched,
         diary,
         ratings,
         films,
-        watchlist
+        watchlist,
+        profile
       );
 
       onUploadComplete?.(dataset);
@@ -309,6 +362,34 @@ export function UploadModal({
     setUploadedFiles([]);
   };
 
+  // Profile confirmation dialog handlers
+  const handleKeepOldProfile = () => {
+    // Discard the new profile file and close dialog
+    setShowProfileConfirm(false);
+    setPendingProfileFile(null);
+    toast.info("Profile not changed. Using current profile.", {
+      duration: 3000,
+    });
+  };
+
+  const handleReplaceProfile = () => {
+    // Add the pending profile file to uploadedFiles and close dialog
+    if (pendingProfileFile) {
+      setUploadedFiles((prev) => [...prev, pendingProfileFile]);
+      setShowProfileConfirm(false);
+      setPendingProfileFile(null);
+      toast.success("Profile will be replaced on continue.", {
+        duration: 3000,
+      });
+    }
+  };
+
+  const handleCancelProfileConfirm = () => {
+    // Cancel the entire upload
+    setShowProfileConfirm(false);
+    setPendingProfileFile(null);
+  };
+
   const groupedFiles = uploadedFiles.reduce((acc, file, index) => {
     if (!acc[file.type]) {
       acc[file.type] = [];
@@ -318,7 +399,8 @@ export function UploadModal({
   }, {} as Record<string, (UploadedFile & { index: number })[]>);
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         className={`!max-w-sm sm:!max-w-xl md:!max-w-2xl lg:!max-w-4xl ${
           isDark ? "bg-slate-950 border-white/10" : "bg-white border-slate-200"
@@ -383,7 +465,7 @@ export function UploadModal({
                         isDark ? "text-white/50" : "text-slate-600"
                       }`}
                     >
-                      Supported: watched.csv, ratings.csv, diary.csv
+                      Supported: watched.csv, ratings.csv, diary.csv, profile.csv
                     </p>
                   </div>
                 </div>
@@ -685,6 +767,18 @@ export function UploadModal({
           </div>
         </div>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+
+      {/* Profile Replacement Confirmation Dialog */}
+      <ProfileReplaceConfirm
+        open={showProfileConfirm}
+        onOpenChange={setShowProfileConfirm}
+        currentProfile={currentProfile}
+        newProfile={pendingProfileFile?.profileData || null}
+        onKeepOld={handleKeepOldProfile}
+        onReplace={handleReplaceProfile}
+        onCancel={handleCancelProfileConfirm}
+      />
+    </>
   );
 }
