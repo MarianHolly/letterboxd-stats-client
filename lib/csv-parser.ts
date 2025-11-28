@@ -4,7 +4,7 @@
  */
 
 import Papa from 'papaparse'
-import type { Movie, CSVType, ParseResult, ParseError, ValidationError, WatchedCSVRow, DiaryCSVRow, RatingsCSVRow } from './types'
+import type { Movie, CSVType, ParseResult, ParseError, ValidationError, WatchedCSVRow, DiaryCSVRow, RatingsCSVRow, UserProfile, FavoriteFilm, ProfileCSVRow } from './types'
 import {
   parseDate,
   parseRating,
@@ -15,6 +15,10 @@ import {
   isValidYear,
   computeDecade,
   classifyEra,
+  isValidLetterboxdFavoriteUri,
+  parseFavoriteFilmsString,
+  limitFavoriteFilms,
+  validateProfileUsername,
 } from './utils'
 
 // ============================================================================
@@ -30,6 +34,7 @@ const EXPECTED_COLUMNS: Record<CSVType, string[]> = {
   ratings: ['Date', 'Name', 'Year', 'Letterboxd URI', 'Rating'],
   films: ['Date', 'Name', 'Year', 'Letterboxd URI'],
   watchlist: ['Date', 'Name', 'Year', 'Letterboxd URI'],
+  profile: ['Date Joined', 'Username', 'Given Name', 'Family Name', 'Email Address', 'Location', 'Website', 'Bio', 'Pronoun', 'Favorite Films'],
   unknown: [],
 }
 
@@ -44,7 +49,15 @@ export function detectCSVType(headers: string[]): CSVType {
   // Normalize headers
   const normalized = headers.map((h) => h.trim())
 
-  // Check exact matches first (most specific)
+  // Check profile first (10 columns, very specific)
+  if (
+    normalized.length === 10 &&
+    EXPECTED_COLUMNS.profile.every((col) => normalized.includes(col))
+  ) {
+    return 'profile'
+  }
+
+  // Check exact matches for other specific types
   if (
     normalized.length === 8 &&
     EXPECTED_COLUMNS.diary.every((col) => normalized.includes(col))
@@ -558,6 +571,8 @@ export async function parseLetterboxdCSV(file: File): Promise<ParseResult<Movie[
       type = 'films'
     } else if (fileName === 'watchlist.csv') {
       type = 'watchlist'
+    } else if (fileName === 'profile.csv') {
+      type = 'profile'
     } else {
       // Fall back to header detection
       const headerLine = content.split('\n')[0]
@@ -603,4 +618,107 @@ export async function parseLetterboxdCSV(file: File): Promise<ParseResult<Movie[
  */
 export function parseCSVContent(content: string, fileType: CSVType): ParseResult<Movie[]> {
   return parseCSV(content, fileType)
+}
+
+// ============================================================================
+// PROFILE CSV PARSING
+// ============================================================================
+
+/**
+ * Parse profile.csv into UserProfile object
+ * Profile CSV contains user metadata and up to 4 favorite film URIs
+ */
+export function parseProfileCSV(content: string): ParseResult<UserProfile> {
+  try {
+    const result = Papa.parse(content, {
+      header: true,
+      skipEmptyLines: true,
+      dynamicTyping: false,
+    })
+
+    if (!result.data || result.data.length === 0) {
+      return {
+        success: false,
+        errors: [
+          {
+            row: 0,
+            field: 'data',
+            value: '',
+            message: 'No data rows found in profile CSV',
+          },
+        ],
+      }
+    }
+
+    // Profile CSV should have exactly 1 data row
+    const row = result.data[0] as ProfileCSVRow
+    const errors: ParseError[] = []
+
+    // Validate Username (required)
+    const usernameValidation = validateProfileUsername(row.Username)
+    if (!usernameValidation.valid) {
+      errors.push({
+        row: 1,
+        field: 'Username',
+        value: row.Username || '',
+        message: usernameValidation.error || 'Username is required',
+      })
+    }
+
+    // Parse and validate favorite films
+    let favoriteFilms: FavoriteFilm[] = []
+    const favoriteFilmsStr = row['Favorite Films']
+    if (favoriteFilmsStr && favoriteFilmsStr.trim()) {
+      const filmUris = parseFavoriteFilmsString(favoriteFilmsStr)
+      const limitedUris = limitFavoriteFilms(filmUris, 4)
+
+      favoriteFilms = limitedUris
+        .filter(uri => isValidLetterboxdFavoriteUri(uri))
+        .map(uri => ({
+          uri,
+          title: undefined,
+          rating: undefined,
+          watched: undefined,
+        }))
+
+      // Warn if any URIs were invalid
+      if (limitedUris.length > favoriteFilms.length) {
+        console.warn(
+          `Profile contains ${limitedUris.length} favorite films, but ${limitedUris.length - favoriteFilms.length} have invalid format`
+        )
+      }
+    }
+
+    // Create UserProfile object
+    const userProfile: UserProfile = {
+      username: row.Username?.trim() || '',
+      firstName: row['Given Name']?.trim(),
+      lastName: row['Family Name']?.trim(),
+      email: row['Email Address']?.trim(),
+      location: row.Location?.trim(),
+      website: row.Website?.trim(),
+      bio: row.Bio?.trim(),
+      pronoun: row.Pronoun?.trim(),
+      joinDate: parseDate(row['Date Joined']) || undefined,
+      favoriteFilms,
+    }
+
+    return {
+      success: errors.length === 0,
+      data: userProfile,
+      errors,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      errors: [
+        {
+          row: 0,
+          field: 'parse',
+          value: '',
+          message: `Parse error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        },
+      ],
+    }
+  }
 }

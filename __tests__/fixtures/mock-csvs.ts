@@ -123,6 +123,46 @@ Test Movie,2020,https://boxd.it/test1`
 export const MOCK_WATCHED_CSV_EMPTY = `Date,Name,Year,Letterboxd URI`
 
 // ============================================================================
+// MOCK profile.csv DATA
+// ============================================================================
+
+/**
+ * Complete profile with all fields and favorite films
+ */
+export const MOCK_PROFILE_CSV_FULL = `Date Joined,Username,Given Name,Family Name,Email Address,Location,Website,Bio,Pronoun,Favorite Films
+2022-01-20,Stupel,Marián,Hollý,,,,,He / his,"https://boxd.it/251c, https://boxd.it/1m8W"`
+
+/**
+ * Profile with 4 favorite films (maximum)
+ */
+export const MOCK_PROFILE_CSV_MANY_FAVORITES = `Date Joined,Username,Given Name,Family Name,Email Address,Location,Website,Bio,Pronoun,Favorite Films
+2025-03-24,contradictio,,,,,,this is mock name for box man with face of another,It / its,"https://boxd.it/251c, https://boxd.it/28Q8, https://boxd.it/1m8W, https://boxd.it/Arw0"`
+
+/**
+ * Minimal profile with only username (required)
+ */
+export const MOCK_PROFILE_CSV_MINIMAL = `Date Joined,Username,Given Name,Family Name,Email Address,Location,Website,Bio,Pronoun,Favorite Films
+,testuser,,,,,,,,""`
+
+/**
+ * Profile with no favorite films
+ */
+export const MOCK_PROFILE_CSV_NO_FAVORITES = `Date Joined,Username,Given Name,Family Name,Email Address,Location,Website,Bio,Pronoun,Favorite Films
+2023-06-15,cinemaloveur,Jean,Dupont,,,,,He / him,""`
+
+/**
+ * Profile with invalid favorite film URLs (more than 4)
+ */
+export const MOCK_PROFILE_CSV_INVALID_FAVORITES = `Date Joined,Username,Given Name,Family Name,Email Address,Location,Website,Bio,Pronoun,Favorite Films
+2021-05-10,filmcritic,,,,,,,"https://boxd.it/a, https://boxd.it/b, https://boxd.it/c, https://boxd.it/d, https://boxd.it/e"`
+
+/**
+ * Profile with missing username (invalid)
+ */
+export const MOCK_PROFILE_CSV_INVALID_NO_USERNAME = `Date Joined,Username,Given Name,Family Name,Email Address,Location,Website,Bio,Pronoun,Favorite Films
+2022-01-20,,John,Doe,,,,,He / him,""`
+
+// ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
 
@@ -136,6 +176,7 @@ export function getMockCSVFiles(): Record<string, File> {
     ratings: new File([MOCK_RATINGS_CSV], 'ratings.csv', { type: 'text/csv' }),
     films: new File([MOCK_FILMS_CSV], 'films.csv', { type: 'text/csv' }),
     watchlist: new File([MOCK_WATCHLIST_CSV], 'watchlist.csv', { type: 'text/csv' }),
+    profile: new File([MOCK_PROFILE_CSV_FULL], 'profile.csv', { type: 'text/csv' }),
   }
 }
 
