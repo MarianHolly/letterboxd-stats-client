@@ -44,9 +44,37 @@ export interface Movie {
  */
 export interface MovieDataset {
   watched: Movie[]; // All watched movies (primary analytics dataset)
-  watchlist: Movie[]; // Unwatched movies (separate)
+  watchlist: Movie[]; // Unwatched movies (separate, empty if none)
+  userProfile?: UserProfile; // User profile data (optional)
   lastUpdated: Date; // When dataset was last updated
-  uploadedFiles: string[]; // Which CSVs were uploaded (watched, diary, ratings, films, watchlist)
+  uploadedFiles: string[]; // Which CSVs were uploaded (watched, diary, ratings, films, watchlist, profile)
+}
+
+/**
+ * User profile from profile.csv export
+ * Contains user metadata and favorite film URIs
+ */
+export interface UserProfile {
+  username: string; // Letterboxd username (required)
+  firstName?: string; // Given Name (optional)
+  lastName?: string; // Family Name (optional)
+  email?: string; // Email Address (optional)
+  location?: string; // Location (optional)
+  website?: string; // Website (optional)
+  bio?: string; // Bio (optional)
+  pronoun?: string; // Pronoun (optional)
+  joinDate?: Date; // Date Joined (optional, ISO format)
+  favoriteFilms: FavoriteFilm[]; // Array of 0-4 favorite films
+}
+
+/**
+ * Individual favorite film from user profile
+ */
+export interface FavoriteFilm {
+  uri: string; // Letterboxd URI (e.g., https://boxd.it/251c)
+  title?: string; // Movie title (resolved from watched list, optional)
+  rating?: number; // Rating 0.5-5.0 if in watched movies (optional)
+  watched?: boolean; // true if in watched movies (optional)
 }
 
 // ============================================================================
@@ -95,6 +123,23 @@ export interface FilmsCSVRow extends WatchedCSVRow {}
  */
 export interface WatchlistCSVRow extends WatchedCSVRow {}
 
+/**
+ * Raw row from profile.csv
+ * User profile with metadata and favorite films
+ */
+export interface ProfileCSVRow {
+  'Date Joined': string; // ISO date string (YYYY-MM-DD) or empty
+  Username: string; // Required
+  'Given Name': string; // Optional
+  'Family Name': string; // Optional
+  'Email Address': string; // Optional
+  Location: string; // Optional
+  Website: string; // Optional
+  Bio: string; // Optional
+  Pronoun: string; // Optional
+  'Favorite Films': string; // Comma-separated Letterboxd URIs (0-4 max)
+}
+
 // ============================================================================
 // CSV PARSING TYPES
 // ============================================================================
@@ -102,7 +147,7 @@ export interface WatchlistCSVRow extends WatchedCSVRow {}
 /**
  * CSV file type identification
  */
-export type CSVType = 'watched' | 'diary' | 'ratings' | 'films' | 'watchlist' | 'unknown';
+export type CSVType = 'watched' | 'diary' | 'ratings' | 'films' | 'watchlist' | 'profile' | 'unknown';
 
 /**
  * Result of parsing a CSV file
