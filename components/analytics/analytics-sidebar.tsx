@@ -52,6 +52,36 @@ export interface NavGroup {
 const data = {
   navMain: [
     {
+      title: "Sections",
+      href: "#",
+      items: [
+        {
+          title: "Movie Collection",
+          href: "#movie-collection",
+          icon: <Film className="w-5 h-5" />,
+          description: "Release years & eras",
+        },
+        {
+          title: "Viewing Journey",
+          href: "#viewing-journey",
+          icon: <TrendingUp className="w-5 h-5" />,
+          description: "Temporal patterns",
+        },
+        {
+          title: "Critical Voice",
+          href: "#critical-voice",
+          icon: <Star className="w-5 h-5" />,
+          description: "Rating analysis",
+        },
+        {
+          title: "Deep Dives",
+          href: "#deep-dives",
+          icon: <Sparkles className="w-5 h-5" />,
+          description: "Advanced insights",
+        }
+      ],
+    },
+    {
       title: "Your Cinematic Journey",
       href: "#",
       items: [
@@ -145,6 +175,10 @@ export function AnalyticsSidebar({
   // Detect which section is currently in view using Intersection Observer
   React.useEffect(() => {
     const sections = [
+      "movie-collection",
+      "viewing-journey",
+      "critical-voice",
+      "deep-dives",
       "analytics-overview",
       "analytics-ratings",
       "analytics-timeline",

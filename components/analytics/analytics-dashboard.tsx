@@ -15,6 +15,10 @@ import { ViewingOverTime } from '@/components/charts/viewing-over-time'
 import { DiaryMonthlyRadarChart } from '@/components/charts/diary-monthly-radar-chart'
 import { DiaryStatistics } from '@/components/charts/diary-statistics'
 import { computeMonthlyRadarData, computeTagDistribution } from '@/lib/analytics-engine'
+import { MovieCollectionSection } from './sections/movie-collection-section'
+import { ViewingJourneySection } from './sections/viewing-journey-section'
+import { CriticalVoiceSection } from './sections/critical-voice-section'
+import { DeepDivesSection } from './sections/deep-dives-section'
 
 // ============================================================================
 // ANALYTICS DASHBOARD COMPONENT
@@ -136,96 +140,37 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* Stats Overview Section - Full Width */}
         <StatsOverview analytics={analytics} profile={dataset?.userProfile} isLoading={!analytics} />
 
-        {/* Main Charts Section */}
-        <section className="space-y-8">
-          {/* Release Year Analysis - Full Width First */}
-          {Object.keys(releaseYearData).length > 0 && (
-            <div>
-              <div className="mb-4 flex items-center justify-center py-12">
-                <div>
-                  <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Movie Release Years</h2>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Requires: watched.csv</p>
-                </div>
-              </div>
-              <ReleasedYearAnalysis data={releaseYearData} />
-            </div>
-          )}
+        {/* New Structured Sections */}
+        <div className="space-y-16">
+          {/* Section 1: Movie Collection */}
+          <MovieCollectionSection
+            uploadedFiles={dataset?.uploadedFiles || []}
+            analytics={analytics}
+            movies={movies}
+          />
 
-          {/* Diary Statistics */}
-          {diaryStats && (
-            <div>
-              <div className="mb-4 py-12 flex flex-col gap-2 items-center justify-center">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Your Viewing Habits</h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Requires: diary.csv</p>
-              </div>
-              <DiaryStatistics stats={diaryStats} />
-            </div>
-          )}
+          {/* Section 2: Viewing Journey */}
+          <ViewingJourneySection
+            uploadedFiles={dataset?.uploadedFiles || []}
+            analytics={analytics}
+            movies={movies}
+          />
 
-          {/* Timeline Charts */}
-          {diaryAreaData.length > 0 && (
-            <div>
-              <div className="mb-4 py-12 flex flex-col gap-2 items-center justify-center">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Watching Timeline</h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Requires: diary.csv (watch dates)</p>
-              </div>
-              <div className="grid gap-8 lg:grid-cols-1">
-                <DiaryAreaChart data={diaryAreaData} />
-              </div>
-            </div>
-          )}
+          {/* Section 3: Critical Voice */}
+          <CriticalVoiceSection
+            uploadedFiles={dataset?.uploadedFiles || []}
+            analytics={analytics}
+          />
 
-          {/* Distribution Charts */}
-          <div className="space-y-4">
-              <div className="mb-4 py-12 flex flex-col gap-2 items-center justify-center">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Ratings & Genres</h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Requires: {analytics?.ratingDistribution && Object.keys(analytics.ratingDistribution).length > 0 ? 'ratings.csv' : ''}{analytics?.ratingDistribution && Object.keys(analytics.ratingDistribution).length > 0 && genreData && Object.keys(genreData).length > 0 ? ' / ' : ''}
-                {genreData && Object.keys(genreData).length > 0 ? 'diary.csv (tags)' : ''}
-              </p>
-            </div>
-            <div className="grid gap-8 md:grid-cols-2">
-              {analytics?.ratingDistribution && Object.keys(analytics.ratingDistribution).length > 0 && (
-                <div className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/50 p-6">
-                  <h3 className="text-lg font-semibold mb-4 text-black dark:text-white">Rating Distribution</h3>
-                  <RatingDistribution data={analytics.ratingDistribution} />
-                </div>
-              )}
+          {/* Section 4: Deep Dives */}
+          <DeepDivesSection
+            uploadedFiles={dataset?.uploadedFiles || []}
+            analytics={analytics}
+            movies={movies}
+          />
+        </div>
 
-              {genreData && Object.keys(genreData).length > 0 && (
-                <div className="rounded-lg border border-slate-200 dark:border-white/10 bg-slate-900 p-6">
-                  <h3 className="text-lg font-semibold mb-4 text-white">Tag Distribution</h3>
-                  <GenreDistribution data={genreData} />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Viewing Over Time */}
-          {Object.keys(viewingOverTimeData).length > 0 && (
-            <div>
-              <div className="mb-4 py-12 flex flex-col gap-2 items-center justify-center">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Viewing Trends</h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Requires: watched.csv or diary.csv (watch dates)</p>
-              </div>
-              <div className="rounded-lg border border-slate-200 dark:border-white/10 bg-slate-900 p-6">
-                <h3 className="text-lg font-semibold mb-4 text-white">Viewing Over Time</h3>
-                <ViewingOverTime data={viewingOverTimeData} />
-              </div>
-            </div>
-          )}
-
-          {/* Distribution Stats Section */}
-          {analytics && (
-            <div>
-              <div className="mb-4 py-12 flex flex-col gap-2 items-center justify-center">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Distribution Breakdown</h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Requires: watched.csv, ratings.csv, diary.csv</p>
-              </div>
-              <StatsDistribution analytics={analytics} movies={movies} isLoading={false} />
-            </div>
-          )}
-        </section>
+      
       </div>
     </div>
   )

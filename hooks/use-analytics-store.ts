@@ -171,7 +171,7 @@ export const useAnalyticsStore = create<AnalyticsStoreType>()(
                 const profileResult = parseProfileCSV(content)
 
                 if (profileResult.success && profileResult.data) {
-                  uploadedFileNames.push(file.name)
+                  uploadedFileNames.push(fileName)
                   userProfile = profileResult.data
                 } else {
                   errors.push(`${file.name}: ${profileResult.errors[0]?.message || 'Unknown error'}`)
@@ -181,7 +181,7 @@ export const useAnalyticsStore = create<AnalyticsStoreType>()(
                 const result = await parseLetterboxdCSV(file)
 
                 if (result.success && result.data) {
-                  uploadedFileNames.push(file.name)
+                  uploadedFileNames.push(fileName)
 
                   // Categorize by filename
                   if (fileName === 'watched.csv') {
