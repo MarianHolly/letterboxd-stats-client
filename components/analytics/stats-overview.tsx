@@ -162,7 +162,7 @@ export function StatsOverview({ analytics, isLoading = false }: StatsOverviewPro
         <StatCard
           title="Rewatched"
           value={`${analytics.moviesRewatched}`}
-          description={`${analytics.totalRewatches} total rewatche${analytics.totalRewatches !== 1 ? 's' : ''}`}
+          description={`${analytics.totalRewatches} total rewatch${analytics.totalRewatches !== 1 ? 'es' : ''}`}
           variant={analytics.rewatchRate >= 20 ? 'success' : 'default'}
         />
 
