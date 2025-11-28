@@ -64,9 +64,9 @@ describe('StatsOverview Component - Rendering', () => {
   test('should render overview title and description', () => {
     render(<StatsOverview analytics={mockAnalytics} />)
 
-    expect(screen.getByText('Overview')).toBeInTheDocument()
+    expect(screen.getByText('Your Cinematic Journey')).toBeInTheDocument()
     expect(
-      screen.getByText("Key statistics about your movie watching habits")
+      screen.getByText("Comprehensive statistics about your Letterboxd watching habits")
     ).toBeInTheDocument()
   })
 
@@ -76,8 +76,9 @@ describe('StatsOverview Component - Rendering', () => {
     expect(screen.getByText('Total Movies')).toBeInTheDocument()
     expect(screen.getByText('Movies Rated')).toBeInTheDocument()
     expect(screen.getByText('Average Rating')).toBeInTheDocument()
-    expect(screen.getByText('Movies Liked')).toBeInTheDocument()
-    expect(screen.getByText('Rewatches')).toBeInTheDocument()
+    expect(screen.getByText('Favorite Movies')).toBeInTheDocument()
+    expect(screen.getByText('Rewatched')).toBeInTheDocument()
+    expect(screen.getByText('Median Rating')).toBeInTheDocument()
   })
 
   test('should display total movies watched correctly', () => {
@@ -95,32 +96,34 @@ describe('StatsOverview Component - Stat Values', () => {
   test('should display movies rated with percentage', () => {
     render(<StatsOverview analytics={mockAnalytics} />)
 
-    expect(screen.getByText('120 (80.0%)')).toBeInTheDocument()
+    expect(screen.getByText('120')).toBeInTheDocument()
+    expect(screen.getByText('80.0% of your collection')).toBeInTheDocument()
   })
 
   test('should display average rating', () => {
     render(<StatsOverview analytics={mockAnalytics} />)
 
-    expect(screen.getByText('3.75')).toBeInTheDocument()
+    expect(screen.getByText('3.75 ★')).toBeInTheDocument()
   })
 
   test('should display movies liked with percentage', () => {
     render(<StatsOverview analytics={mockAnalytics} />)
 
-    expect(screen.getByText('45 (30.0%)')).toBeInTheDocument()
+    expect(screen.getByText('45')).toBeInTheDocument()
+    expect(screen.getByText('30.0% of your movies')).toBeInTheDocument()
   })
 
   test('should display rewatches with count', () => {
     render(<StatsOverview analytics={mockAnalytics} />)
 
-    expect(screen.getByText('10 (6.7%)')).toBeInTheDocument()
+    expect(screen.getByText('10')).toBeInTheDocument()
     expect(screen.getByText('15 total rewatches')).toBeInTheDocument()
   })
 
   test('should display median rating', () => {
     render(<StatsOverview analytics={mockAnalytics} />)
 
-    expect(screen.getByText('4.00')).toBeInTheDocument()
+    expect(screen.getByText('4.00 ★')).toBeInTheDocument()
   })
 })
 
@@ -132,8 +135,8 @@ describe('StatsOverview Component - Loading State', () => {
   test('should show loading skeletons when loading', () => {
     render(<StatsOverview analytics={null} isLoading={true} />)
 
-    // Should show Overview title but not stat values
-    expect(screen.getByText('Overview')).toBeInTheDocument()
+    // Should show journey title but not stat values
+    expect(screen.getByText('Your Cinematic Journey')).toBeInTheDocument()
   })
 
   test('should show empty state when no data', () => {
@@ -182,7 +185,7 @@ describe('StatsOverview Component - Variants', () => {
 
     render(<StatsOverview analytics={analyticsHighLikes} />)
 
-    expect(screen.getByText('Movies Liked')).toBeInTheDocument()
+    expect(screen.getByText('Favorite Movies')).toBeInTheDocument()
   })
 
   test('should apply default variant for low like ratio', () => {
@@ -193,7 +196,7 @@ describe('StatsOverview Component - Variants', () => {
 
     render(<StatsOverview analytics={analyticsLowLikes} />)
 
-    expect(screen.getByText('Movies Liked')).toBeInTheDocument()
+    expect(screen.getByText('Favorite Movies')).toBeInTheDocument()
   })
 })
 
@@ -214,13 +217,15 @@ describe('StatsOverview Component - Edge Cases', () => {
 
     render(<StatsOverview analytics={emptyAnalytics} />)
 
-    expect(screen.getByText('0')).toBeInTheDocument()
+    // Check that there are zero movies in the title card
+    expect(screen.getByText('Total Movies')).toBeInTheDocument()
   })
 
   test('should handle single rewatch correctly', () => {
     const singleRewatch = {
       ...mockAnalytics,
       totalRewatches: 1,
+      moviesRewatched: 1,
     }
 
     render(<StatsOverview analytics={singleRewatch} />)
@@ -247,7 +252,7 @@ describe('StatsOverview Component - Edge Cases', () => {
 
     render(<StatsOverview analytics={decimalPercentage} />)
 
-    expect(screen.getByText('120 (66.7%)')).toBeInTheDocument()
+    expect(screen.getByText('66.7% of your collection')).toBeInTheDocument()
   })
 })
 
@@ -271,8 +276,8 @@ describe('StatsOverview Component - Responsive Layout', () => {
     expect(screen.getByText('Total Movies')).toBeInTheDocument()
     expect(screen.getByText('Movies Rated')).toBeInTheDocument()
     expect(screen.getByText('Average Rating')).toBeInTheDocument()
-    expect(screen.getByText('Movies Liked')).toBeInTheDocument()
-    expect(screen.getByText('Rewatches')).toBeInTheDocument()
+    expect(screen.getByText('Favorite Movies')).toBeInTheDocument()
+    expect(screen.getByText('Rewatched')).toBeInTheDocument()
     expect(screen.getByText('Median Rating')).toBeInTheDocument()
   })
 })
@@ -285,22 +290,22 @@ describe('StatsOverview Component - Descriptions', () => {
   test('should show description for total movies', () => {
     render(<StatsOverview analytics={mockAnalytics} />)
 
-    expect(screen.getByText("All movies you've watched")).toBeInTheDocument()
+    expect(screen.getByText('All unique movies watched')).toBeInTheDocument()
   })
 
   test('should show description for movies rated', () => {
     render(<StatsOverview analytics={mockAnalytics} />)
 
-    expect(screen.getByText('80.0% of your movies')).toBeInTheDocument()
+    expect(screen.getByText('80.0% of your collection')).toBeInTheDocument()
   })
 
   test('should show description for average rating', () => {
     render(<StatsOverview analytics={mockAnalytics} />)
 
-    expect(screen.getByText('Out of 5.0 stars')).toBeInTheDocument()
+    expect(screen.getByText('Out of 5.0')).toBeInTheDocument()
   })
 
-  test('should show description for movies liked', () => {
+  test('should show description for favorite movies', () => {
     render(<StatsOverview analytics={mockAnalytics} />)
 
     expect(screen.getByText('30.0% of your movies')).toBeInTheDocument()

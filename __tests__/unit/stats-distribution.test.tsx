@@ -79,7 +79,7 @@ describe('StatsDistribution Component - Rendering', () => {
 
     expect(screen.getByText('Distributions')).toBeInTheDocument()
     expect(
-      screen.getByText('Breakdown of your movies by rating, decade, and year')
+      screen.getByText('Breakdown of your movies by rating, decade, year, and monthly patterns')
     ).toBeInTheDocument()
   })
 
