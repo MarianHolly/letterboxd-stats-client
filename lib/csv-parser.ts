@@ -722,3 +722,49 @@ export function parseProfileCSV(content: string): ParseResult<UserProfile> {
     }
   }
 }
+
+/**
+ * Parse profile.csv file (async version)
+ * Reads File object and delegates to parseProfileCSV
+ */
+export async function parseProfileCSVFile(
+  file: File
+): Promise<ParseResult<UserProfile>> {
+  if (!file) {
+    return {
+      success: false,
+      errors: [
+        {
+          row: 0,
+          field: 'file',
+          value: '',
+          message: 'No file provided',
+        },
+      ],
+    }
+  }
+
+  try {
+    // Read file content using FileReader
+    const content = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => resolve(e.target?.result as string)
+      reader.onerror = () => reject(new Error('Failed to read file'))
+      reader.readAsText(file)
+    })
+
+    return parseProfileCSV(content)
+  } catch (err) {
+    return {
+      success: false,
+      errors: [
+        {
+          row: 0,
+          field: 'file',
+          value: '',
+          message: `Error reading file: ${err instanceof Error ? err.message : 'Unknown error'}`,
+        },
+      ],
+    }
+  }
+}
