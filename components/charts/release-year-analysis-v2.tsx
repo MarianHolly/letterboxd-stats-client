@@ -242,14 +242,21 @@ export function ReleasedYearAnalysisUpgrade({ data }: ReleaseYearAnalysisProps) 
 
   return (
     <Card className="py-0 border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
-      <CardHeader className="flex flex-col items-stretch border-b border-slate-200 dark:border-white/10 !p-0 sm:flex-row">
-        <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-0">
+      <CardHeader className="flex flex-row items-center gap-6 border-b border-slate-200 dark:border-white/10 !p-0 px-6 pt-6 pb-6">
+        {/* Title Section */}
+        <div className="flex flex-col gap-1 mx-6">
           <CardTitle className="text-black dark:text-white">Release Year Analysis</CardTitle>
           <CardDescription className="text-slate-600 dark:text-white/60">
             Movies watched by release year with era categorization
           </CardDescription>
         </div>
-        <div className="flex" role="tablist" aria-label="Select era filter">
+
+        {/* iOS-Style Segmented Control */}
+        <div
+          className="flex gap-1 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-sm p-1 border border-white/30 dark:border-white/20"
+          role="tablist"
+          aria-label="Select era filter"
+        >
           {[
             { key: "classic" as EraFilter, label: "Classic", count: eraTotals.classic, description: ERA_BOUNDARIES.CLASSIC.description },
             { key: "golden" as EraFilter, label: "Golden", count: eraTotals.golden, description: ERA_BOUNDARIES.GOLDEN.description },
@@ -259,18 +266,24 @@ export function ReleasedYearAnalysisUpgrade({ data }: ReleaseYearAnalysisProps) 
           ].map(({ key, label, count, description }) => (
             <button
               key={key}
+              role="tab"
+              aria-selected={eraFilter === key}
               data-active={eraFilter === key}
-              className="data-[active=true]:bg-slate-100 dark:data-[active=true]:bg-white/5 relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-slate-200 dark:border-white/10 px-6 py-4 text-left even:border-l sm:border-t-0 sm:border-l sm:px-8 sm:py-6 hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors"
               onClick={() => setEraFilter(key)}
+              className="relative flex-1 flex flex-col gap-0.5 px-3 py-2.5 rounded-sm text-center transition-all duration-200
+                data-[active=true]:bg-white/40 dark:data-[active=true]:bg-white/15
+                data-[active=true]:shadow-sm
+                hover:bg-white/20 dark:hover:bg-white/10
+                active:scale-95"
             >
-              <span className="text-xs text-slate-500 dark:text-white/50">
-                {description}
-              </span>
-              <span className="text-lg leading-none font-bold sm:text-2xl text-black dark:text-white">
+              <span className="text-3xl font-bold text-slate-900 dark:text-white mb-auto">
                 {count}
               </span>
-              <span className="text-xs text-slate-600 dark:text-white/60">
+              <span className="text-xs text-slate-600 dark:text-slate-300 font-normal">
                 {label}
+              </span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-light">
+                {description}
               </span>
             </button>
           ))}
