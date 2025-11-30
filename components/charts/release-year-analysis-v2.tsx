@@ -1,12 +1,11 @@
 /*
 
 Released Year Analysis for Analytics Page
-- Showing Individual Years
+- Four-era breakdown: Classic (1900-1944), Golden (1945-1969), Modern (1970-1999), Contemporary (2000+)
 - Interactive bar chart of movies watched by release year
-- Era filter tabs: Classic Films (≤1969), Modern Films (≥1970), All Years
-- Color gradient from blue (older years) to violet (newer years)
-- tablist for selecting eras with total counts
-- hover over bars to show year and count
+- Segmented control tabs with era filtering and mini-bars for "All Years" view
+- Color gradient within each era (dark to light progression by year)
+- Hover over bars to show year and count
 - Each bar colored individually using Cell components for proper rendering
 
 */
@@ -34,17 +33,136 @@ interface ReleaseYearAnalysisProps {
   data: Record<string, number>;
 }
 
-type EraFilter = "classic" | "modern" | "all"
+type EraFilter = "classic" | "golden" | "modern" | "contemporary" | "all"
 
-export const description = "An interactive bar chart of movies by release year"
+export const description = "An interactive bar chart of movies by release year with era categorization"
 
-// Color gradient from blue (older) to violet (newer)
-const getYearColor = (year: number, minYear: number, maxYear: number): string => {
-  const progress = (year - minYear) / (maxYear - minYear);
+// ============================================================================
+// ERA BOUNDARIES CONFIGURATION
+// ============================================================================
 
-  // Blue to Violet gradient
-  const hue = 240 - (progress * 90); // 240 (blue) to 270 (violet)
-  return `hsl(${hue}, 70%, 50%)`;
+const ERA_BOUNDARIES = {
+  CLASSIC: {
+    min: 1900,
+    max: 1944,
+    label: "Classic",
+    description: "1900–1944"
+  },
+  GOLDEN: {
+    min: 1945,
+    max: 1969,
+    label: "Golden",
+    description: "1945–1969"
+  },
+  MODERN: {
+    min: 1970,
+    max: 1999,
+    label: "Modern",
+    description: "1970–1999"
+  },
+  CONTEMPORARY: {
+    min: 2000,
+    max: 2099,
+    label: "Contemporary",
+    description: "2000–"
+  },
+} as const;
+
+// ============================================================================
+// COLOR SCHEME (Subtle shades derived from blue-to-violet gradient)
+// Each era has a single shade with subtle variations within the era
+// ============================================================================
+
+const eraColors = {
+  classic: {
+    // Blue shade - older films
+    base: "hsl(240, 70%, 50%)",           // #3b82f6 (original blue)
+    light: "hsl(240, 60%, 60%)",          // Lighter variation for newest in era
+    dark: "hsl(240, 75%, 40%)",           // Darker variation for oldest in era
+  },
+  golden: {
+    // Blue-purple shade - golden age
+    base: "hsl(250, 70%, 50%)",           // Between blue and purple
+    light: "hsl(250, 60%, 60%)",
+    dark: "hsl(250, 75%, 40%)",
+  },
+  modern: {
+    // Purple-violet shade - modern films
+    base: "hsl(260, 70%, 50%)",           // Between purple and violet
+    light: "hsl(260, 60%, 60%)",
+    dark: "hsl(260, 75%, 40%)",
+  },
+  contemporary: {
+    // Violet shade - contemporary films
+    base: "hsl(270, 70%, 50%)",           // #c084fc (original violet)
+    light: "hsl(270, 60%, 60%)",          // Lighter variation
+    dark: "hsl(270, 75%, 40%)",           // Darker variation
+  },
+} as const;
+
+// ============================================================================
+// COLOR CALCULATION FUNCTIONS
+// ============================================================================
+
+/**
+ * Determine which era a year belongs to
+ */
+function getEraForYear(year: number): keyof typeof ERA_BOUNDARIES | null {
+  if (year >= ERA_BOUNDARIES.CLASSIC.min && year <= ERA_BOUNDARIES.CLASSIC.max) return "CLASSIC";
+  if (year >= ERA_BOUNDARIES.GOLDEN.min && year <= ERA_BOUNDARIES.GOLDEN.max) return "GOLDEN";
+  if (year >= ERA_BOUNDARIES.MODERN.min && year <= ERA_BOUNDARIES.MODERN.max) return "MODERN";
+  if (year >= ERA_BOUNDARIES.CONTEMPORARY.min && year <= ERA_BOUNDARIES.CONTEMPORARY.max) return "CONTEMPORARY";
+  return null;
+}
+
+/**
+ * Calculate subtle gradient color for a year within its era
+ * Progresses from dark (oldest in era) to light (newest in era)
+ * Maintains overall blue-to-violet theme across all eras
+ */
+const getYearColor = (year: number): string => {
+  const eraKey = getEraForYear(year);
+
+  if (!eraKey) {
+    // Fallback for years outside defined ranges
+    return "#94a3b8"; // neutral gray
+  }
+
+  const era = ERA_BOUNDARIES[eraKey];
+  const eraColor = eraColors[eraKey.toLowerCase() as keyof typeof eraColors];
+
+  // Calculate progress within this era (0 = oldest year, 1 = newest year)
+  const progress = (year - era.min) / (era.max - era.min);
+
+  // For years at the start of era, use darker shade; at end, use lighter shade
+  if (progress < 0.5) {
+    // First half: interpolate from dark to base
+    const halfProgress = progress * 2; // 0 to 1 within first half
+    const darkHSL = eraColor.dark.match(/\d+/g);
+    const baseHSL = eraColor.base.match(/\d+/g);
+
+    if (darkHSL && baseHSL) {
+      const h = parseInt(darkHSL[0]) + (parseInt(baseHSL[0]) - parseInt(darkHSL[0])) * halfProgress;
+      const s = parseInt(darkHSL[1]) + (parseInt(baseHSL[1]) - parseInt(darkHSL[1])) * halfProgress;
+      const l = parseInt(darkHSL[2]) + (parseInt(baseHSL[2]) - parseInt(darkHSL[2])) * halfProgress;
+      return `hsl(${h}, ${s}%, ${l}%)`;
+    }
+  } else {
+    // Second half: interpolate from base to light
+    const halfProgress = (progress - 0.5) * 2; // 0 to 1 within second half
+    const baseHSL = eraColor.base.match(/\d+/g);
+    const lightHSL = eraColor.light.match(/\d+/g);
+
+    if (baseHSL && lightHSL) {
+      const h = parseInt(baseHSL[0]) + (parseInt(lightHSL[0]) - parseInt(baseHSL[0])) * halfProgress;
+      const s = parseInt(baseHSL[1]) + (parseInt(lightHSL[1]) - parseInt(baseHSL[1])) * halfProgress;
+      const l = parseInt(baseHSL[2]) + (parseInt(lightHSL[2]) - parseInt(baseHSL[2])) * halfProgress;
+      return `hsl(${h}, ${s}%, ${l}%)`;
+    }
+  }
+
+  // Fallback to base color
+  return eraColor.base;
 };
 
 const chartConfig = {
@@ -58,48 +176,69 @@ export function ReleasedYearAnalysisUpgrade({ data }: ReleaseYearAnalysisProps) 
   const [eraFilter, setEraFilter] = React.useState<EraFilter>("all");
 
   // Process data by year with era filtering
-  const { processedData, classicCount, modernCount, allCount } = React.useMemo(() => {
+  const { processedData, eraTotals, allData } = React.useMemo(() => {
     const entries = Object.entries(data)
       .map(([year, count]) => ({ year: parseInt(year), count }))
       .sort((a, b) => a.year - b.year);
 
     if (entries.length === 0) {
-      return { processedData: [], classicCount: 0, modernCount: 0, allCount: 0 };
+      return {
+        processedData: [],
+        eraTotals: {
+          classic: 0,
+          golden: 0,
+          modern: 0,
+          contemporary: 0,
+          all: 0,
+        },
+        allData: entries,
+      };
     }
 
-    // Filter by era
+    // Calculate totals for each era
+    const classicTotal = entries
+      .filter(e => e.year >= ERA_BOUNDARIES.CLASSIC.min && e.year <= ERA_BOUNDARIES.CLASSIC.max)
+      .reduce((sum, e) => sum + e.count, 0);
+
+    const goldenTotal = entries
+      .filter(e => e.year >= ERA_BOUNDARIES.GOLDEN.min && e.year <= ERA_BOUNDARIES.GOLDEN.max)
+      .reduce((sum, e) => sum + e.count, 0);
+
+    const modernTotal = entries
+      .filter(e => e.year >= ERA_BOUNDARIES.MODERN.min && e.year <= ERA_BOUNDARIES.MODERN.max)
+      .reduce((sum, e) => sum + e.count, 0);
+
+    const contemporaryTotal = entries
+      .filter(e => e.year >= ERA_BOUNDARIES.CONTEMPORARY.min && e.year <= ERA_BOUNDARIES.CONTEMPORARY.max)
+      .reduce((sum, e) => sum + e.count, 0);
+
+    const allTotal = entries.reduce((sum, e) => sum + e.count, 0);
+
+    // Filter data based on selected era
     let filtered = entries;
     if (eraFilter === "classic") {
-      filtered = entries.filter(e => e.year <= 1969);
+      filtered = entries.filter(e => e.year >= ERA_BOUNDARIES.CLASSIC.min && e.year <= ERA_BOUNDARIES.CLASSIC.max);
+    } else if (eraFilter === "golden") {
+      filtered = entries.filter(e => e.year >= ERA_BOUNDARIES.GOLDEN.min && e.year <= ERA_BOUNDARIES.GOLDEN.max);
     } else if (eraFilter === "modern") {
-      filtered = entries.filter(e => e.year >= 1970);
+      filtered = entries.filter(e => e.year >= ERA_BOUNDARIES.MODERN.min && e.year <= ERA_BOUNDARIES.MODERN.max);
+    } else if (eraFilter === "contemporary") {
+      filtered = entries.filter(e => e.year >= ERA_BOUNDARIES.CONTEMPORARY.min && e.year <= ERA_BOUNDARIES.CONTEMPORARY.max);
     }
-
-    const allCount = entries.reduce((sum, e) => sum + e.count, 0);
-    const classicCount = entries.filter(e => e.year <= 1969).reduce((sum, e) => sum + e.count, 0);
-    const modernCount = entries.filter(e => e.year >= 1970).reduce((sum, e) => sum + e.count, 0);
-
-
-    // Year
 
     return {
       processedData: filtered,
-      classicCount,
-      modernCount,
-      allCount,
+      eraTotals: {
+        classic: classicTotal,
+        golden: goldenTotal,
+        modern: modernTotal,
+        contemporary: contemporaryTotal,
+        all: allTotal,
+      },
+      allData: entries,
     };
   }, [data, eraFilter]);
 
-  // Get color gradient range
-  const minYear = Math.min(...processedData.map(d => d.year), 1900);
-  const maxYear = Math.max(...processedData.map(d => d.year), 2024);
-
-  // Calculate totals for display
-  const totalMovies = eraFilter === "classic"
-    ? classicCount
-    : eraFilter === "modern"
-    ? modernCount
-    : allCount;
 
   return (
     <Card className="py-0 border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
@@ -112,9 +251,11 @@ export function ReleasedYearAnalysisUpgrade({ data }: ReleaseYearAnalysisProps) 
         </div>
         <div className="flex" role="tablist" aria-label="Select era filter">
           {[
-            { key: "classic" as EraFilter, label: "Classic", count: classicCount, description: "≤1969" },
-            { key: "modern" as EraFilter, label: "Modern", count: modernCount, description: "≥1970" },
-            { key: "all" as EraFilter, label: "All Years", count: allCount, description: "Complete range" },
+            { key: "classic" as EraFilter, label: "Classic", count: eraTotals.classic, description: ERA_BOUNDARIES.CLASSIC.description },
+            { key: "golden" as EraFilter, label: "Golden", count: eraTotals.golden, description: ERA_BOUNDARIES.GOLDEN.description },
+            { key: "modern" as EraFilter, label: "Modern", count: eraTotals.modern, description: ERA_BOUNDARIES.MODERN.description },
+            { key: "contemporary" as EraFilter, label: "Contemporary", count: eraTotals.contemporary, description: ERA_BOUNDARIES.CONTEMPORARY.description },
+            { key: "all" as EraFilter, label: "All Years", count: eraTotals.all, description: "Complete range" },
           ].map(({ key, label, count, description }) => (
             <button
               key={key}
@@ -138,7 +279,7 @@ export function ReleasedYearAnalysisUpgrade({ data }: ReleaseYearAnalysisProps) 
       <CardContent className="px-2 sm:p-6 pt-6">
         {processedData.length === 0 ? (
           <div className="flex items-center justify-center h-[300px] text-slate-500 dark:text-white/50">
-            No data available for {eraFilter === "classic" ? "classic films" : eraFilter === "modern" ? "modern films" : "this era"}
+            No data available for {eraFilter === "all" ? "this era" : `${eraFilter} films`}
           </div>
         ) : (
           <ChartContainer
@@ -198,7 +339,7 @@ export function ReleasedYearAnalysisUpgrade({ data }: ReleaseYearAnalysisProps) 
                   {processedData.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={getYearColor(entry.year, minYear, maxYear)}
+                      fill={getYearColor(entry.year)}
                     />
                   ))}
                 </Bar>
