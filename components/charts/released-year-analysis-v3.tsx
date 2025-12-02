@@ -34,7 +34,7 @@ export function ReleasedYearAnalysisUpgradeV3({ data }: ReleaseYearAnalysisProps
   // Filter 1960s movies (1960-1969)
   const sixties1960sData = React.useMemo(() => {
     const result = [];
-    for (let year = 1960; year <= 1969; year++) {
+    for (let year = 1940; year <= 1959; year++) {
       const yearStr = String(year);
       const count = data[yearStr] || 0;
       result.push({
@@ -118,7 +118,7 @@ export function ReleasedYearAnalysisUpgradeV3({ data }: ReleaseYearAnalysisProps
                 </div>
               }
             />
-            <Bar dataKey="count" radius={[8, 8, 0, 0]} fill="var(--color-count)">
+            <Bar dataKey="count" radius={[1, 1, 0, 0]} fill="var(--color-count)">
               {sixties1960sData.map((_, index) => (
                 <Cell
                   className="duration-200"
