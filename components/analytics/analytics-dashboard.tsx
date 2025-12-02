@@ -13,6 +13,7 @@ import { DiaryMonthlyRadarChart } from "@/components/charts/diary-monthly-radar-
 import { DiaryStatistics } from "@/components/charts/diary-statistics";
 import { ReleasedYearAnalysis } from "@/components/charts/release-year-analysis";
 import { ReleasedYearAnalysisUpgrade } from "@/components/charts/release-year-analysis-v2";
+import { ReleasedYearAnalysisUpgradeV3 } from "../charts/released-year-analysis-v3";
 
 // ============================================================================
 // DATA TRANSFORMATION FUNCTIONS
@@ -201,6 +202,33 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
           isLoading={!analytics}
         />
 
+        {/* ===== RELEASE YEAR ANALYSIS (V1 & V2) ===== */}
+          {Object.keys(releaseYearData).length > 0 && (
+            <div>
+              <div className="mb-6 py-8">
+                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
+                  Movie Release Years
+                </h2>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Distribution of movies by their release year
+                </p>
+              </div>
+              <div className="flex flex-col gap-8">
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Version 1: Classic Era Filter</h3>
+                  <ReleasedYearAnalysis data={releaseYearData} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Version 2: Four-Era Breakdown</h3>
+                  <ReleasedYearAnalysisUpgrade data={releaseYearData} />
+                </div>
+                <div className="">
+                  <ReleasedYearAnalysisUpgradeV3 data={releaseYearData} />
+                </div>
+              </div>
+            </div>
+          )}
+
         {/* Main Charts Section */}
         <section className="space-y-8">
           {/* ===== DIARY STATISTICS ===== */}
@@ -248,36 +276,27 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
             </div>
           )}
 
-          {/* ===== RELEASE YEAR ANALYSIS (V1 & V2) ===== */}
+          {/* ===== 1960s RELEASE YEAR ANALYSIS ===== */}
           {Object.keys(releaseYearData).length > 0 && (
             <div>
               <div className="mb-6 py-8">
                 <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                  Movie Release Years
+                  1960s Movies by Release Year
                 </h2>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Distribution of movies by their release year
+                  Movies released during the 1960s decade
                 </p>
               </div>
-              <div className="flex flex-col gap-8">
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Version 1: Classic Era Filter</h3>
-                  <ReleasedYearAnalysis data={releaseYearData} />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Version 2: Four-Era Breakdown</h3>
-                  <ReleasedYearAnalysisUpgrade data={releaseYearData} />
-                </div>
-              </div>
+              <ReleasedYearAnalysisUpgradeV3 data={releaseYearData} />
             </div>
           )}
 
           {/* ===== RATING DISTRIBUTION ===== */}
-          
 
-          
 
-          
+
+
+
         </section>
       </div>
     </div>
