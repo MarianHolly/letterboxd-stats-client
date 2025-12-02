@@ -128,6 +128,8 @@ export function ReleasedYearAnalysisUpgradeV3({ data }: ReleaseYearAnalysisProps
                 <Cell
                   key={`cell-${index}`}
                   fill={entry.count > 0 ? "var(--color-count)" : "transparent"}
+                  fillOpacity={activeIndex === null ? 1 : activeIndex === index ? 1 : 0.7}
+                  style={{ transition: "opacity 300ms ease-in-out" }}
                 />
               ))}
             </Bar>
