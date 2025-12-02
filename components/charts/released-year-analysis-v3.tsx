@@ -107,7 +107,16 @@ export function ReleasedYearAnalysisUpgradeV3({ data }: ReleaseYearAnalysisProps
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={
+                <div className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950 px-3.5 py-2 shadow-md">
+                  {activeData && (
+                    <div className="text-xs">
+                      <p className="font-light text-black dark:text-white">Year of {activeData.year}</p>
+                      <p className="text-slate-600 dark:text-white/70">{activeData.count} movies</p>
+                    </div>
+                  )}
+                </div>
+              }
             />
             <Bar dataKey="count" radius={[8, 8, 0, 0]} fill="var(--color-count)">
               {sixties1960sData.map((_, index) => (
