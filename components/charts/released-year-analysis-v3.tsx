@@ -21,12 +21,33 @@ interface ReleaseYearAnalysisProps {
   data: Record<string, number>;
 }
 
-type DecadeFilter = "1960-1964" | "1965-1969" | "all";
+type EraFilter = "classic" | "golden" | "modern" | "contemporary" | "all";
 
 const ERA_BOUNDARIES = {
-  EARLY: { min: 1960, max: 1964, label: "1960-1964" },
-  LATE: { min: 1965, max: 1969, label: "1965-1969" },
-  ALL: { min: 1960, max: 1969, label: "All 1960s" },
+  CLASSIC: {
+    min: 1900,
+    max: 1944,
+    label: "Classic",
+    description: "1900–1944",
+  },
+  GOLDEN: {
+    min: 1945,
+    max: 1969,
+    label: "Golden",
+    description: "1945–1969",
+  },
+  MODERN: {
+    min: 1970,
+    max: 1999,
+    label: "Modern",
+    description: "1970–1999",
+  },
+  CONTEMPORARY: {
+    min: 2000,
+    max: 2099,
+    label: "Contemporary",
+    description: "2000–",
+  },
 } as const;
 
 const chartConfig = {
@@ -38,48 +59,92 @@ const chartConfig = {
 
 export function ReleasedYearAnalysisUpgradeV3({ data }: ReleaseYearAnalysisProps) {
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
-  const [decadeFilter, setDecadeFilter] = React.useState<DecadeFilter>("all");
+  const [eraFilter, setEraFilter] = React.useState<EraFilter>("all");
 
-  // Filter data based on decade filter
-  const { processedData, decadeTotals } = React.useMemo(() => {
-    const fullData = [];
-    for (let year = 1960; year <= 1969; year++) {
-      const yearStr = String(year);
-      const count = data[yearStr] || 0;
-      fullData.push({
-        year: yearStr,
-        count: count,
+  // Process data by year with era filtering
+  const { processedData, eraTotals, allData } = React.useMemo(() => {
+    const entries = Object.entries(data)
+      .map(([year, count]) => ({ year: parseInt(year), count }))
+      .sort((a, b) => a.year - b.year);
+
+    if (entries.length === 0) {
+      return {
+        processedData: [],
+        eraTotals: {
+          classic: 0,
+          golden: 0,
+          modern: 0,
+          contemporary: 0,
+          all: 0,
+        },
+        allData: entries,
+      };
+    }
+
+    // Calculate totals for each era
+    const classicTotal = entries
+      .filter(e => e.year >= ERA_BOUNDARIES.CLASSIC.min && e.year <= ERA_BOUNDARIES.CLASSIC.max)
+      .reduce((sum, e) => sum + e.count, 0);
+
+    const goldenTotal = entries
+      .filter(e => e.year >= ERA_BOUNDARIES.GOLDEN.min && e.year <= ERA_BOUNDARIES.GOLDEN.max)
+      .reduce((sum, e) => sum + e.count, 0);
+
+    const modernTotal = entries
+      .filter(e => e.year >= ERA_BOUNDARIES.MODERN.min && e.year <= ERA_BOUNDARIES.MODERN.max)
+      .reduce((sum, e) => sum + e.count, 0);
+
+    const contemporaryTotal = entries
+      .filter(e => e.year >= ERA_BOUNDARIES.CONTEMPORARY.min && e.year <= ERA_BOUNDARIES.CONTEMPORARY.max)
+      .reduce((sum, e) => sum + e.count, 0);
+
+    const allTotal = entries.reduce((sum, e) => sum + e.count, 0);
+
+    // Filter data based on selected era - fill in missing years in range with 0
+    let filtered = entries;
+    let minYear = entries[0].year;
+    let maxYear = entries[entries.length - 1].year;
+
+    if (eraFilter === "classic") {
+      minYear = ERA_BOUNDARIES.CLASSIC.min;
+      maxYear = ERA_BOUNDARIES.CLASSIC.max;
+      filtered = entries.filter(e => e.year >= ERA_BOUNDARIES.CLASSIC.min && e.year <= ERA_BOUNDARIES.CLASSIC.max);
+    } else if (eraFilter === "golden") {
+      minYear = ERA_BOUNDARIES.GOLDEN.min;
+      maxYear = ERA_BOUNDARIES.GOLDEN.max;
+      filtered = entries.filter(e => e.year >= ERA_BOUNDARIES.GOLDEN.min && e.year <= ERA_BOUNDARIES.GOLDEN.max);
+    } else if (eraFilter === "modern") {
+      minYear = ERA_BOUNDARIES.MODERN.min;
+      maxYear = ERA_BOUNDARIES.MODERN.max;
+      filtered = entries.filter(e => e.year >= ERA_BOUNDARIES.MODERN.min && e.year <= ERA_BOUNDARIES.MODERN.max);
+    } else if (eraFilter === "contemporary") {
+      minYear = ERA_BOUNDARIES.CONTEMPORARY.min;
+      maxYear = Math.min(ERA_BOUNDARIES.CONTEMPORARY.max, maxYear);
+      filtered = entries.filter(e => e.year >= ERA_BOUNDARIES.CONTEMPORARY.min && e.year <= ERA_BOUNDARIES.CONTEMPORARY.max);
+    }
+
+    // Fill in missing years with 0 count
+    const filledData = [];
+    for (let year = minYear; year <= maxYear; year++) {
+      const existing = filtered.find(e => e.year === year);
+      filledData.push({
+        year: String(year),
+        count: existing ? existing.count : 0,
       });
     }
 
-    // Calculate totals for each filter
-    const earlyTotal = fullData
-      .filter(d => parseInt(d.year) >= ERA_BOUNDARIES.EARLY.min && parseInt(d.year) <= ERA_BOUNDARIES.EARLY.max)
-      .reduce((sum, d) => sum + d.count, 0);
-
-    const lateTotal = fullData
-      .filter(d => parseInt(d.year) >= ERA_BOUNDARIES.LATE.min && parseInt(d.year) <= ERA_BOUNDARIES.LATE.max)
-      .reduce((sum, d) => sum + d.count, 0);
-
-    const allTotal = fullData.reduce((sum, d) => sum + d.count, 0);
-
-    // Filter data based on selected decade
-    let filtered = fullData;
-    if (decadeFilter === "1960-1964") {
-      filtered = fullData.filter(d => parseInt(d.year) >= ERA_BOUNDARIES.EARLY.min && parseInt(d.year) <= ERA_BOUNDARIES.EARLY.max);
-    } else if (decadeFilter === "1965-1969") {
-      filtered = fullData.filter(d => parseInt(d.year) >= ERA_BOUNDARIES.LATE.min && parseInt(d.year) <= ERA_BOUNDARIES.LATE.max);
-    }
-
     return {
-      processedData: filtered,
-      decadeTotals: {
-        early: earlyTotal,
-        late: lateTotal,
+      processedData: filledData,
+      eraTotals: {
+        classic: classicTotal,
+        golden: goldenTotal,
+        modern: modernTotal,
+        contemporary: contemporaryTotal,
         all: allTotal,
       },
+      allData: entries,
     };
-  }, [data, decadeFilter]);
+  }, [data, eraFilter]);
 
   const activeData = React.useMemo(() => {
     if (activeIndex === null) return null;
@@ -96,38 +161,41 @@ export function ReleasedYearAnalysisUpgradeV3({ data }: ReleaseYearAnalysisProps
         {/* Title Section */}
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 md:!py-0">
           <CardTitle className="text-black dark:text-white">
-            1960s Movies
+            Release Year Analysis
           </CardTitle>
           <CardDescription className="text-slate-600 dark:text-white/60">
-            {activeData
-              ? `${activeData.year}: ${activeData.count} movie${activeData.count !== 1 ? 's' : ''}`
-              : `Total: ${totalMovies} movies from the 1960s`}
+            Movies watched by release year with era categorization
           </CardDescription>
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex flex-wrap" role="tablist" aria-label="Select decade range">
+        <div className="flex flex-wrap" role="tablist" aria-label="Select era filter">
           {[
-            { key: "1960-1964" as DecadeFilter, label: "1960-1964", count: decadeTotals.early },
-            { key: "1965-1969" as DecadeFilter, label: "1965-1969", count: decadeTotals.late },
-            { key: "all" as DecadeFilter, label: "All 1960s", count: decadeTotals.all },
-          ].map(({ key, label, count }) => (
+            { key: "classic" as EraFilter, label: "Classic", count: eraTotals.classic, description: ERA_BOUNDARIES.CLASSIC.description },
+            { key: "golden" as EraFilter, label: "Golden", count: eraTotals.golden, description: ERA_BOUNDARIES.GOLDEN.description },
+            { key: "modern" as EraFilter, label: "Modern", count: eraTotals.modern, description: ERA_BOUNDARIES.MODERN.description },
+            { key: "contemporary" as EraFilter, label: "Contemporary", count: eraTotals.contemporary, description: ERA_BOUNDARIES.CONTEMPORARY.description },
+            { key: "all" as EraFilter, label: "All Years", count: eraTotals.all, description: "Complete range" },
+          ].map(({ key, label, count, description }) => (
             <button
               key={key}
               role="tab"
-              aria-selected={decadeFilter === key}
-              data-active={decadeFilter === key}
-              onClick={() => setDecadeFilter(key)}
+              aria-selected={eraFilter === key}
+              data-active={eraFilter === key}
+              onClick={() => setEraFilter(key)}
               className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-slate-200 dark:border-white/10 px-6 py-4 text-left md:border-t-0 md:border-l md:px-8 md:py-6
                 data-[active=true]:bg-slate-50 dark:data-[active=true]:bg-white/5
                 hover:bg-slate-50 dark:hover:bg-white/[0.02]
                 transition-colors"
             >
               <span className="text-xs text-slate-500 dark:text-white/50">
-                {label}
+                {description}
               </span>
               <span className="text-lg leading-none font-bold md:text-2xl text-black dark:text-white">
                 {count}
+              </span>
+              <span className="text-xs text-slate-600 dark:text-white/60">
+                {label}
               </span>
             </button>
           ))}
@@ -136,7 +204,7 @@ export function ReleasedYearAnalysisUpgradeV3({ data }: ReleaseYearAnalysisProps
       <CardContent className="px-2 md:p-6 pt-6">
         {processedData.length === 0 ? (
           <div className="flex items-center justify-center h-[300px] text-slate-500 dark:text-white/50">
-            No data available for {decadeFilter === "all" ? "the 1960s" : `${decadeFilter}`}
+            No data available for {eraFilter === "all" ? "this era" : `${eraFilter} films`}
           </div>
         ) : (
           <ChartContainer config={chartConfig} className="aspect-auto h-[300px] w-full">
