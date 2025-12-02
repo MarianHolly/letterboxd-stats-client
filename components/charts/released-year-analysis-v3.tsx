@@ -31,10 +31,10 @@ const chartConfig = {
 export function ReleasedYearAnalysisUpgradeV3({ data }: ReleaseYearAnalysisProps) {
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
 
-  // Filter 1960s movies (1960-1969)
+  // Filter 1960s movies (1960-1969) fillOpacity=
   const sixties1960sData = React.useMemo(() => {
     const result = [];
-    for (let year = 1940; year <= 1959; year++) {
+    for (let year = 1900; year <= 2025; year++) {
       const yearStr = String(year);
       const count = data[yearStr] || 0;
       result.push({
@@ -71,6 +71,11 @@ export function ReleasedYearAnalysisUpgradeV3({ data }: ReleaseYearAnalysisProps
           <BarChart
             accessibilityLayer
             data={sixties1960sData}
+            onMouseMove={(state) => {
+              if (state.isTooltipActive && state.activeTooltipIndex !== undefined) {
+                setActiveIndex(state.activeTooltipIndex);
+              }
+            }}
             onMouseLeave={() => setActiveIndex(null)}
             margin={{
               left: 12,
@@ -106,28 +111,23 @@ export function ReleasedYearAnalysisUpgradeV3({ data }: ReleaseYearAnalysisProps
               className="dark:[&_text]:fill-white/70"
             />
             <ChartTooltip
-              cursor={false}
+              cursor={{ fill: "rgba(0,0,0,0.01)" }}
               content={
                 <div className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950 px-3.5 py-2 shadow-md">
                   {activeData && (
-                    <div className="text-xs">
+                    <div className="text-xs text-center">
                       <p className="font-light text-black dark:text-white">Year of {activeData.year}</p>
-                      <p className="text-slate-600 dark:text-white/70">{activeData.count} movies</p>
+                      <p className="text-slate-600 dark:text-white/70 font-semibold">{activeData.count} movies</p>
                     </div>
                   )}
                 </div>
               }
             />
-            <Bar dataKey="count" radius={[1, 1, 0, 0]} fill="var(--color-count)">
-              {sixties1960sData.map((_, index) => (
+            <Bar dataKey="count" radius={[3, 3, 0, 0]} fill="var(--color-count)" isAnimationActive={false}>
+              {sixties1960sData.map((entry, index) => (
                 <Cell
-                  className="duration-200"
                   key={`cell-${index}`}
-                  fillOpacity={
-                    activeIndex === null ? 1 : activeIndex === index ? 1 : 0.3
-                  }
-                  stroke={activeIndex === index ? "var(--color-count)" : ""}
-                  onMouseEnter={() => setActiveIndex(index)}
+                  fill={entry.count > 0 ? "var(--color-count)" : "transparent"}
                 />
               ))}
             </Bar>
