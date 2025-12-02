@@ -13,9 +13,6 @@ import { DiaryMonthlyRadarChart } from "@/components/charts/diary-monthly-radar-
 import { DiaryStatistics } from "@/components/charts/diary-statistics";
 import { ReleasedYearAnalysis } from "@/components/charts/release-year-analysis";
 import { ReleasedYearAnalysisUpgrade } from "@/components/charts/release-year-analysis-v2";
-import { GenreDistribution } from "@/components/charts/genre-distribution";
-import { RatingDistribution } from "@/components/charts/rating-distribution";
-import { ViewingOverTime } from "@/components/charts/viewing-over-time";
 
 // ============================================================================
 // DATA TRANSFORMATION FUNCTIONS
@@ -191,10 +188,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   // Transform all data using pure functions
   const releaseYearData = transformReleaseYearData(movies);
   const monthlyData = transformMonthlyData(movies);
-  const genreData = transformGenreData(movies.length);
-  const ratingData = transformRatingData(movies);
   const yearMonthlyData = transformYearMonthlyData(movies);
-  const dailyData = transformDailyData(movies);
   const diaryStats = transformDiaryStats(monthlyData, movies.length);
 
   return (
@@ -279,49 +273,11 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
           )}
 
           {/* ===== RATING DISTRIBUTION ===== */}
-          {Object.keys(ratingData).some((key) => ratingData[parseInt(key)] > 0) && (
-            <div>
-              <div className="mb-6 py-8">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                  Rating Distribution
-                </h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  How you rate movies (1-5 stars)
-                </p>
-              </div>
-              <RatingDistribution data={ratingData} />
-            </div>
-          )}
+          
 
-          {/* ===== GENRE DISTRIBUTION ===== */}
-          {Object.keys(genreData).length > 0 && (
-            <div>
-              <div className="mb-6 py-8">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                  Genre Distribution
-                </h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Your favorite genres and viewing preferences
-                </p>
-              </div>
-              <GenreDistribution data={genreData} />
-            </div>
-          )}
+          
 
-          {/* ===== VIEWING OVER TIME ===== */}
-          {Object.keys(dailyData).length > 0 && (
-            <div>
-              <div className="mb-6 py-8">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                  Viewing Over Time
-                </h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Flexible time-series view with different granularities and ranges
-                </p>
-              </div>
-              <ViewingOverTime data={dailyData} />
-            </div>
-          )}
+          
         </section>
       </div>
     </div>
