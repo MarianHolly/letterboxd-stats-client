@@ -184,7 +184,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                 {genreData && Object.keys(genreData).length > 0 ? 'diary.csv (tags)' : ''}
               </p>
             </div>
-            <div className="grid gap-8 md:grid-cols-2">
+            {/* <div className="grid gap-8 md:grid-cols-2">
               {analytics?.ratingDistribution && Object.keys(analytics.ratingDistribution).length > 0 && (
                 <div className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/50 p-6">
                   <h3 className="text-lg font-semibold mb-4 text-black dark:text-white">Rating Distribution</h3>
@@ -198,11 +198,11 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                   <GenreDistribution data={genreData} />
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
 
           {/* Viewing Over Time */}
-          {Object.keys(viewingOverTimeData).length > 0 && (
+          {/* {Object.keys(viewingOverTimeData).length > 0 && (
             <div>
               <div className="mb-4 py-12 flex flex-col gap-2 items-center justify-center">
                 <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Viewing Trends</h2>
@@ -213,7 +213,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                 <ViewingOverTime data={viewingOverTimeData} />
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Distribution Stats Section */}
           {analytics && (
