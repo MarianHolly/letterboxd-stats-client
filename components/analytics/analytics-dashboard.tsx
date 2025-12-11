@@ -13,6 +13,7 @@ import { DiaryMonthlyRadarChart } from "@/components/charts/diary-monthly-radar-
 import { DiaryStatistics } from "@/components/charts/diary-statistics";
 import { ReleasedYearAnalysis } from "@/components/charts/release-year-analysis";
 import { ReleasedYearBarHorizontal } from "@/components/charts/released-year-bar-horizont";
+import { ReleasedYearPieChart } from "@/components/charts/released-year-pie-chart";
 
 // ============================================================================
 // DATA TRANSFORMATION FUNCTIONS
@@ -49,6 +50,44 @@ function transformReleaseYearToDecades(movies: any[]): Array<{ decade: string; c
       const yearB = parseInt(b.decade);
       return yearA - yearB;
     });
+}
+
+function transformReleaseYearToEras(movies: any[]): Array<{ era: string; count: number; fill: string }> {
+  const ERA_BOUNDARIES = {
+    CLASSIC: { min: 1900, max: 1944, label: "Classic", color: "#06b6d4" },      // Cyan
+    GOLDEN: { min: 1945, max: 1969, label: "Golden", color: "#0891b2" },        // Dark Cyan
+    MODERN: { min: 1970, max: 1999, label: "Modern", color: "#6366f1" },        // Indigo
+    CONTEMPORARY: { min: 2000, max: 2099, label: "Contemporary", color: "#d946ef" }, // Magenta
+  };
+
+  const eraTotals = {
+    classic: 0,
+    golden: 0,
+    modern: 0,
+    contemporary: 0,
+  };
+
+  movies.forEach((movie) => {
+    if (movie.year) {
+      const year = parseInt(String(movie.year));
+      if (year >= ERA_BOUNDARIES.CLASSIC.min && year <= ERA_BOUNDARIES.CLASSIC.max) {
+        eraTotals.classic++;
+      } else if (year >= ERA_BOUNDARIES.GOLDEN.min && year <= ERA_BOUNDARIES.GOLDEN.max) {
+        eraTotals.golden++;
+      } else if (year >= ERA_BOUNDARIES.MODERN.min && year <= ERA_BOUNDARIES.MODERN.max) {
+        eraTotals.modern++;
+      } else if (year >= ERA_BOUNDARIES.CONTEMPORARY.min && year <= ERA_BOUNDARIES.CONTEMPORARY.max) {
+        eraTotals.contemporary++;
+      }
+    }
+  });
+
+  return [
+    { era: ERA_BOUNDARIES.CLASSIC.label, count: eraTotals.classic, fill: ERA_BOUNDARIES.CLASSIC.color },
+    { era: ERA_BOUNDARIES.GOLDEN.label, count: eraTotals.golden, fill: ERA_BOUNDARIES.GOLDEN.color },
+    { era: ERA_BOUNDARIES.MODERN.label, count: eraTotals.modern, fill: ERA_BOUNDARIES.MODERN.color },
+    { era: ERA_BOUNDARIES.CONTEMPORARY.label, count: eraTotals.contemporary, fill: ERA_BOUNDARIES.CONTEMPORARY.color },
+  ].filter(item => item.count > 0);
 }
 
 function transformMonthlyData(movies: any[]): Array<{ month: string; count: number }> {
@@ -212,6 +251,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   // Transform all data using pure functions
   const releaseYearData = transformReleaseYearData(movies);
   const decadeData = transformReleaseYearToDecades(movies);
+  const eraData = transformReleaseYearToEras(movies);
   const monthlyData = transformMonthlyData(movies);
   const yearMonthlyData = transformYearMonthlyData(movies);
   const diaryStats = transformDiaryStats(monthlyData, movies.length);
@@ -240,12 +280,16 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
               </p>
             </div>
             <ReleasedYearAnalysis data={releaseYearData} />
-            {decadeData.length > 0 && (
-              <ReleasedYearBarHorizontal data={decadeData} />
+            {(decadeData.length > 0 || eraData.length > 0) && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {decadeData.length > 0 && (
+                  <ReleasedYearBarHorizontal data={decadeData} />
+                )}
+                {eraData.length > 0 && (
+                  <ReleasedYearPieChart data={eraData} />
+                )}
+              </div>
             )}
-            <div>
-              <div id="released-year-pie-chart"></div>
-            </div>
           </div>
         )}
 

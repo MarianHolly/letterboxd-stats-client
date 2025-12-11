@@ -212,7 +212,7 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
   }, [data, eraFilter]);
 
   return (
-    <Card className="py-0 border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+    <Card className="py-0 border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent mb-6">
       <CardHeader className="flex flex-col items-stretch border-b border-slate-200 dark:border-white/10 !p-0 md:flex-row">
         {/* Title Section */}
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 md:!py-0">
