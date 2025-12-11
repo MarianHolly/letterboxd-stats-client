@@ -1,22 +1,23 @@
 /*
 
-Released Year Analysis for Analytics Page (Enhanced V1)
+Released Year Analysis for Analytics Page (Enhanced V1 - Vibrant Cyan-to-Magenta Edition)
 - Interactive bar chart of movies watched by release year
 - Four-era breakdown: Classic (1900-1944), Golden (1945-1969), Modern (1970-1999), Contemporary (2000+)
 - Segmented control tabs with era filtering and counts
-- Era-based color scheme with internal gradients (dark→light within each era)
+- Unified vibrant cyan-to-magenta gradient across entire timeline (1900-2099)
+- Solid separator lines at era boundaries for clear visual distinction
 - Missing year filling (no visual gaps in chart)
 - Dotted background pattern for visual polish
-- Hover effects with opacity transitions for better feedback
+- Smooth hover effects with 300ms opacity transitions for polished feedback
 - Fixed tooltip showing year and movie count (no undefined bug)
-- Each bar colored individually based on era and position within era
+- Dark mode support throughout
 
 */
 
 "use client"
 
 import * as React from "react"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell, ResponsiveContainer } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell, ResponsiveContainer, ReferenceLine } from "recharts"
 
 import {
   Card,
@@ -71,32 +72,16 @@ const ERA_BOUNDARIES = {
   },
 } as const;
 
+// Unified gradient timeline boundaries
+const TIMELINE_MIN = 1900;
+const TIMELINE_MAX = 2099;
+
 // ============================================================================
-// COLOR SCHEME (Era-based with internal gradients)
+// COLOR SCHEME (Unified Cyan-to-Magenta Gradient - Vibrant)
 // ============================================================================
 
-const eraColors = {
-  classic: {
-    base: "hsl(240, 70%, 50%)",
-    light: "hsl(240, 60%, 60%)",
-    dark: "hsl(240, 75%, 40%)",
-  },
-  golden: {
-    base: "hsl(250, 70%, 50%)",
-    light: "hsl(250, 60%, 60%)",
-    dark: "hsl(250, 75%, 40%)",
-  },
-  modern: {
-    base: "hsl(260, 70%, 50%)",
-    light: "hsl(260, 60%, 60%)",
-    dark: "hsl(260, 75%, 40%)",
-  },
-  contemporary: {
-    base: "hsl(270, 70%, 50%)",
-    light: "hsl(270, 60%, 60%)",
-    dark: "hsl(270, 75%, 40%)",
-  },
-} as const;
+const GRADIENT_START = { h: 180, s: 85, l: 45 }; // Cyan - vibrant
+const GRADIENT_END = { h: 300, s: 85, l: 45 };   // Magenta - vibrant
 
 // ============================================================================
 // COLOR CALCULATION FUNCTIONS
@@ -114,50 +99,20 @@ function getEraForYear(year: number): keyof typeof ERA_BOUNDARIES | null {
 }
 
 /**
- * Calculate gradient color for a year within its era
- * Progresses from dark (oldest in era) to light (newest in era)
+ * Calculate unified gradient color across entire timeline (1900-2099)
+ * Creates smooth blue-to-violet gradient spanning all years
+ * Eras are separated visually by divider lines, not color changes
  */
 const getYearColor = (year: number): string => {
-  const eraKey = getEraForYear(year);
+  // Calculate progress across the entire timeline (0 = 1900, 1 = 2099)
+  const progress = (year - TIMELINE_MIN) / (TIMELINE_MAX - TIMELINE_MIN);
 
-  if (!eraKey) {
-    return "#94a3b8"; // neutral gray
-  }
+  // Interpolate between blue (hue 240) and violet (hue 270)
+  const hue = GRADIENT_START.h + (GRADIENT_END.h - GRADIENT_START.h) * progress;
+  const saturation = GRADIENT_START.s;
+  const lightness = GRADIENT_START.l;
 
-  const era = ERA_BOUNDARIES[eraKey];
-  const eraColor = eraColors[eraKey.toLowerCase() as keyof typeof eraColors];
-
-  // Calculate progress within this era (0 = oldest year, 1 = newest year)
-  const progress = (year - era.min) / (era.max - era.min);
-
-  // For years at the start of era, use darker shade; at end, use lighter shade
-  if (progress < 0.5) {
-    // First half: interpolate from dark to base
-    const halfProgress = progress * 2;
-    const darkHSL = eraColor.dark.match(/\d+/g);
-    const baseHSL = eraColor.base.match(/\d+/g);
-
-    if (darkHSL && baseHSL) {
-      const h = parseInt(darkHSL[0]) + (parseInt(baseHSL[0]) - parseInt(darkHSL[0])) * halfProgress;
-      const s = parseInt(darkHSL[1]) + (parseInt(baseHSL[1]) - parseInt(darkHSL[1])) * halfProgress;
-      const l = parseInt(darkHSL[2]) + (parseInt(baseHSL[2]) - parseInt(darkHSL[2])) * halfProgress;
-      return `hsl(${h}, ${s}%, ${l}%)`;
-    }
-  } else {
-    // Second half: interpolate from base to light
-    const halfProgress = (progress - 0.5) * 2;
-    const baseHSL = eraColor.base.match(/\d+/g);
-    const lightHSL = eraColor.light.match(/\d+/g);
-
-    if (baseHSL && lightHSL) {
-      const h = parseInt(baseHSL[0]) + (parseInt(lightHSL[0]) - parseInt(baseHSL[0])) * halfProgress;
-      const s = parseInt(baseHSL[1]) + (parseInt(lightHSL[1]) - parseInt(baseHSL[1])) * halfProgress;
-      const l = parseInt(baseHSL[2]) + (parseInt(lightHSL[2]) - parseInt(baseHSL[2])) * halfProgress;
-      return `hsl(${h}, ${s}%, ${l}%)`;
-    }
-  }
-
-  return eraColor.base;
+  return `hsl(${Math.round(hue)}, ${saturation}%, ${lightness}%)`;
 };
 
 const chartConfig = {
@@ -345,6 +300,27 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
                   <DottedBackgroundPattern />
                 </defs>
                 <CartesianGrid vertical={false} stroke="rgba(0,0,0,0.1)" className="dark:stroke-white/10" />
+
+                {/* Era Separator Lines */}
+                <ReferenceLine
+                  x="1944"
+                  stroke="rgba(0,0,0,0.2)"
+                  strokeWidth={1.5}
+                  className="dark:stroke-white/25"
+                />
+                <ReferenceLine
+                  x="1969"
+                  stroke="rgba(0,0,0,0.2)"
+                  strokeWidth={1.5}
+                  className="dark:stroke-white/25"
+                />
+                <ReferenceLine
+                  x="1999"
+                  stroke="rgba(0,0,0,0.2)"
+                  strokeWidth={1.5}
+                  className="dark:stroke-white/25"
+                />
+
                 <XAxis
                   dataKey="year"
                   tickLine={false}
