@@ -8,7 +8,7 @@ Released Year Analysis for Analytics Page (Enhanced V1 - Vibrant Cyan-to-Magenta
 - Solid separator lines at era boundaries for clear visual distinction
 - Missing year filling (no visual gaps in chart)
 - Dotted background pattern for visual polish
-- Smooth hover effects with 300ms opacity transitions for polished feedback
+- Very smooth hover effects with 500ms opacity transitions (90% dim - subtle and elegant)
 - Fixed tooltip showing year and movie count (no undefined bug)
 - Dark mode support throughout
 
@@ -193,7 +193,7 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
     for (let year = minYear; year <= maxYear; year++) {
       const existing = filtered.find(e => e.year === year);
       filledData.push({
-        year: String(year),
+        year: year,
         count: existing ? existing.count : 0,
       });
     }
@@ -210,11 +210,6 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
       allData: entries,
     };
   }, [data, eraFilter]);
-
-  const activeData = React.useMemo(() => {
-    if (activeIndex === null) return null;
-    return processedData[activeIndex];
-  }, [activeIndex, processedData]);
 
   return (
     <Card className="py-0 border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
@@ -301,21 +296,21 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
                 </defs>
                 <CartesianGrid vertical={false} stroke="rgba(0,0,0,0.1)" className="dark:stroke-white/10" />
 
-                {/* Era Separator Lines */}
+                {/* Era Separator Lines (positioned between years) */}
                 <ReferenceLine
-                  x="1944"
+                  x={1944.5}
                   stroke="rgba(0,0,0,0.2)"
                   strokeWidth={1.5}
                   className="dark:stroke-white/25"
                 />
                 <ReferenceLine
-                  x="1969"
+                  x={1969.5}
                   stroke="rgba(0,0,0,0.2)"
                   strokeWidth={1.5}
                   className="dark:stroke-white/25"
                 />
                 <ReferenceLine
-                  x="1999"
+                  x={1999.5}
                   stroke="rgba(0,0,0,0.2)"
                   strokeWidth={1.5}
                   className="dark:stroke-white/25"
@@ -338,24 +333,28 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
                 />
                 <ChartTooltip
                   cursor={{ fill: "rgba(0,0,0,0.01)" }}
-                  content={
-                    <div className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950 px-3.5 py-2 shadow-md">
-                      {activeData && (
-                        <div className="text-xs text-center">
-                          <p className="font-light text-black dark:text-white">Year of {activeData.year}</p>
-                          <p className="text-slate-600 dark:text-white/70 font-semibold">{activeData.count} movies</p>
+                  content={({ active, payload }: any) => {
+                    if (active && payload && payload.length > 0) {
+                      const data = payload[0].payload;
+                      return (
+                        <div className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950 px-3.5 py-2 shadow-md">
+                          <div className="text-xs text-center">
+                            <p className="font-light text-black dark:text-white">Year of {data.year}</p>
+                            <p className="text-slate-600 dark:text-white/70 font-semibold">{data.count} movies</p>
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  }
+                      );
+                    }
+                    return null;
+                  }}
                 />
                 <Bar dataKey="count" radius={[3, 3, 0, 0]} fill="var(--color-count)" isAnimationActive={false}>
                   {processedData.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={entry.count > 0 ? getYearColor(parseInt(entry.year)) : "transparent"}
-                      fillOpacity={activeIndex === null ? 1 : activeIndex === index ? 1 : 0.7}
-                      style={{ transition: "opacity 300ms ease-in-out" }}
+                      fill={entry.count > 0 ? getYearColor(entry.year) : "transparent"}
+                      fillOpacity={activeIndex === null ? 1 : activeIndex === index ? 1 : 0.9}
+                      style={{ transition: "opacity 500ms ease-in-out" }}
                     />
                   ))}
                 </Bar>

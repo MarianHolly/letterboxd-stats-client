@@ -7,13 +7,11 @@ import { StatsOverview } from "./stats-overview";
 import { AnalyticsEmptyState } from "./analytics-empty-state";
 import { AnalyticsSkeleton } from "./analytics-skeleton";
 
-// Import all chart components
+// Import chart components
 import { DiaryAreaChart } from "@/components/charts/diary-area-chart";
 import { DiaryMonthlyRadarChart } from "@/components/charts/diary-monthly-radar-chart";
 import { DiaryStatistics } from "@/components/charts/diary-statistics";
 import { ReleasedYearAnalysis } from "@/components/charts/release-year-analysis";
-import { ReleasedYearAnalysisUpgrade } from "@/components/charts/release-year-analysis-v2";
-import { ReleasedYearAnalysisUpgradeV3 } from "../charts/released-year-analysis-v3";
 
 // ============================================================================
 // DATA TRANSFORMATION FUNCTIONS
@@ -202,102 +200,73 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
           isLoading={!analytics}
         />
 
-        {/* ===== RELEASE YEAR ANALYSIS (V1 & V2) ===== */}
-          {Object.keys(releaseYearData).length > 0 && (
-            <div>
-              <div className="mb-6 py-8">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                  Movie Release Years
-                </h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Distribution of movies by their release year
-                </p>
-              </div>
-              <div className="flex flex-col gap-8">
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Version 1: Classic Era Filter</h3>
-                  <ReleasedYearAnalysis data={releaseYearData} />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Version 2: Four-Era Breakdown</h3>
-                  <ReleasedYearAnalysisUpgrade data={releaseYearData} />
-                </div>
-                <div className="">
-                  <ReleasedYearAnalysisUpgradeV3 data={releaseYearData} />
-                </div>
-              </div>
+        {/* ============================================ */}
+        {/* SECTION 1: VIEWING PATTERNS & HABITS */}
+        {/* ============================================ */}
+
+        {/* ===== DIARY STATISTICS ===== */}
+        {diaryStats && (
+          <div>
+            <div className="mb-6 py-8">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
+                Your Watching Habits
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Key metrics about your viewing patterns
+              </p>
             </div>
-          )}
+            <DiaryStatistics stats={diaryStats} />
+          </div>
+        )}
 
-        {/* Main Charts Section */}
-        <section className="space-y-8">
-          {/* ===== DIARY STATISTICS ===== */}
-          {diaryStats && (
-            <div>
-              <div className="mb-6 py-8">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                  Your Watching Habits
-                </h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Overview of your viewing patterns and statistics
-                </p>
-              </div>
-              <DiaryStatistics stats={diaryStats} />
+        {/* ===== TIMELINE / AREA CHART ===== */}
+        {monthlyData.length > 0 && (
+          <div>
+            <div className="mb-6 py-8">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
+                Watching Timeline
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Your viewing activity over time with smoothing options
+              </p>
             </div>
-          )}
+            <DiaryAreaChart data={monthlyData} />
+          </div>
+        )}
 
-          {/* ===== TIMELINE / AREA CHART ===== */}
-          {monthlyData.length > 0 && (
-            <div>
-              <div className="mb-6 py-8">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                  Watching Timeline
-                </h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Your viewing activity over time
-                </p>
-              </div>
-              <DiaryAreaChart data={monthlyData} />
+        {/* ===== MONTHLY RADAR CHART (BY YEAR) ===== */}
+        {yearMonthlyData.length > 0 && (
+          <div>
+            <div className="mb-6 py-8">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
+                Monthly Patterns by Year
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                How your watching habits vary by month across different years
+              </p>
             </div>
-          )}
+            <DiaryMonthlyRadarChart data={yearMonthlyData} size="compact" />
+          </div>
+        )}
 
-          {/* ===== MONTHLY RADAR CHART (BY YEAR) ===== */}
-          {yearMonthlyData.length > 0 && (
-            <div>
-              <div className="mb-6 py-8">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                  Monthly Patterns by Year
-                </h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  How your watching habits vary by month across different years
-                </p>
-              </div>
-              <DiaryMonthlyRadarChart data={yearMonthlyData} size="compact" />
+        {/* ============================================ */}
+        {/* SECTION 2: CONTENT ANALYSIS */}
+        {/* ============================================ */}
+
+        {/* ===== RELEASE YEAR ANALYSIS ===== */}
+        {Object.keys(releaseYearData).length > 0 && (
+          <div>
+            <div className="mb-6 py-8">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
+                Release Year Analysis
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Movies watched by release year with era categorization
+              </p>
             </div>
-          )}
-
-          {/* ===== 1960s RELEASE YEAR ANALYSIS ===== */}
-          {Object.keys(releaseYearData).length > 0 && (
-            <div>
-              <div className="mb-6 py-8">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                  1960s Movies by Release Year
-                </h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Movies released during the 1960s decade
-                </p>
-              </div>
-              <ReleasedYearAnalysisUpgradeV3 data={releaseYearData} />
-            </div>
-          )}
-
-          {/* ===== RATING DISTRIBUTION ===== */}
-
-
-
-
-
-        </section>
+            <ReleasedYearAnalysis data={releaseYearData} />
+          </div>
+        )}
       </div>
     </div>
   );
