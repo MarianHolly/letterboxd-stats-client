@@ -12,6 +12,7 @@ import { DiaryAreaChart } from "@/components/charts/diary-area-chart";
 import { DiaryMonthlyRadarChart } from "@/components/charts/diary-monthly-radar-chart";
 import { DiaryStatistics } from "@/components/charts/diary-statistics";
 import { ReleasedYearAnalysis } from "@/components/charts/release-year-analysis";
+import { ReleasedYearBarHorizontal } from "@/components/charts/released-year-bar-horizont";
 
 // ============================================================================
 // DATA TRANSFORMATION FUNCTIONS
@@ -24,6 +25,30 @@ function transformReleaseYearData(movies: any[]): Record<string, number> {
     data[year] = (data[year] || 0) + 1;
   });
   return data;
+}
+
+function transformReleaseYearToDecades(movies: any[]): Array<{ decade: string; count: number }> {
+  const decadeMap: Record<string, number> = {};
+
+  movies.forEach((movie) => {
+    if (movie.year) {
+      const year = parseInt(String(movie.year));
+      const decadeStart = Math.floor(year / 10) * 10;
+      const decadeEnd = decadeStart + 9;
+      const decadeLabel = `${decadeStart}s`;
+
+      decadeMap[decadeLabel] = (decadeMap[decadeLabel] || 0) + 1;
+    }
+  });
+
+  // Sort decades in chronological order
+  return Object.entries(decadeMap)
+    .map(([decade, count]) => ({ decade, count }))
+    .sort((a, b) => {
+      const yearA = parseInt(a.decade);
+      const yearB = parseInt(b.decade);
+      return yearA - yearB;
+    });
 }
 
 function transformMonthlyData(movies: any[]): Array<{ month: string; count: number }> {
@@ -186,6 +211,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
 
   // Transform all data using pure functions
   const releaseYearData = transformReleaseYearData(movies);
+  const decadeData = transformReleaseYearToDecades(movies);
   const monthlyData = transformMonthlyData(movies);
   const yearMonthlyData = transformYearMonthlyData(movies);
   const diaryStats = transformDiaryStats(monthlyData, movies.length);
@@ -193,12 +219,39 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   return (
     <div className="flex-1 overflow-auto scroll-smooth">
       <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full">
+
+
         {/* Stats Overview Section - Full Width */}
         <StatsOverview
           analytics={analytics}
           profile={dataset?.userProfile}
           isLoading={!analytics}
         />
+
+        {/* ===== RELEASE YEAR ANALYSIS ===== */}
+        {Object.keys(releaseYearData).length > 0 && (
+          <div>
+            <div className="mb-6 py-8">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
+                Release Year Analysis
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Movies watched by release year with era categorization
+              </p>
+            </div>
+            <ReleasedYearAnalysis data={releaseYearData} />
+            <div>
+              <div id="released-year-bar-horizont"></div>
+              <div id="released-year-pie-chart"></div>
+            </div>
+          </div>
+        )}
+
+
+
+
+
+
 
         {/* ============================================ */}
         {/* SECTION 1: VIEWING PATTERNS & HABITS */}
@@ -249,24 +302,8 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
           </div>
         )}
 
-        {/* ============================================ */}
-        {/* SECTION 2: CONTENT ANALYSIS */}
-        {/* ============================================ */}
 
-        {/* ===== RELEASE YEAR ANALYSIS ===== */}
-        {Object.keys(releaseYearData).length > 0 && (
-          <div>
-            <div className="mb-6 py-8">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                Release Year Analysis
-              </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Movies watched by release year with era categorization
-              </p>
-            </div>
-            <ReleasedYearAnalysis data={releaseYearData} />
-          </div>
-        )}
+        
       </div>
     </div>
   );
