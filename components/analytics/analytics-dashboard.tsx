@@ -240,8 +240,10 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
               </p>
             </div>
             <ReleasedYearAnalysis data={releaseYearData} />
+            {decadeData.length > 0 && (
+              <ReleasedYearBarHorizontal data={decadeData} />
+            )}
             <div>
-              <div id="released-year-bar-horizont"></div>
               <div id="released-year-pie-chart"></div>
             </div>
           </div>
