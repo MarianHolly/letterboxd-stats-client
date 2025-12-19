@@ -3,6 +3,7 @@
 import type { AnalyticsOverview, UserProfile } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatProfileFullName } from "@/lib/utils";
+import { Separator } from "../ui/separator";
 
 // ============================================================================
 // STAT CARD COMPONENT - PROFESSIONAL DESIGN
@@ -68,12 +69,12 @@ function StatCard({
 
   return (
     <div className="text-center flex-shrink-0">
+      <div className={`text-4xl font-bold ${style.value}`}>{value}</div>
       <p
-        className={`text-xs font-light ${style.title} uppercase tracking-widest mb-2`}
+        className={`text-xs font-light ${style.title} uppercase tracking-widest mb-1`}
       >
         {title}
       </p>
-      <div className={`text-4xl font-bold ${style.value}`}>{value}</div>
     </div>
   );
 }
@@ -130,20 +131,16 @@ export function StatsOverview({
       {/* Profile Header Section */}
       {profile && (
         <div className="space-y-4 text-center mt-8">
-          <h1 className="text-7xl font-extrabold text-slate-900 dark:text-white pt-4">
-            Cinematic Identity
+       
+          <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white pt-4">
+            <span className="font-light">Cinematic Identity of</span> @{profile.username}
           </h1>
+      
           <h2 className="text-lg font-light text-slate-900 dark:text-white">
-            {displayName}'s all-time stats
+            {displayName}'s Stats
           </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            @{profile.username}
-          </p>
-          {profile.bio && (
-            <p className="text-base text-slate-700 dark:text-slate-300 max-w-2xl mx-auto">
-              {profile.bio}
-            </p>
-          )}
+
+          <Separator className="my-6" />
         </div>
       )}
 
@@ -177,27 +174,36 @@ export function StatsOverview({
           variant={analytics.likeRatio >= 50 ? "success" : "default"}
         />
 
-        {/* Hours Watched - Coming Soon */}
-        <div className="text-center flex-shrink-0">
-          <p className="text-xs font-light text-slate-500 dark:text-slate-500 uppercase tracking-widest mb-4">
-            Hours Watched
-          </p>
-
-          <span className="inline-block px-2 py-1 text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300 rounded">
-            Coming Soon
-          </span>
-        </div>
-
         {/* Countries - Coming Soon */}
         <div className="text-center flex-shrink-0">
+          <span className="inline-block px-2 mb-4 py-1 text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300 rounded">
+            Coming Soon
+          </span>
           <p className="text-xs font-light text-slate-500 dark:text-slate-500 uppercase tracking-widest mb-4">
             Countries
           </p>
-
-          <span className="inline-block px-2 py-1 text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300 rounded">
-            Coming Soon
-          </span>
         </div>
+
+        {/* Earliest Entry Date */}
+        {analytics.earliestWatchDate &&
+          (() => {
+            const date = new Date(analytics.earliestWatchDate);
+            const month = date.toLocaleDateString("en-US", { month: "short" });
+            const year = date.getFullYear();
+
+            return (
+              <div className="text-center flex-shrink-0">
+                <div className="text-indigo-600 dark:text-indigo-400 leading-tight">
+                  <div className="text-xl md:text-2xl font-bold">
+                    <span className="font-normal">{month}</span> {year}
+                  </div>
+                </div>
+                <p className="text-xs font-light text-slate-500 dark:text-slate-500 uppercase tracking-widest mt-2">
+                  Earliest Entry
+                </p>
+              </div>
+            );
+          })()}
       </div>
     </section>
   );
