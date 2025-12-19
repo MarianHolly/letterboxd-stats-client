@@ -9,7 +9,6 @@ import { AnalyticsSkeleton } from "./analytics-skeleton";
 
 // Import chart components
 import { DiaryAreaChart } from "@/components/charts/diary-area-chart";
-import { DiaryMonthlyRadarChart } from "@/components/charts/diary-monthly-radar-chart";
 import { DiaryStatistics } from "@/components/charts/diary-statistics";
 import { ReleasedYearAnalysis } from "@/components/charts/release-year-analysis";
 import { ReleasedYearBarHorizontal } from "@/components/charts/released-year-bar-horizont";
@@ -303,7 +302,10 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* SECTION 1: VIEWING PATTERNS & HABITS */}
         {/* ============================================ */}
 
-        {/* ===== DIARY STATISTICS ===== */}
+        {/* ===== GENERAL DIARY STATISTICS ===== */}
+        {/* 
+          - how many movies user watched, liked, rated, has in watchlist?
+        */}
         {diaryStats && (
           <div>
             <div className="mb-6 py-8">
@@ -333,21 +335,50 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
           </div>
         )}
 
-        {/* ===== MONTHLY RADAR CHART (BY YEAR) ===== */}
-        {yearMonthlyData.length > 0 && (
-          <div>
-            <div className="mb-6 py-8">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                Monthly Patterns by Year
-              </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                How your watching habits vary by month across different years
-              </p>
-            </div>
-            <DiaryMonthlyRadarChart data={yearMonthlyData} size="compact" />
-          </div>
-        )}
 
+        {/* CHARTS BASED ON DIARY */}
+        {/* 
+          - title
+          - description - look at your diary records to discover what month you watch most movies, how many movies you watched over time,...
+          - message based on users ratio of watched for first time - re-watched movies (various conclusions based on value - you are discovery watcher, you rarelly discover new movies,...)
+        */}
+        {/* PRIMARY CHART: Area Chart of Watched Movies / Monthly */}
+        {/* 
+          - possible variantions and manipulations: all records, last 12 months / monhtly, average of 2 or 3 months
+        */}
+
+        {/* 
+          SECONDARY CHARTs: 
+          - Compare years to each other
+          - Compare months throught years to each other - bar chart (like in januar in 2023 has 20 movies, in 2024 has 31, in 2025 has 27 - making average)
+          - Compare years to each other - area chart with multiple years 
+        */}
+
+        
+        {/* CHARTS BASED ON RATING */}
+        {/* 
+          - give ration of how many movies are rated in comparison to watched - how well we can see users personality
+          - looking at average rating and other patterns - not only basic average - look at most used rating value, what rating value is rare or never used
+        */}
+        {/* 
+          rated vs not rated
+          average rating per decade (note how precise it is (number of rated movies, number of rated movies compare to watched in particular decade - these are two different numbers expressing something different))
+        */}
+
+
+        {/* CHARTS BASED ON WATCHLIST */}
+        {/* 
+          - how many movies in watchlist - conclusions (you are wonderrer and collector, you are...)
+          - watched vs watchlist (ratio)
+          - display on cbar chart various decades 
+        */}
+
+
+        {/* CHARTS BASED ON FAMOUS WATCHLISTS */}
+        {/* 
+          - bar chart that can be changes btw stacked + legend / multiple charts
+          - maybe will be composed of list of various watchlist and user can pick and choose which he is interested in
+        */}
 
         
       </div>
