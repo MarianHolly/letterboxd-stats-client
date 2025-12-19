@@ -68,7 +68,7 @@ const ERA_BOUNDARIES = {
     min: 2000,
     max: 2099,
     label: "Contemporary",
-    description: "2000–"
+    description: "2000–Now"
   },
 } as const;
 
@@ -216,10 +216,10 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
       <CardHeader className="flex flex-col items-stretch border-b border-slate-200 dark:border-white/10 !p-0 md:flex-row">
         {/* Title Section */}
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 md:!py-0">
-          <CardTitle className="text-black dark:text-white">
+          <CardTitle className="text-black dark:text-white text-center md:text-start">
             Release Year Analysis
           </CardTitle>
-          <CardDescription className="text-slate-600 dark:text-white/60">
+          <CardDescription className="text-slate-600 dark:text-white/60 hidden md:block md:text-xs">
             Movies watched by release year with era categorization
           </CardDescription>
         </div>
@@ -231,7 +231,7 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
             { key: "golden" as EraFilter, label: "Golden", count: eraTotals.golden, description: ERA_BOUNDARIES.GOLDEN.description },
             { key: "modern" as EraFilter, label: "Modern", count: eraTotals.modern, description: ERA_BOUNDARIES.MODERN.description },
             { key: "contemporary" as EraFilter, label: "Contemporary", count: eraTotals.contemporary, description: ERA_BOUNDARIES.CONTEMPORARY.description },
-            { key: "all" as EraFilter, label: "All Years", count: eraTotals.all, description: "Complete range" },
+            { key: "all" as EraFilter, label: "All Years", count: eraTotals.all, description: "Complete" },
           ].map(({ key, label, count, description }) => (
             <button
               key={key}
@@ -239,19 +239,19 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
               aria-selected={eraFilter === key}
               data-active={eraFilter === key}
               onClick={() => setEraFilter(key)}
-              className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-slate-200 dark:border-white/10 px-6 py-4 text-left md:border-t-0 md:border-l md:px-8 md:py-6
+              className="relative z-30 flex flex-1 flex-col justify-center items-center border-t border-slate-200 dark:border-white/10 px-4 py-2 text-left md:border-t-0 md:border-l md:px-6 md:py-4
                 data-[active=true]:bg-slate-50 dark:data-[active=true]:bg-white/5
                 hover:bg-slate-50 dark:hover:bg-white/[0.02]
                 transition-colors"
             >
-              <span className="text-xs text-slate-500 dark:text-white/50">
-                {description}
-              </span>
-              <span className="text-lg leading-none font-bold md:text-2xl text-black dark:text-white">
+              <span className="text-lg leading-none font-bold md:text-2xl text-black dark:text-white mb-1">
                 {count}
               </span>
               <span className="text-xs text-slate-600 dark:text-white/60">
                 {label}
+              </span>
+              <span className="text-xs text-slate-500 dark:text-white/50 w-full hidden md:block whitespace-nowrap">
+                {description}
               </span>
             </button>
           ))}
