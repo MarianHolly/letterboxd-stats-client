@@ -76,8 +76,11 @@ export function detectCSVType(headers: string[]): CSVType {
   const hasBase = EXPECTED_COLUMNS.watched.every((col) => normalized.includes(col))
 
   if (hasBase) {
-    // If it has 8 columns and includes diary columns, it's diary
-    if (normalized.length === 8) {
+    // If it has 8 columns and includes ALL diary columns, it's diary
+    if (
+      normalized.length === 8 &&
+      EXPECTED_COLUMNS.diary.every((col) => normalized.includes(col))
+    ) {
       return 'diary'
     }
     // If it has 5 columns and includes rating, it's ratings

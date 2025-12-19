@@ -135,6 +135,8 @@ export function computeReleaseYearInsight(
 
 /**
  * Transform movies to monthly viewing data
+ * IMPORTANT: Should only be called with movies that have watchedDate set (from diary.csv)
+ * Use: movies.filter(m => m.watchedDate !== undefined && m.watchedDate !== null)
  * @returns Array of { month: "Jan 2024", count }
  */
 export function transformMonthlyData(
@@ -143,14 +145,28 @@ export function transformMonthlyData(
   const monthMap: Record<string, number> = {}
 
   movies.forEach((movie) => {
+    // Use watchedDate first (from diary), fallback to dateMarkedWatched (from watched.csv)
     const date = movie.watchedDate || movie.dateMarkedWatched
+
     if (date) {
-      const dateObj = typeof date === 'string' ? new Date(date) : date
-      const monthKey = dateObj.toLocaleDateString('en-US', {
-        month: 'short',
-        year: 'numeric',
-      })
-      monthMap[monthKey] = (monthMap[monthKey] || 0) + 1
+      try {
+        // Handle both Date objects and date strings
+        const dateObj = typeof date === 'string' ? new Date(date) : date
+
+        // Validate the date is valid
+        if (isNaN(dateObj.getTime())) {
+          return // Skip invalid dates
+        }
+
+        const monthKey = dateObj.toLocaleDateString('en-US', {
+          month: 'short',
+          year: 'numeric',
+        })
+        monthMap[monthKey] = (monthMap[monthKey] || 0) + 1
+      } catch (error) {
+        // Skip movies with date parsing errors
+        console.warn('Error parsing date for movie:', movie.title, error)
+      }
     }
   })
 
@@ -161,6 +177,7 @@ export function transformMonthlyData(
 
 /**
  * Transform movies to year-monthly breakdown
+ * IMPORTANT: Should only be called with movies that have watchedDate set (from diary.csv)
  * @returns Array of { year, data: [{ month, count }] }
  */
 export function transformYearMonthlyData(
@@ -169,14 +186,26 @@ export function transformYearMonthlyData(
   const yearMap: Record<number, Record<string, number>> = {}
 
   movies.forEach((movie) => {
-    const date = movie.watchedDate || movie.dateMarkedWatched
+    // For diary section: ONLY use watchedDate (from diary.csv)
+    const date = movie.watchedDate
     if (date) {
-      const dateObj = typeof date === 'string' ? new Date(date) : date
-      const year = dateObj.getFullYear()
-      const month = dateObj.toLocaleDateString('en-US', { month: 'short' })
+      try {
+        const dateObj = typeof date === 'string' ? new Date(date) : date
 
-      if (!yearMap[year]) yearMap[year] = {}
-      yearMap[year][month] = (yearMap[year][month] || 0) + 1
+        // Validate the date is valid
+        if (isNaN(dateObj.getTime())) {
+          return // Skip invalid dates
+        }
+
+        const year = dateObj.getFullYear()
+        const month = dateObj.toLocaleDateString('en-US', { month: 'short' })
+
+        if (!yearMap[year]) yearMap[year] = {}
+        yearMap[year][month] = (yearMap[year][month] || 0) + 1
+      } catch (error) {
+        // Skip movies with date parsing errors
+        console.warn('Error parsing date for movie:', movie.title, error)
+      }
     }
   })
 
@@ -265,14 +294,26 @@ export function transformLikesByMonth(
   const monthMap: Record<string, number> = {}
 
   likedMovies.forEach((movie) => {
-    const date = movie.watchedDate || movie.dateMarkedWatched
+    // For diary section: ONLY use watchedDate (from diary.csv)
+    const date = movie.watchedDate
     if (date) {
-      const dateObj = typeof date === 'string' ? new Date(date) : date
-      const monthKey = dateObj.toLocaleDateString('en-US', {
-        month: 'short',
-        year: 'numeric',
-      })
-      monthMap[monthKey] = (monthMap[monthKey] || 0) + 1
+      try {
+        const dateObj = typeof date === 'string' ? new Date(date) : date
+
+        // Validate the date is valid
+        if (isNaN(dateObj.getTime())) {
+          return // Skip invalid dates
+        }
+
+        const monthKey = dateObj.toLocaleDateString('en-US', {
+          month: 'short',
+          year: 'numeric',
+        })
+        monthMap[monthKey] = (monthMap[monthKey] || 0) + 1
+      } catch (error) {
+        // Skip movies with date parsing errors
+        console.warn('Error parsing date for movie:', movie.title, error)
+      }
     }
   })
 
@@ -291,22 +332,34 @@ export function transformLikesVsUnlikesOverTime(
   const monthMap: Record<string, { liked: number; unliked: number }> = {}
 
   movies.forEach((movie) => {
-    const date = movie.watchedDate || movie.dateMarkedWatched
+    // For diary section: ONLY use watchedDate (from diary.csv)
+    const date = movie.watchedDate
     if (date) {
-      const dateObj = typeof date === 'string' ? new Date(date) : date
-      const monthKey = dateObj.toLocaleDateString('en-US', {
-        month: 'short',
-        year: 'numeric',
-      })
+      try {
+        const dateObj = typeof date === 'string' ? new Date(date) : date
 
-      if (!monthMap[monthKey]) {
-        monthMap[monthKey] = { liked: 0, unliked: 0 }
-      }
+        // Validate the date is valid
+        if (isNaN(dateObj.getTime())) {
+          return // Skip invalid dates
+        }
 
-      if (movie.liked === true) {
-        monthMap[monthKey].liked++
-      } else {
-        monthMap[monthKey].unliked++
+        const monthKey = dateObj.toLocaleDateString('en-US', {
+          month: 'short',
+          year: 'numeric',
+        })
+
+        if (!monthMap[monthKey]) {
+          monthMap[monthKey] = { liked: 0, unliked: 0 }
+        }
+
+        if (movie.liked === true) {
+          monthMap[monthKey].liked++
+        } else {
+          monthMap[monthKey].unliked++
+        }
+      } catch (error) {
+        // Skip movies with date parsing errors
+        console.warn('Error parsing date for movie:', movie.title, error)
       }
     }
   })
