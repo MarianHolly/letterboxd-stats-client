@@ -1,6 +1,6 @@
 // Export all chart components
 export { DiaryAreaChart } from './diary-area-chart';
-export { DiaryMonthlyRadarChart } from './diary-monthly-radar-chart';
+export { DiaryMonthlyRadarChart } from './upcoming-feature-showcase';
 export { DiaryStatistics } from './diary-statistics';
 export { ReleasedYearAnalysis } from './release-year-analysis';
 // export { GenreDistribution } from './genre-distribution';

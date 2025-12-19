@@ -12,7 +12,7 @@ import { DiaryAreaChart } from '@/components/charts/diary-area-chart'
 // import { RatingDistribution } from '@/components/charts/rating-distribution'
 import { ReleasedYearAnalysis } from '@/components/charts/release-year-analysis'
 // import { ViewingOverTime } from '@/components/charts/viewing-over-time'
-import { DiaryMonthlyRadarChart } from '@/components/charts/diary-monthly-radar-chart'
+import { DiaryMonthlyRadarChart } from '@/components/charts/upcoming-feature-showcase'
 import { DiaryStatistics } from '@/components/charts/diary-statistics'
 import { computeMonthlyRadarData, computeTagDistribution } from '@/lib/analytics-engine'
 

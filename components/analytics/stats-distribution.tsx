@@ -3,7 +3,7 @@
 import type { AnalyticsOverview, Movie } from '@/lib/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { DiaryMonthlyRadarChart } from '@/components/charts/diary-monthly-radar-chart'
+import { DiaryMonthlyRadarChart } from '@/components/charts/upcoming-feature-showcase'
 import { computeMonthlyRadarData } from '@/lib/analytics-engine'
 import {
   BarChart,
