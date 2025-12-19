@@ -41,19 +41,19 @@ interface HeaderProps {
  */
 SectionLayout.Header = function Header({ title, description, insight }: HeaderProps) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 text-center">
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
           {title}
         </h2>
-        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+        <p className="hidden md:block text-sm text-slate-600 dark:text-slate-400 mt-1">
           {description}
         </p>
       </div>
 
       {insight && (
-        <div className="pt-2 text-sm text-slate-600 dark:text-slate-400 italic border-l-2 border-slate-300 dark:border-white/10 pl-3">
-          💡 {insight}
+        <div className="pt-2 text-sm text-slate-600 dark:text-slate-400 italic">
+          {insight}
         </div>
       )}
     </div>
