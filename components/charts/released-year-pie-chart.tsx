@@ -105,13 +105,13 @@ export function ReleasedYearPieChart({ data }: ReleasedYearPieChartProps) {
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardContent className="flex-col gap-4 text-sm">
-        <div className="space-y-3">
+      <CardContent className="flex flex-row gap-3 text-sm pt-4 px-6 pb-4">
+        <div className="flex gap-4 w-full flex-wrap justify-center md:justify-start">
           {data.map((item) => {
             const percentage = ((item.count / totalMovies) * 100).toFixed(1);
             const eraDesc = ERA_DESCRIPTIONS[item.era] || { years: "", description: "" };
             return (
-              <div key={item.era} className="flex flex-col gap-1.5">
+              <div key={item.era} className="flex flex-col gap-1.5 flex-1 min-w-[150px]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div
