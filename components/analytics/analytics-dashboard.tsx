@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useAnalyticsStore } from "@/hooks/use-analytics-store";
+import type { Movie } from "@/lib/types";
 
 import { StatsOverview } from "./stats-overview";
 import { AnalyticsEmptyState } from "./analytics-empty-state";
 import { AnalyticsSkeleton } from "./analytics-skeleton";
+import { SectionLayout } from "./SectionLayout";
 
 // Import chart components
 import { DiaryAreaChart } from "@/components/charts/diary-area-chart";
@@ -14,179 +16,41 @@ import { ReleasedYearAnalysis } from "@/components/charts/release-year-analysis"
 import { ReleasedYearBarHorizontal } from "@/components/charts/released-year-bar-horizont";
 import { ReleasedYearPieChart } from "@/components/charts/released-year-pie-chart";
 
-// ============================================================================
-// DATA TRANSFORMATION FUNCTIONS
-// ============================================================================
+// Import new secondary chart components
+import { LikedVsUnlikedDonut } from "@/components/charts/secondary/LikedVsUnlikedDonut";
+import { LikesByDecadeBar } from "@/components/charts/secondary/LikesByDecadeBar";
+import { LikesByMonthArea } from "@/components/charts/secondary/LikesByMonthArea";
+import { LikesVsUnlikesOverTimeArea } from "@/components/charts/secondary/LikesVsUnlikesOverTimeArea";
+import { RatingDistributionBar } from "@/components/charts/secondary/RatingDistributionBar";
+import { RatingByDecadeBar } from "@/components/charts/secondary/RatingByDecadeBar";
+import { RatingVsUnratedRatio } from "@/components/charts/secondary/RatingVsUnratedRatio";
+import { WatchedVsWatchlistBar } from "@/components/charts/secondary/WatchedVsWatchlistBar";
+import { WatchlistByDecadeBar } from "@/components/charts/secondary/WatchlistByDecadeBar";
 
-function transformReleaseYearData(movies: any[]): Record<string, number> {
-  const data: Record<string, number> = {};
-  movies.forEach((movie) => {
-    const year = String(movie.year);
-    data[year] = (data[year] || 0) + 1;
-  });
-  return data;
-}
-
-function transformReleaseYearToDecades(movies: any[]): Array<{ decade: string; count: number }> {
-  const decadeMap: Record<string, number> = {};
-
-  movies.forEach((movie) => {
-    if (movie.year) {
-      const year = parseInt(String(movie.year));
-      const decadeStart = Math.floor(year / 10) * 10;
-      const decadeEnd = decadeStart + 9;
-      const decadeLabel = `${decadeStart}s`;
-
-      decadeMap[decadeLabel] = (decadeMap[decadeLabel] || 0) + 1;
-    }
-  });
-
-  // Sort decades in chronological order
-  return Object.entries(decadeMap)
-    .map(([decade, count]) => ({ decade, count }))
-    .sort((a, b) => {
-      const yearA = parseInt(a.decade);
-      const yearB = parseInt(b.decade);
-      return yearA - yearB;
-    });
-}
-
-function transformReleaseYearToEras(movies: any[]): Array<{ era: string; count: number; fill: string }> {
-  const ERA_BOUNDARIES = {
-    CLASSIC: { min: 1900, max: 1944, label: "Classic", color: "#06b6d4" },      // Cyan
-    GOLDEN: { min: 1945, max: 1969, label: "Golden", color: "#0891b2" },        // Dark Cyan
-    MODERN: { min: 1970, max: 1999, label: "Modern", color: "#6366f1" },        // Indigo
-    CONTEMPORARY: { min: 2000, max: 2099, label: "Contemporary", color: "#d946ef" }, // Magenta
-  };
-
-  const eraTotals = {
-    classic: 0,
-    golden: 0,
-    modern: 0,
-    contemporary: 0,
-  };
-
-  movies.forEach((movie) => {
-    if (movie.year) {
-      const year = parseInt(String(movie.year));
-      if (year >= ERA_BOUNDARIES.CLASSIC.min && year <= ERA_BOUNDARIES.CLASSIC.max) {
-        eraTotals.classic++;
-      } else if (year >= ERA_BOUNDARIES.GOLDEN.min && year <= ERA_BOUNDARIES.GOLDEN.max) {
-        eraTotals.golden++;
-      } else if (year >= ERA_BOUNDARIES.MODERN.min && year <= ERA_BOUNDARIES.MODERN.max) {
-        eraTotals.modern++;
-      } else if (year >= ERA_BOUNDARIES.CONTEMPORARY.min && year <= ERA_BOUNDARIES.CONTEMPORARY.max) {
-        eraTotals.contemporary++;
-      }
-    }
-  });
-
-  return [
-    { era: ERA_BOUNDARIES.CLASSIC.label, count: eraTotals.classic, fill: ERA_BOUNDARIES.CLASSIC.color },
-    { era: ERA_BOUNDARIES.GOLDEN.label, count: eraTotals.golden, fill: ERA_BOUNDARIES.GOLDEN.color },
-    { era: ERA_BOUNDARIES.MODERN.label, count: eraTotals.modern, fill: ERA_BOUNDARIES.MODERN.color },
-    { era: ERA_BOUNDARIES.CONTEMPORARY.label, count: eraTotals.contemporary, fill: ERA_BOUNDARIES.CONTEMPORARY.color },
-  ].filter(item => item.count > 0);
-}
-
-function transformMonthlyData(movies: any[]): Array<{ month: string; count: number }> {
-  const monthMap: Record<string, number> = {};
-  movies.forEach((movie) => {
-    const date = movie.watchedDate || movie.dateMarkedWatched;
-    if (date) {
-      const dateObj = typeof date === "string" ? new Date(date) : date;
-      const monthKey = dateObj.toLocaleDateString("en-US", { month: "short", year: "numeric" });
-      monthMap[monthKey] = (monthMap[monthKey] || 0) + 1;
-    }
-  });
-
-  return Object.entries(monthMap)
-    .map(([month, count]) => ({ month, count }))
-    .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
-}
-
-function transformGenreData(moviesLength: number): Record<string, number> {
-  const genreMap: Record<string, number> = {};
-  const genres = ["Drama", "Action", "Comedy", "Sci-Fi", "Horror", "Thriller", "Romance", "Animation", "Adventure", "Documentary"];
-  genres.forEach((genre) => {
-    genreMap[genre] = Math.floor(Math.random() * moviesLength * 0.15) + 5;
-  });
-  return genreMap;
-}
-
-function transformRatingData(movies: any[]): Record<number, number> {
-  const ratingMap: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-  movies.forEach((movie) => {
-    if (movie.rating !== undefined) {
-      const roundedRating = Math.ceil(movie.rating);
-      ratingMap[roundedRating] = (ratingMap[roundedRating] || 0) + 1;
-    }
-  });
-  return ratingMap;
-}
-
-function transformYearMonthlyData(movies: any[]): Array<{ year: number; data: Array<{ month: string; count: number }> }> {
-  const yearMap: Record<number, Record<string, number>> = {};
-
-  movies.forEach((movie) => {
-    const date = movie.watchedDate || movie.dateMarkedWatched;
-    if (date) {
-      const dateObj = typeof date === "string" ? new Date(date) : date;
-      const year = dateObj.getFullYear();
-      const month = dateObj.toLocaleDateString("en-US", { month: "short" });
-
-      if (!yearMap[year]) yearMap[year] = {};
-      yearMap[year][month] = (yearMap[year][month] || 0) + 1;
-    }
-  });
-
-  return Object.entries(yearMap)
-    .map(([year, monthData]) => ({
-      year: parseInt(year),
-      data: Object.entries(monthData).map(([month, count]) => ({ month, count })),
-    }))
-    .sort((a, b) => a.year - b.year);
-}
-
-function transformDailyData(movies: any[]): Record<string, number> {
-  const dayMap: Record<string, number> = {};
-  movies.forEach((movie) => {
-    const date = movie.watchedDate || movie.dateMarkedWatched;
-    if (date) {
-      const dateObj = typeof date === "string" ? new Date(date) : date;
-      const dayKey = dateObj.toISOString().split("T")[0];
-      dayMap[dayKey] = (dayMap[dayKey] || 0) + 1;
-    }
-  });
-  return dayMap;
-}
-
-function transformDiaryStats(
-  monthlyData: Array<{ month: string; count: number }>,
-  moviesLength: number
-): { totalEntries: number; averagePerMonth: number; busiestMonth: string; busiestMonthCount: number; quietestMonth: string; quietestMonthCount: number; dateRange: string } | undefined {
-  if (monthlyData.length === 0) return undefined;
-
-  const monthlyAverages = monthlyData.map((m) => m.count);
-  const averagePerMonth = monthlyAverages.length > 0
-    ? monthlyAverages.reduce((a, b) => a + b, 0) / monthlyAverages.length
-    : 0;
-
-  const busiestMonth = monthlyData.reduce((max, m) => m.count > max.count ? m : max, monthlyData[0]);
-  const quietestMonth = monthlyData.reduce((min, m) => m.count < min.count ? m : min, monthlyData[0]);
-
-  return {
-    totalEntries: moviesLength,
-    averagePerMonth: Math.round(averagePerMonth * 10) / 10,
-    busiestMonth: busiestMonth?.month || "Unknown",
-    busiestMonthCount: busiestMonth?.count || 0,
-    quietestMonth: quietestMonth?.month || "Unknown",
-    quietestMonthCount: quietestMonth?.count || 0,
-    dateRange: monthlyData.length > 0
-      ? `${monthlyData[0].month} - ${monthlyData[monthlyData.length - 1].month}`
-      : "No data",
-  };
-}
+// Import data transformers
+import {
+  transformReleaseYearData,
+  transformReleaseYearToDecades,
+  transformReleaseYearToEras,
+  transformMonthlyData,
+  transformYearMonthlyData,
+  transformDiaryStats,
+  computeReleaseYearInsight,
+  computeViewingInsight,
+  transformLikesByMonth,
+  transformLikesVsUnlikesOverTime,
+  computeLikeTimelineInsight,
+  transformLikedVsUnliked,
+  transformLikesByDecade,
+  computeLikeInsight,
+  transformRatingDistribution,
+  transformRatingByDecade,
+  transformRatedVsUnrated,
+  computeRatingInsight,
+  transformWatchedVsWatchlist,
+  transformWatchlistByDecade,
+  computeWatchlistInsight,
+} from "@/lib/analytics-transformers";
 
 // ============================================================================
 // ANALYTICS DASHBOARD COMPONENT
@@ -244,143 +108,282 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
 
   // Success state - prepare data for all charts
   const movies = dataset?.watched || [];
+  const watchlist = dataset?.watchlist || [];
 
-  // ========== DATA TRANSFORMATIONS FOR CHARTS ==========
+  // ========== DATA TRANSFORMATIONS FOR ALL SECTIONS ==========
 
-  // Transform all data using pure functions
+  // SECTION 1: Your Movie Taste
   const releaseYearData = transformReleaseYearData(movies);
   const decadeData = transformReleaseYearToDecades(movies);
   const eraData = transformReleaseYearToEras(movies);
-  const monthlyData = transformMonthlyData(movies);
-  const yearMonthlyData = transformYearMonthlyData(movies);
-  const diaryStats = transformDiaryStats(monthlyData, movies.length);
+  const releaseYearInsight = computeReleaseYearInsight(movies, eraData);
+
+  // SECTION 2A: Watching Timeline
+  const hasDiaryData = dataset?.uploadedFiles?.includes("diary") ?? false;
+  const monthlyData = hasDiaryData ? transformMonthlyData(movies) : [];
+  const yearMonthlyData = hasDiaryData ? transformYearMonthlyData(movies) : [];
+  const diaryStats = hasDiaryData ? transformDiaryStats(monthlyData, movies.length) : undefined;
+  const viewingInsight = analytics ? computeViewingInsight(analytics, monthlyData) : "";
+
+  // SECTION 2B: Like Timeline
+  const hasLikesData = movies.some((m: Movie) => m.liked === true) && hasDiaryData;
+  const likesByMonth = hasLikesData ? transformLikesByMonth(movies) : [];
+  const likesVsUnlikesOverTime = hasLikesData ? transformLikesVsUnlikesOverTime(movies) : [];
+  const likeTimelineInsight = hasLikesData ? computeLikeTimelineInsight(likesByMonth) : "";
+
+  // SECTION 3A: Likes Analysis
+  const hasMoviesLiked = movies.some((m: Movie) => m.liked === true);
+  const likedVsUnliked = hasMoviesLiked ? transformLikedVsUnliked(movies) : null;
+  const likesByDecade = hasMoviesLiked ? transformLikesByDecade(movies) : [];
+  const likeInsight = hasMoviesLiked ? computeLikeInsight(analytics?.moviesLiked || 0, movies.length) : "";
+
+  // SECTION 3B: Rating Patterns
+  const hasRatings = analytics && analytics.moviesRated > 0;
+  const ratingDistribution = hasRatings
+    ? transformRatingDistribution(analytics?.ratingDistribution || {})
+    : [];
+  const ratingByDecade = hasRatings ? transformRatingByDecade(movies) : [];
+  const ratedVsUnrated = hasRatings ? transformRatedVsUnrated(movies) : null;
+  const ratingInsight = analytics ? computeRatingInsight(analytics) : "";
+
+  // SECTION 4: Watchlist
+  const hasWatchlist = watchlist && watchlist.length > 0;
+  const watchedVsWatchlist = hasWatchlist ? transformWatchedVsWatchlist(movies, watchlist) : null;
+  const watchlistByDecade = hasWatchlist ? transformWatchlistByDecade(movies, watchlist) : [];
+  const watchlistInsight = hasWatchlist ? computeWatchlistInsight(movies, watchlist) : "";
 
   return (
     <div className="flex-1 overflow-auto scroll-smooth">
       <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full">
-
-
-        {/* Stats Overview Section - Full Width */}
+        {/* ============================================================================ */}
+        {/* STATS OVERVIEW - KPI Cards */}
+        {/* ============================================================================ */}
         <StatsOverview
           analytics={analytics}
           profile={dataset?.userProfile}
           isLoading={!analytics}
         />
 
-        {/* ===== RELEASE YEAR ANALYSIS ===== */}
+        {/* ============================================================================ */}
+        {/* SECTION 1: YOUR MOVIE TASTE */}
+        {/* ============================================================================ */}
         {Object.keys(releaseYearData).length > 0 && (
-          <div>
-            <div className="mb-6 py-8">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                Release Year Analysis
-              </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Movies watched by release year with era categorization
-              </p>
-            </div>
-            <ReleasedYearAnalysis data={releaseYearData} />
+          <SectionLayout>
+            <SectionLayout.Header
+              title="Your Movie Taste"
+              description="Explore the release years and eras of movies you watch"
+              insight={releaseYearInsight}
+            />
+
+            <SectionLayout.Primary>
+              <ReleasedYearAnalysis data={releaseYearData} />
+            </SectionLayout.Primary>
+
             {(decadeData.length > 0 || eraData.length > 0) && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <SectionLayout.Secondary>
                 {decadeData.length > 0 && (
-                  <ReleasedYearBarHorizontal data={decadeData} />
+                  <div>
+                    <ReleasedYearBarHorizontal data={decadeData} />
+                  </div>
                 )}
                 {eraData.length > 0 && (
-                  <ReleasedYearPieChart data={eraData} />
+                  <div>
+                    <ReleasedYearPieChart data={eraData} />
+                  </div>
                 )}
-              </div>
+              </SectionLayout.Secondary>
             )}
-          </div>
+          </SectionLayout>
         )}
 
+        {/* ============================================================================ */}
+        {/* SECTION 2: YOUR VIEWING PROFILE */}
+        {/* ============================================================================ */}
+        {loading && hasDiaryData ? (
+          <SectionLayout.Loading />
+        ) : (
+          <SectionLayout>
+            <SectionLayout.Header
+              title="Your Viewing Profile"
+              description="Discover when and how often you watch movies"
+            />
 
+            {!hasDiaryData ? (
+              <SectionLayout.Empty
+                message="Upload your diary.csv to unlock viewing insights and discover your watching patterns over time."
+                actionText="Upload Diary"
+                onAction={onUploadClick}
+              />
+            ) : (
+              <>
+                {/* SUBSECTION 2A: Watching Timeline */}
+                <SectionLayout>
+                  <SectionLayout.Header
+                    title="Watching Timeline"
+                    description="Your viewing activity over time"
+                    insight={viewingInsight}
+                  />
 
+                  {diaryStats && (
+                    <>
+                      <DiaryStatistics stats={diaryStats} />
+                    </>
+                  )}
 
+                  {monthlyData.length > 0 && (
+                    <>
+                      <SectionLayout.Primary>
+                        <DiaryAreaChart data={monthlyData} />
+                      </SectionLayout.Primary>
 
+                      <SectionLayout.Secondary>
+                        <div className="col-span-1 md:col-span-2">
+                          {/* FUTURE SHOWCASE CHART */}
+                          {/* <DiaryMonthlyRadarChart data={yearMonthlyData} /> */}
+                          <div className="flex items-center justify-center h-[300px] rounded-lg border-2 border-dashed border-slate-300 dark:border-white/10 bg-slate-50/50 dark:bg-white/5">
+                            <div className="text-center space-y-2">
+                              <p className="text-sm font-medium text-slate-600 dark:text-white/70">
+                                📊 Coming Soon: Monthly Comparison by Year
+                              </p>
+                              <p className="text-xs text-slate-500 dark:text-white/50">
+                                Advanced radar chart for multi-year viewing patterns
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </SectionLayout.Secondary>
+                    </>
+                  )}
+                </SectionLayout>
 
+                {/* SUBSECTION 2B: Like Timeline */}
+                {hasLikesData && (
+                  <SectionLayout>
+                    <SectionLayout.Header
+                      title="Like Timeline"
+                      description="When did you start liking movies?"
+                      insight={likeTimelineInsight}
+                    />
 
-        {/* ============================================ */}
-        {/* SECTION 1: VIEWING PATTERNS & HABITS */}
-        {/* ============================================ */}
+                    {likesByMonth.length > 0 && (
+                      <>
+                        <SectionLayout.Primary>
+                          <LikesByMonthArea data={likesByMonth} />
+                        </SectionLayout.Primary>
 
-        {/* ===== GENERAL DIARY STATISTICS ===== */}
-        {/* 
-          - how many movies user watched, liked, rated, has in watchlist?
-        */}
-        {diaryStats && (
-          <div>
-            <div className="mb-6 py-8">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                Your Watching Habits
-              </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Key metrics about your viewing patterns
-              </p>
-            </div>
-            <DiaryStatistics stats={diaryStats} />
-          </div>
+                        <SectionLayout.Secondary>
+                          <div className="col-span-1 md:col-span-2">
+                            <LikesVsUnlikesOverTimeArea data={likesVsUnlikesOverTime} />
+                          </div>
+                        </SectionLayout.Secondary>
+                      </>
+                    )}
+                  </SectionLayout>
+                )}
+              </>
+            )}
+          </SectionLayout>
         )}
 
-        {/* ===== TIMELINE / AREA CHART ===== */}
-        {monthlyData.length > 0 && (
-          <div>
-            <div className="mb-6 py-8">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                Watching Timeline
-              </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Your viewing activity over time with smoothing options
-              </p>
-            </div>
-            <DiaryAreaChart data={monthlyData} />
-          </div>
+        {/* ============================================================================ */}
+        {/* SECTION 3: LIKES & RATINGS */}
+        {/* ============================================================================ */}
+        {(hasMoviesLiked || hasRatings) && (
+          <SectionLayout>
+            <SectionLayout.Header
+              title="Likes & Ratings"
+              description="How you feel about the movies you watch"
+            />
+
+            {/* SUBSECTION 3A: Likes Analysis */}
+            {hasMoviesLiked && (
+              <SectionLayout>
+                <SectionLayout.Header
+                  title="Your Likes"
+                  description="Which movies do you love?"
+                  insight={likeInsight}
+                />
+
+                {likedVsUnliked && (
+                  <>
+                    <SectionLayout.Primary>
+                      <LikedVsUnlikedDonut data={likedVsUnliked} />
+                    </SectionLayout.Primary>
+
+                    {likesByDecade.length > 0 && (
+                      <SectionLayout.Secondary>
+                        <div className="col-span-1">
+                          <LikesByDecadeBar data={likesByDecade} />
+                        </div>
+                      </SectionLayout.Secondary>
+                    )}
+                  </>
+                )}
+              </SectionLayout>
+            )}
+
+            {/* SUBSECTION 3B: Rating Patterns */}
+            {hasRatings && (
+              <SectionLayout>
+                <SectionLayout.Header
+                  title="Rating Patterns"
+                  description="How you rate the movies you watch"
+                  insight={ratingInsight}
+                />
+
+                {ratingDistribution.length > 0 && (
+                  <>
+                    <SectionLayout.Primary>
+                      <RatingDistributionBar data={ratingDistribution} />
+                    </SectionLayout.Primary>
+
+                    <SectionLayout.Secondary>
+                      {ratingByDecade.length > 0 && (
+                        <div className="col-span-1">
+                          <RatingByDecadeBar data={ratingByDecade} />
+                        </div>
+                      )}
+                      {ratedVsUnrated && (
+                        <div className="col-span-1">
+                          <RatingVsUnratedRatio data={ratedVsUnrated} />
+                        </div>
+                      )}
+                    </SectionLayout.Secondary>
+                  </>
+                )}
+              </SectionLayout>
+            )}
+          </SectionLayout>
         )}
 
+        {/* ============================================================================ */}
+        {/* SECTION 4: WATCHLIST INSIGHTS */}
+        {/* ============================================================================ */}
+        {hasWatchlist && (
+          <SectionLayout>
+            <SectionLayout.Header
+              title="Watchlist Insights"
+              description="Explore movies you want to watch"
+              insight={watchlistInsight}
+            />
 
-        {/* CHARTS BASED ON DIARY */}
-        {/* 
-          - title
-          - description - look at your diary records to discover what month you watch most movies, how many movies you watched over time,...
-          - message based on users ratio of watched for first time - re-watched movies (various conclusions based on value - you are discovery watcher, you rarelly discover new movies,...)
-        */}
-        {/* PRIMARY CHART: Area Chart of Watched Movies / Monthly */}
-        {/* 
-          - possible variantions and manipulations: all records, last 12 months / monhtly, average of 2 or 3 months
-        */}
+            {watchedVsWatchlist && (
+              <>
+                <SectionLayout.Primary>
+                  <WatchedVsWatchlistBar data={watchedVsWatchlist} />
+                </SectionLayout.Primary>
 
-        {/* 
-          SECONDARY CHARTs: 
-          - Compare years to each other
-          - Compare months throught years to each other - bar chart (like in januar in 2023 has 20 movies, in 2024 has 31, in 2025 has 27 - making average)
-          - Compare years to each other - area chart with multiple years 
-        */}
-
-        
-        {/* CHARTS BASED ON RATING */}
-        {/* 
-          - give ration of how many movies are rated in comparison to watched - how well we can see users personality
-          - looking at average rating and other patterns - not only basic average - look at most used rating value, what rating value is rare or never used
-        */}
-        {/* 
-          rated vs not rated
-          average rating per decade (note how precise it is (number of rated movies, number of rated movies compare to watched in particular decade - these are two different numbers expressing something different))
-        */}
-
-
-        {/* CHARTS BASED ON WATCHLIST */}
-        {/* 
-          - how many movies in watchlist - conclusions (you are wonderrer and collector, you are...)
-          - watched vs watchlist (ratio)
-          - display on cbar chart various decades 
-        */}
-
-
-        {/* CHARTS BASED ON FAMOUS WATCHLISTS */}
-        {/* 
-          - bar chart that can be changes btw stacked + legend / multiple charts
-          - maybe will be composed of list of various watchlist and user can pick and choose which he is interested in
-        */}
-
-        
+                {watchlistByDecade.length > 0 && (
+                  <SectionLayout.Secondary>
+                    <div className="col-span-1 md:col-span-2">
+                      <WatchlistByDecadeBar data={watchlistByDecade} />
+                    </div>
+                  </SectionLayout.Secondary>
+                )}
+              </>
+            )}
+          </SectionLayout>
+        )}
       </div>
     </div>
   );
