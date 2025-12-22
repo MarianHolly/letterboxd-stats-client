@@ -111,7 +111,7 @@ export function ReleasedYearPieChart({ data }: ReleasedYearPieChartProps) {
             const percentage = ((item.count / totalMovies) * 100).toFixed(1);
             const eraDesc = ERA_DESCRIPTIONS[item.era] || { years: "", description: "" };
             return (
-              <div key={item.era} className="flex flex-col gap-1.5 flex-1 min-w-[150px]">
+              <div key={item.era} className="flex flex-col gap-1 flex-1 min-w-[150px]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div
@@ -122,7 +122,7 @@ export function ReleasedYearPieChart({ data }: ReleasedYearPieChartProps) {
                   </div>
                   <span className="text-xs font-medium text-slate-600 dark:text-white/70">{percentage}%</span>
                 </div>
-                <div className="ml-5">
+                <div className="ml-5 flex flex-col gap-1">
                   <p className="text-xs text-slate-500 dark:text-white/50">{eraDesc.years}</p>
                   <p className="text-xs text-slate-600 dark:text-white/70">{eraDesc.description}</p>
                 </div>

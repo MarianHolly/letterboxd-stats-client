@@ -135,8 +135,8 @@ export function computeReleaseYearInsight(
 
 /**
  * Transform movies to monthly viewing data
- * IMPORTANT: Should only be called with movies that have watchedDate set (from diary.csv)
- * Use: movies.filter(m => m.watchedDate !== undefined && m.watchedDate !== null)
+ * ONLY includes movies with watchedDate (from diary.csv)
+ * Movies without diary dates are excluded to maintain data integrity
  * @returns Array of { month: "Jan 2024", count }
  */
 export function transformMonthlyData(
@@ -145,8 +145,8 @@ export function transformMonthlyData(
   const monthMap: Record<string, number> = {}
 
   movies.forEach((movie) => {
-    // Use watchedDate first (from diary), fallback to dateMarkedWatched (from watched.csv)
-    const date = movie.watchedDate || movie.dateMarkedWatched
+    // ONLY use watchedDate from diary.csv - no fallback to unreliable data
+    const date = movie.watchedDate
 
     if (date) {
       try {
@@ -612,4 +612,156 @@ export function computeWatchlistInsight(
   if (ratio < 0.5) collectorType = 'minimal'
 
   return `You're an ${collectorType} watcher — ${watchlistCount} movies to watch vs ${watchedCount} already watched`
+}
+
+// ============================================================================
+// SECTION 5: 2025 YEAR IN REVIEW
+// ============================================================================
+
+/**
+ * Filter movies watched in 2025
+ * @returns Array of movies with watchedDate in 2025
+ */
+export function filter2025Movies(movies: Movie[]): Movie[] {
+  return movies.filter((movie) => {
+    if (!movie.watchedDate) return false
+    try {
+      const dateObj = typeof movie.watchedDate === 'string' ? new Date(movie.watchedDate) : movie.watchedDate
+      return dateObj.getFullYear() === 2025
+    } catch {
+      return false
+    }
+  })
+}
+
+/**
+ * Transform 2025 movies to monthly viewing data
+ * @returns Array of { month: "Jan 2025", count }
+ */
+export function transform2025MonthlyData(
+  movies: Movie[]
+): Array<{ month: string; count: number }> {
+  const movies2025 = filter2025Movies(movies)
+  return transformMonthlyData(movies2025)
+}
+
+/**
+ * Compute 2025 specific statistics
+ */
+export function transform2025Stats(
+  movies2025: Movie[]
+): {
+  totalWatched: number
+  avgRating: number
+  totalRewatches: number
+  totalLiked: number
+  monthlyAverage: number
+  busiestMonth?: string
+  busiestMonthCount?: number
+} {
+  const monthlyData = transformMonthlyData(movies2025)
+  const ratedMovies = movies2025.filter((m) => m.rating !== undefined)
+  const rewatchedMovies = movies2025.filter((m) => m.rewatch === true)
+  const likedMovies = movies2025.filter((m) => m.liked === true)
+
+  const avgRating =
+    ratedMovies.length > 0
+      ? Math.round(
+          (ratedMovies.reduce((sum, m) => sum + (m.rating || 0), 0) / ratedMovies.length) * 10
+        ) / 10
+      : 0
+
+  const monthlyAverage =
+    monthlyData.length > 0
+      ? Math.round(
+          (monthlyData.reduce((sum, m) => sum + m.count, 0) / monthlyData.length) * 10
+        ) / 10
+      : 0
+
+  const busiestMonth = monthlyData.length > 0 ? monthlyData.reduce((max, m) => (m.count > max.count ? m : max)) : undefined
+
+  return {
+    totalWatched: movies2025.length,
+    avgRating,
+    totalRewatches: rewatchedMovies.length,
+    totalLiked: likedMovies.length,
+    monthlyAverage,
+    busiestMonth: busiestMonth?.month,
+    busiestMonthCount: busiestMonth?.count,
+  }
+}
+
+/**
+ * Transform rating distribution for 2025 movies
+ * @returns Array of { rating: "5.0", count }
+ */
+export function transform2025RatingDistribution(
+  movies2025: Movie[]
+): Array<{ rating: string; count: number }> {
+  const ratingDist: Record<string, number> = {}
+
+  movies2025.forEach((movie) => {
+    if (movie.rating !== undefined) {
+      const rating = String(movie.rating)
+      ratingDist[rating] = (ratingDist[rating] || 0) + 1
+    }
+  })
+
+  return Object.entries(ratingDist)
+    .map(([rating, count]) => ({
+      rating,
+      count,
+    }))
+    .sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating))
+}
+
+/**
+ * Transform rewatch data for 2025
+ * @returns { rewatched, firstWatch }
+ */
+export function transform2025RewatchData(
+  movies2025: Movie[]
+): { rewatched: number; firstWatch: number } {
+  const rewatched = movies2025.filter((m) => m.rewatch === true).length
+  const firstWatch = movies2025.length - rewatched
+
+  return {
+    rewatched,
+    firstWatch,
+  }
+}
+
+/**
+ * Transform likes and favorites for 2025
+ * @returns { liked, unliked }
+ */
+export function transform2025LikesAndFavorites(
+  movies2025: Movie[]
+): { liked: number; unliked: number } {
+  const liked = movies2025.filter((m) => m.liked === true).length
+  const unliked = movies2025.length - liked
+
+  return {
+    liked,
+    unliked,
+  }
+}
+
+/**
+ * Generate insight about 2025 viewing year
+ */
+export function compute2025Insight(
+  stats: ReturnType<typeof transform2025Stats>,
+  totalMovies: number
+): string {
+  if (stats.totalWatched === 0) return ''
+
+  const yearPercent = Math.round((stats.totalWatched / totalMovies) * 100)
+  const avgRatingText = stats.avgRating > 0 ? ` with an average rating of ${stats.avgRating}★` : ''
+  const busiestMonthText =
+    stats.busiestMonth && stats.busiestMonthCount
+      ? ` Your busiest month was ${stats.busiestMonth} with ${stats.busiestMonthCount} watches.`
+      : ''
+
+  return `In 2025, you watched ${stats.totalWatched} movies — that's ${yearPercent}% of your all-time collection${avgRatingText}.${busiestMonthText}`
 }

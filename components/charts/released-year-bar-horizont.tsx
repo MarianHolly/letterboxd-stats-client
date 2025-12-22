@@ -51,7 +51,7 @@ export function ReleasedYearBarHorizontal({ data }: ReleasedYearBarHorizontalPro
           <CardDescription>Movie count distribution across decades</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center h-[400px] text-slate-500 dark:text-white/50">
+          <div className="flex items-center justify-center h-[550px] text-slate-500 dark:text-white/50">
             No decade data available
           </div>
         </CardContent>
@@ -66,11 +66,12 @@ export function ReleasedYearBarHorizontal({ data }: ReleasedYearBarHorizontalPro
         <CardDescription>Movie count distribution across decades</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="aspect-auto h-[400px] w-full">
+        <ChartContainer config={chartConfig} className="aspect-auto h-[545px] w-full">
           <BarChart
             accessibilityLayer
             data={data}
             layout="vertical"
+            barSize={36}
             margin={{
               left: 60,
               right: 16,

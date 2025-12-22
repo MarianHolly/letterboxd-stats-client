@@ -26,6 +26,8 @@ import { RatingByDecadeBar } from "@/components/charts/secondary/RatingByDecadeB
 import { RatingVsUnratedRatio } from "@/components/charts/secondary/RatingVsUnratedRatio";
 import { WatchedVsWatchlistBar } from "@/components/charts/secondary/WatchedVsWatchlistBar";
 import { WatchlistByDecadeBar } from "@/components/charts/secondary/WatchlistByDecadeBar";
+import { YearRewatchesRatio } from "@/components/charts/secondary/YearRewatchesRatio";
+import { YearInReviewStats } from "@/components/charts/year-in-review-stats";
 
 // Import data transformers
 import {
@@ -50,6 +52,13 @@ import {
   transformWatchedVsWatchlist,
   transformWatchlistByDecade,
   computeWatchlistInsight,
+  filter2025Movies,
+  transform2025MonthlyData,
+  transform2025Stats,
+  transform2025RatingDistribution,
+  transform2025RewatchData,
+  transform2025LikesAndFavorites,
+  compute2025Insight,
 } from "@/lib/analytics-transformers";
 
 // ============================================================================
@@ -152,6 +161,16 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   const watchlistByDecade = hasWatchlist ? transformWatchlistByDecade(movies, watchlist) : [];
   const watchlistInsight = hasWatchlist ? computeWatchlistInsight(movies, watchlist) : "";
 
+  // SECTION 5: 2025 Year in Review
+  const movies2025 = filter2025Movies(movies);
+  const has2025Data = movies2025.length > 0;
+  const monthly2025Data = has2025Data ? transform2025MonthlyData(movies) : [];
+  const stats2025 = has2025Data ? transform2025Stats(movies2025) : null;
+  const rating2025Distribution = has2025Data ? transform2025RatingDistribution(movies2025) : [];
+  const rewatch2025Data = has2025Data ? transform2025RewatchData(movies2025) : null;
+  const likes2025Data = has2025Data ? transform2025LikesAndFavorites(movies2025) : null;
+  const insight2025 = stats2025 ? compute2025Insight(stats2025, movies.length) : "";
+
   return (
     <div className="flex-1 overflow-auto scroll-smooth">
       <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full">
@@ -236,22 +255,6 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                         <DiaryAreaChart data={monthlyData} />
                       </SectionLayout.Primary>
 
-                      <SectionLayout.Secondary>
-                        <div className="col-span-1 md:col-span-2">
-                          {/* FUTURE SHOWCASE CHART */}
-                          {/* <DiaryMonthlyRadarChart data={yearMonthlyData} /> */}
-                          <div className="flex items-center justify-center h-[300px] rounded-lg border-2 border-dashed border-slate-300 dark:border-white/10 bg-slate-50/50 dark:bg-white/5">
-                            <div className="text-center space-y-2">
-                              <p className="text-sm font-medium text-slate-600 dark:text-white/70">
-                                📊 Coming Soon: Monthly Comparison by Year
-                              </p>
-                              <p className="text-xs text-slate-500 dark:text-white/50">
-                                Advanced radar chart for multi-year viewing patterns
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </SectionLayout.Secondary>
                     </>
                   )}
                 </SectionLayout>
@@ -384,6 +387,53 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
             )}
           </SectionLayout>
         )}
+
+        {/* ============================================================================ */}
+        {/* SECTION 5: 2025 YEAR IN REVIEW */}
+        {/* ============================================================================ */}
+        <SectionLayout>
+          <SectionLayout.Header
+            title="2025 Year in Review"
+            description="Your cinematic journey through the year"
+            insight={insight2025}
+          />
+
+          {!has2025Data ? (
+            <SectionLayout.Empty
+              message="No movies watched in 2025 yet. Start logging your 2025 watches to see your year in review!"
+            />
+          ) : (
+            <>
+              {stats2025 && <YearInReviewStats stats={stats2025} />}
+
+              {monthly2025Data.length > 0 && (
+                <>
+                  <SectionLayout.Primary>
+                    <DiaryAreaChart data={monthly2025Data} />
+                  </SectionLayout.Primary>
+
+                  <SectionLayout.Secondary>
+                    {rating2025Distribution.length > 0 && (
+                      <div className="col-span-1">
+                        <RatingDistributionBar data={rating2025Distribution} />
+                      </div>
+                    )}
+                    {rewatch2025Data && (
+                      <div className="col-span-1">
+                        <YearRewatchesRatio data={rewatch2025Data} />
+                      </div>
+                    )}
+                    {likes2025Data && (
+                      <div className="col-span-1 md:col-span-2">
+                        <LikedVsUnlikedDonut data={likes2025Data} />
+                      </div>
+                    )}
+                  </SectionLayout.Secondary>
+                </>
+              )}
+            </>
+          )}
+        </SectionLayout>
       </div>
     </div>
   );
