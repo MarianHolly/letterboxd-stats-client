@@ -172,13 +172,13 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* INTRO SECTION - Shown when no profile data */}
         {/* ============================================================================ */}
         {!dataset?.userProfile && (
-          <SectionLayout>
+          <div className="space-y-6 pb-12 border-b-2 border-slate-200 dark:border-white/10">
             <SectionLayout.Header
               title="Welcome to Your Cinematic Identity"
               subtitle="Discover the data behind your film taste"
               description="Upload your Letterboxd data to begin exploring your viewing habits, preferences, and cinematic journey. This dashboard reveals patterns in what you watch, when you watch it, and how you feel about cinema."
             />
-          </SectionLayout>
+          </div>
         )}
 
         {/* ============================================================================ */}
@@ -200,6 +200,9 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
               subtitle="A chronological map of the film history you've explored"
               description="This section analyzes your viewing habits through the lens of release years. By mapping watched films across decades and major cinematic eras—from the Golden Age of Hollywood to contemporary cinema—it reveals which periods of film history most strongly shape your personal canon."
               insight={releaseYearInsight}
+              highlightWord="Cinematic"
+              highlightColor="#3b82f6"
+              showDescription={true}
             />
 
             <SectionLayout.Primary>
@@ -234,6 +237,9 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
               title="Viewing Rhythm"
               subtitle="The tempo of your movie-watching life, month by month"
               description="An examination of your engagement over time. This analysis highlights peak viewing periods and quieter months, visualizing how your watching frequency fluctuates across the calendar year and over longer historical spans."
+              highlightWord="Viewing"
+              highlightColor="#06b6d4"
+              showDescription={hasDiaryData}
             />
 
             {!hasDiaryData ? (
@@ -303,6 +309,9 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
               title="Taste, Preference, and Judgment"
               subtitle="How you evaluate cinema—and what it says about your taste"
               description="A breakdown of how you rate what you watch. Compare Liked versus Unliked films, explore your rating distribution, and identify patterns across decades. This section reveals whether your preferences gravitate toward critically acclaimed classics, specific eras, or more overlooked, under-the-radar films."
+              highlightWord="Preference"
+              highlightColor="#f59e0b"
+              showDescription={Boolean(hasMoviesLiked || hasRatings)}
             />
 
             {/* SUBSECTION 3A: Likes Analysis */}
@@ -389,6 +398,9 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
             title="Planned vs. Watched"
             subtitle="The gap between intention and experience"
             description="An analysis of your cinematic backlog. This section compares your watchlist against completed viewings and breaks down unwatched titles by decade, highlighting which eras and movements you are most eager to explore next."
+            highlightWord="Watched"
+            highlightColor="#8b5cf6"
+            showDescription={hasWatchlist}
           />
 
           {!hasWatchlist ? (
@@ -415,6 +427,9 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
             subtitle="A concise summary of volume, taste, and discovery"
             description="A high-level snapshot of the past twelve months. This review highlights total films watched, average ratings, rewatches, standout discoveries, and the decades that defined your year—capturing both breadth and depth of your viewing habits."
             insight={insight2025}
+            highlightWord="Year"
+            highlightColor="#ec4899"
+            showDescription={has2025Data}
           />
 
           {!has2025Data ? (
@@ -456,6 +471,25 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
               )}
             </>
           )}
+        </SectionLayout>
+
+        {/* ============================================================================ */}
+        {/* SECTION 6: THE CANON */}
+        {/* ============================================================================ */}
+        <SectionLayout>
+          <SectionLayout.Header
+            title="The Canon"
+            subtitle="Essential Cinema Collections"
+            description="Track your progress through the world's most iconic film lists and cinematic movements. See how much of the 'Top 250' or specific genres (like French New Wave or Noir) you've conquered compared to the global film community."
+            highlightWord="Canon"
+            highlightColor="#10b981"
+            showDescription={true}
+          />
+
+          <div className="text-center p-8 text-slate-600 dark:text-slate-400">
+            <p className="mb-4">Essential cinema collections coming soon</p>
+            <p className="text-sm">Track progress through iconic film lists and cinematic movements</p>
+          </div>
         </SectionLayout>
       </div>
     </div>

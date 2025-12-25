@@ -34,26 +34,64 @@ interface HeaderProps {
   subtitle?: string
   description: string
   insight?: string
+  highlightWord?: string
+  highlightColor?: string
+  showDescription?: boolean
 }
 
 /**
  * Section header with title, subtitle, description, and optional insight message
  * Subtitle appears between title and description
  * Insight appears as an italicized callout below description
+ *
+ * Usage with highlight:
+ * <Header
+ *   title="Your Cinematic Timeline"
+ *   highlightWord="Cinematic"
+ *   highlightColor="#4F46E5"
+ *   ...
+ * />
  */
-SectionLayout.Header = function Header({ title, subtitle, insight }: HeaderProps) {
+SectionLayout.Header = function Header({ title, subtitle, description, insight, highlightWord, highlightColor, showDescription = true }: HeaderProps) {
+  // Render title with highlighted word if provided
+  const renderTitle = () => {
+    if (!highlightWord || !highlightColor) {
+      return title
+    }
+
+    const parts = title.split(highlightWord)
+    return (
+      <>
+        {parts.map((part, index) => (
+          <span key={index}>
+            {part}
+            {index < parts.length - 1 && (
+              <span style={{ color: highlightColor }} className="font-bold">
+                {highlightWord}
+              </span>
+            )}
+          </span>
+        ))}
+      </>
+    )
+  }
+
   return (
     <div className="space-y-2 text-center">
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-          {title}
+          {renderTitle()}
         </h2>
         {subtitle && (
           <p className="hidden md:block text-lg font-medium text-slate-700 dark:text-slate-300 mt-2">
             {subtitle}
           </p>
         )}
-       
+        {showDescription && (
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 md:max-w-3xl mx-auto">
+            {description}
+          </p>
+        )}
       </div>
 
       {insight && (
