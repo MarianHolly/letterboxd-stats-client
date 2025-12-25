@@ -24,8 +24,6 @@ import { LikesVsUnlikesOverTimeArea } from "@/components/charts/secondary/LikesV
 import { RatingDistributionBar } from "@/components/charts/secondary/RatingDistributionBar";
 import { RatingByDecadeBar } from "@/components/charts/secondary/RatingByDecadeBar";
 import { RatingVsUnratedRatio } from "@/components/charts/secondary/RatingVsUnratedRatio";
-import { WatchedVsWatchlistBar } from "@/components/charts/secondary/WatchedVsWatchlistBar";
-import { WatchlistByDecadeBar } from "@/components/charts/secondary/WatchlistByDecadeBar";
 import { YearRewatchesRatio } from "@/components/charts/secondary/YearRewatchesRatio";
 import { YearInReviewStats } from "@/components/charts/year-in-review-stats";
 
@@ -49,8 +47,6 @@ import {
   transformRatingByDecade,
   transformRatedVsUnrated,
   computeRatingInsight,
-  transformWatchedVsWatchlist,
-  transformWatchlistByDecade,
   computeWatchlistInsight,
   filter2025Movies,
   transform2025MonthlyData,
@@ -98,7 +94,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   if (error) {
     return (
       <div className="flex-1 overflow-auto scroll-smooth">
-        <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full">
+        <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full min-w-0">
           <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6">
             <h3 className="font-semibold text-destructive mb-2">Error</h3>
             <p className="text-sm text-destructive/90">{error}</p>
@@ -157,8 +153,6 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
 
   // SECTION 4: Watchlist
   const hasWatchlist = watchlist && watchlist.length > 0;
-  const watchedVsWatchlist = hasWatchlist ? transformWatchedVsWatchlist(movies, watchlist) : null;
-  const watchlistByDecade = hasWatchlist ? transformWatchlistByDecade(movies, watchlist) : [];
   const watchlistInsight = hasWatchlist ? computeWatchlistInsight(movies, watchlist) : "";
 
   // SECTION 5: 2025 Year in Review
@@ -173,7 +167,20 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
 
   return (
     <div className="flex-1 overflow-auto scroll-smooth">
-      <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full">
+      <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full min-w-0">
+        {/* ============================================================================ */}
+        {/* INTRO SECTION - Shown when no profile data */}
+        {/* ============================================================================ */}
+        {!dataset?.userProfile && (
+          <SectionLayout>
+            <SectionLayout.Header
+              title="Welcome to Your Cinematic Identity"
+              subtitle="Discover the data behind your film taste"
+              description="Upload your Letterboxd data to begin exploring your viewing habits, preferences, and cinematic journey. This dashboard reveals patterns in what you watch, when you watch it, and how you feel about cinema."
+            />
+          </SectionLayout>
+        )}
+
         {/* ============================================================================ */}
         {/* STATS OVERVIEW - KPI Cards */}
         {/* ============================================================================ */}
@@ -184,13 +191,14 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         />
 
         {/* ============================================================================ */}
-        {/* SECTION 1: YOUR MOVIE TASTE */}
+        {/* SECTION 1: YOUR CINEMATIC TIMELINE */}
         {/* ============================================================================ */}
         {Object.keys(releaseYearData).length > 0 && (
           <SectionLayout>
             <SectionLayout.Header
-              title="Your Movie Taste"
-              description="Explore the release years and eras of movies you watch"
+              title="Your Cinematic Timeline"
+              subtitle="A chronological map of the film history you've explored"
+              description="This section analyzes your viewing habits through the lens of release years. By mapping watched films across decades and major cinematic eras—from the Golden Age of Hollywood to contemporary cinema—it reveals which periods of film history most strongly shape your personal canon."
               insight={releaseYearInsight}
             />
 
@@ -216,53 +224,51 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         )}
 
         {/* ============================================================================ */}
-        {/* SECTION 2: YOUR VIEWING PROFILE */}
+        {/* SECTION 2: VIEWING RHYTHM */}
         {/* ============================================================================ */}
         {loading && hasDiaryData ? (
           <SectionLayout.Loading />
         ) : (
           <SectionLayout>
             <SectionLayout.Header
-              title="Your Viewing Profile"
-              description="Discover when and how often you watch movies"
+              title="Viewing Rhythm"
+              subtitle="The tempo of your movie-watching life, month by month"
+              description="An examination of your engagement over time. This analysis highlights peak viewing periods and quieter months, visualizing how your watching frequency fluctuates across the calendar year and over longer historical spans."
             />
 
             {!hasDiaryData ? (
-              <SectionLayout.Empty
-                message="Upload your diary.csv to unlock viewing insights and discover your watching patterns over time."
+              <SectionLayout.EmptyWithSplit
+                subtitle="The tempo of your movie-watching life, month by month"
+                description="An examination of your engagement over time. This analysis highlights peak viewing periods and quieter months, visualizing how your watching frequency fluctuates across the calendar year and over longer historical spans."
+                requiredFiles={["diary.csv"]}
                 actionText="Upload Diary"
                 onAction={onUploadClick}
               />
             ) : (
               <>
                 {/* SUBSECTION 2A: Watching Timeline */}
-                <SectionLayout>
-                  <SectionLayout.Header
+                <SectionLayout.Subsection>
+                  <SectionLayout.SubHeader
                     title="Watching Timeline"
                     description="Your viewing activity over time"
                     insight={viewingInsight}
                   />
 
                   {diaryStats && (
-                    <>
-                      <DiaryStatistics stats={diaryStats} />
-                    </>
+                    <DiaryStatistics stats={diaryStats} />
                   )}
 
                   {monthlyData.length > 0 && (
-                    <>
-                      <SectionLayout.Primary>
-                        <DiaryAreaChart data={monthlyData} />
-                      </SectionLayout.Primary>
-
-                    </>
+                    <SectionLayout.Primary>
+                      <DiaryAreaChart data={monthlyData} />
+                    </SectionLayout.Primary>
                   )}
-                </SectionLayout>
+                </SectionLayout.Subsection>
 
                 {/* SUBSECTION 2B: Like Timeline */}
                 {hasLikesData && (
-                  <SectionLayout>
-                    <SectionLayout.Header
+                  <SectionLayout.Subsection>
+                    <SectionLayout.SubHeader
                       title="Like Timeline"
                       description="When did you start liking movies?"
                       insight={likeTimelineInsight}
@@ -281,7 +287,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                         </SectionLayout.Secondary>
                       </>
                     )}
-                  </SectionLayout>
+                  </SectionLayout.Subsection>
                 )}
               </>
             )}
@@ -289,25 +295,26 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         )}
 
         {/* ============================================================================ */}
-        {/* SECTION 3: LIKES & RATINGS */}
+        {/* SECTION 3: TASTE, PREFERENCE, AND JUDGMENT */}
         {/* ============================================================================ */}
         {(hasMoviesLiked || hasRatings) && (
           <SectionLayout>
             <SectionLayout.Header
-              title="Likes & Ratings"
-              description="How you feel about the movies you watch"
+              title="Taste, Preference, and Judgment"
+              subtitle="How you evaluate cinema—and what it says about your taste"
+              description="A breakdown of how you rate what you watch. Compare Liked versus Unliked films, explore your rating distribution, and identify patterns across decades. This section reveals whether your preferences gravitate toward critically acclaimed classics, specific eras, or more overlooked, under-the-radar films."
             />
 
             {/* SUBSECTION 3A: Likes Analysis */}
             {hasMoviesLiked && (
-              <SectionLayout>
-                <SectionLayout.Header
+              <SectionLayout.Subsection>
+                <SectionLayout.SubHeader
                   title="Your Likes"
                   description="Which movies do you love?"
                   insight={likeInsight}
                 />
 
-                {likedVsUnliked && (
+                {likedVsUnliked ? (
                   <>
                     <SectionLayout.Primary>
                       <LikedVsUnlikedDonut data={likedVsUnliked} />
@@ -321,20 +328,27 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                       </SectionLayout.Secondary>
                     )}
                   </>
+                ) : (
+                  <SectionLayout.EmptyWithSplit
+                    subtitle="Which movies do you love?"
+                    description="Discover how you express your feelings about films through likes and ratings. Analyze your rating patterns across genres and decades, and understand the relationship between your ratings and your most-loved movies."
+                    requiredFiles={["watched.csv with like markers"]}
+                    actionText="Mark Likes on Letterboxd"
+                  />
                 )}
-              </SectionLayout>
+              </SectionLayout.Subsection>
             )}
 
             {/* SUBSECTION 3B: Rating Patterns */}
             {hasRatings && (
-              <SectionLayout>
-                <SectionLayout.Header
+              <SectionLayout.Subsection>
+                <SectionLayout.SubHeader
                   title="Rating Patterns"
                   description="How you rate the movies you watch"
                   insight={ratingInsight}
                 />
 
-                {ratingDistribution.length > 0 && (
+                {ratingDistribution.length > 0 ? (
                   <>
                     <SectionLayout.Primary>
                       <RatingDistributionBar data={ratingDistribution} />
@@ -353,54 +367,63 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                       )}
                     </SectionLayout.Secondary>
                   </>
+                ) : (
+                  <SectionLayout.EmptyWithSplit
+                    subtitle="How you rate the movies you watch"
+                    description="A breakdown of how you rate what you watch. Compare Liked versus Unliked films, explore your rating distribution, and identify patterns across decades. This section reveals whether your preferences gravitate toward critically acclaimed classics, specific eras, or more overlooked, under-the-radar films."
+                    requiredFiles={["ratings.csv"]}
+                    actionText="Upload Ratings"
+                    onAction={onUploadClick}
+                  />
                 )}
-              </SectionLayout>
+              </SectionLayout.Subsection>
             )}
           </SectionLayout>
         )}
 
         {/* ============================================================================ */}
-        {/* SECTION 4: WATCHLIST INSIGHTS */}
-        {/* ============================================================================ */}
-        {hasWatchlist && (
-          <SectionLayout>
-            <SectionLayout.Header
-              title="Watchlist Insights"
-              description="Explore movies you want to watch"
-              insight={watchlistInsight}
-            />
-
-            {watchedVsWatchlist && (
-              <>
-                <SectionLayout.Primary>
-                  <WatchedVsWatchlistBar data={watchedVsWatchlist} />
-                </SectionLayout.Primary>
-
-                {watchlistByDecade.length > 0 && (
-                  <SectionLayout.Secondary>
-                    <div className="col-span-1 md:col-span-2">
-                      <WatchlistByDecadeBar data={watchlistByDecade} />
-                    </div>
-                  </SectionLayout.Secondary>
-                )}
-              </>
-            )}
-          </SectionLayout>
-        )}
-
-        {/* ============================================================================ */}
-        {/* SECTION 5: 2025 YEAR IN REVIEW */}
+        {/* SECTION 4: PLANNED VS. WATCHED */}
         {/* ============================================================================ */}
         <SectionLayout>
           <SectionLayout.Header
-            title="2025 Year in Review"
-            description="Your cinematic journey through the year"
+            title="Planned vs. Watched"
+            subtitle="The gap between intention and experience"
+            description="An analysis of your cinematic backlog. This section compares your watchlist against completed viewings and breaks down unwatched titles by decade, highlighting which eras and movements you are most eager to explore next."
+          />
+
+          {!hasWatchlist ? (
+            <SectionLayout.EmptyWithSplit
+              subtitle="The gap between intention and experience"
+              description="An analysis of your cinematic backlog. This section compares your watchlist against completed viewings and breaks down unwatched titles by decade, highlighting which eras and movements you are most eager to explore next."
+              requiredFiles={["watchlist.csv"]}
+              actionText="Upload Watchlist"
+              onAction={onUploadClick}
+            />
+          ) : (
+            <div className="text-center p-8 text-slate-600 dark:text-slate-400">
+              Watchlist content coming soon
+            </div>
+          )}
+        </SectionLayout>
+
+        {/* ============================================================================ */}
+        {/* SECTION 5: YOUR YEAR IN FILM */}
+        {/* ============================================================================ */}
+        <SectionLayout>
+          <SectionLayout.Header
+            title="Your Year in Film"
+            subtitle="A concise summary of volume, taste, and discovery"
+            description="A high-level snapshot of the past twelve months. This review highlights total films watched, average ratings, rewatches, standout discoveries, and the decades that defined your year—capturing both breadth and depth of your viewing habits."
             insight={insight2025}
           />
 
           {!has2025Data ? (
-            <SectionLayout.Empty
-              message="No movies watched in 2025 yet. Start logging your 2025 watches to see your year in review!"
+            <SectionLayout.EmptyWithSplit
+              subtitle="A concise summary of volume, taste, and discovery"
+              description="A high-level snapshot of the past twelve months. This review highlights total films watched, average ratings, rewatches, standout discoveries, and the decades that defined your year—capturing both breadth and depth of your viewing habits."
+              requiredFiles={["diary.csv (with 2025 entries)"]}
+              actionText="Upload Diary"
+              onAction={onUploadClick}
             />
           ) : (
             <>
