@@ -31,24 +31,29 @@ export function SectionLayout({ children }: SectionLayoutProps) {
 
 interface HeaderProps {
   title: string
+  subtitle?: string
   description: string
   insight?: string
 }
 
 /**
- * Section header with title, description, and optional insight message
+ * Section header with title, subtitle, description, and optional insight message
+ * Subtitle appears between title and description
  * Insight appears as an italicized callout below description
  */
-SectionLayout.Header = function Header({ title, description, insight }: HeaderProps) {
+SectionLayout.Header = function Header({ title, subtitle, insight }: HeaderProps) {
   return (
     <div className="space-y-2 text-center">
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
           {title}
         </h2>
-        <p className="hidden md:block text-sm text-slate-600 dark:text-slate-400 mt-1">
-          {description}
-        </p>
+        {subtitle && (
+          <p className="hidden md:block text-lg font-medium text-slate-700 dark:text-slate-300 mt-2">
+            {subtitle}
+          </p>
+        )}
+       
       </div>
 
       {insight && (
@@ -113,6 +118,76 @@ SectionLayout.Secondary = function Secondary({ children }: { children: React.Rea
 }
 
 // ============================================================================
+// SUBSECTION - Nested subsection without border
+// ============================================================================
+
+interface SubsectionProps {
+  children: React.ReactNode
+}
+
+/**
+ * Subsection wrapper for nested content within a section
+ * No border, uses spacing to separate from other subsections
+ * Use with SubHeader for consistent subsection styling
+ *
+ * Usage:
+ * <SectionLayout.Subsection>
+ *   <SectionLayout.SubHeader title="..." />
+ *   <SectionLayout.Primary>...</SectionLayout.Primary>
+ * </SectionLayout.Subsection>
+ */
+SectionLayout.Subsection = function Subsection({ children }: SubsectionProps) {
+  return (
+    <div className="space-y-6 pt-4">
+      {children}
+    </div>
+  )
+}
+
+// ============================================================================
+// SUB HEADER - Smaller header for subsections
+// ============================================================================
+
+interface SubHeaderProps {
+  title: string
+  subtitle?: string
+  description?: string
+  insight?: string
+}
+
+/**
+ * Subsection header with smaller styling
+ * Used within Subsection for visual hierarchy
+ */
+SectionLayout.SubHeader = function SubHeader({ title, subtitle, description, insight }: SubHeaderProps) {
+  return (
+    <div className="space-y-2">
+      <div>
+        <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+          {title}
+        </h3>
+        {subtitle && (
+          <p className="text-base font-medium text-slate-600 dark:text-slate-400 mt-1">
+            {subtitle}
+          </p>
+        )}
+        {description && (
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+            {description}
+          </p>
+        )}
+      </div>
+
+      {insight && (
+        <div className="text-sm text-slate-600 dark:text-slate-400 italic">
+          {insight}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================================
 // EMPTY STATE - No data available
 // ============================================================================
 
@@ -155,6 +230,117 @@ SectionLayout.Empty = function Empty({ message, actionText, onAction }: EmptySta
 }
 
 // ============================================================================
+// EMPTY WITH SPLIT - Split layout for optional sections with no data
+// ============================================================================
+
+interface EmptyWithSplitProps {
+  subtitle: string
+  description: string
+  requiredFiles: string[]
+  actionText?: string
+  onAction?: () => void
+}
+
+/**
+ * Empty state with split layout for optional sections
+ * Desktop: Title + subtitle on top, description (40%) on left, upload area (60%) on right
+ * Tablet: Hide subtitle, keep split positioning
+ * Mobile: Hide description, show subtitle, stack upload area below
+ *
+ * Usage:
+ * <SectionLayout.EmptyWithSplit
+ *   subtitle="Track your cinema journey"
+ *   description="Lorem ipsum..."
+ *   requiredFiles={["diary.csv"]}
+ *   actionText="Upload Diary"
+ *   onAction={() => {}}
+ * />
+ */
+SectionLayout.EmptyWithSplit = function EmptyWithSplit({
+  subtitle,
+  description,
+  requiredFiles,
+  actionText = "Upload Data",
+  onAction,
+}: EmptyWithSplitProps) {
+  return (
+    <div className="space-y-6">
+      {/* Subtitle - visible on mobile and tablet, hidden on desktop (shown in Header) */}
+      <div className="block md:hidden text-center">
+        <p className="text-lg font-medium text-slate-700 dark:text-slate-300">
+          {subtitle}
+        </p>
+      </div>
+
+      {/* Split layout: description (40%) + upload area (60%) */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+        {/* Description - Left side (40% on desktop, full width on mobile) */}
+        <div className="hidden lg:block lg:col-span-2">
+          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            {description}
+          </p>
+        </div>
+
+        {/* Upload Area - Right side (60% on desktop, full width on mobile) */}
+        <div className="lg:col-span-3">
+          <div className="flex flex-col items-center justify-center p-8 rounded-lg border-2 border-dashed border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/5 min-h-[280px]">
+            <div className="text-center space-y-4 w-full">
+              {/* Upload icon */}
+              <div className="flex justify-center">
+                <div className="p-3 rounded-lg bg-slate-100 dark:bg-white/10">
+                  <svg
+                    className="w-8 h-8 text-slate-600 dark:text-slate-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Upload text */}
+              <div>
+                <h4 className="font-semibold text-slate-900 dark:text-white mb-1">
+                  Upload Required Files
+                </h4>
+               
+              {/* Upload text with required files instruction */}
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Select and upload the following files:{' '}
+                {requiredFiles.map((file, index) => (
+                  <span key={index} className="font-bold text-slate-700 dark:text-slate-300">
+                    {file}
+                    {index < requiredFiles.length - 1 ? ', ' : ''}
+                  </span>
+                ))}
+              </p>
+              </div>
+
+
+              {/* Upload button */}
+              {actionText && onAction && (
+                <button
+                  onClick={onAction}
+                  className="mt-4 inline-flex items-center justify-center px-6 py-2 rounded text-sm font-semibold bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  {actionText}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ============================================================================
 // LOADING STATE - Skeleton loaders
 // ============================================================================
 
@@ -171,6 +357,7 @@ SectionLayout.Loading = function Loading() {
       {/* Header skeleton */}
       <div className="space-y-3">
         <div className="h-8 w-48 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
+        <div className="h-6 w-64 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
         <div className="space-y-2">
           <div className="h-4 w-full bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
           <div className="h-4 w-3/4 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
