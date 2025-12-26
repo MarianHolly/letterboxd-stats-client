@@ -28,6 +28,7 @@ import { RatingVsUnratedRatio } from "@/components/charts/secondary/RatingVsUnra
 import { YearRewatchesRatio } from "@/components/charts/secondary/YearRewatchesRatio";
 import { YearInReviewStats } from "@/components/charts/year-in-review-stats";
 import { YearlyComparisonChart } from "@/components/charts/yearly-comparison-chart";
+import { YearlyTotalsBarChart } from "@/components/charts/yearly-totals-bar-chart";
 
 // Import data transformers
 import {
@@ -58,6 +59,7 @@ import {
   transform2025LikesAndFavorites,
   compute2025Insight,
   transformYearlyComparison,
+  transformYearlyTotals,
 } from "@/lib/analytics-transformers";
 
 // ============================================================================
@@ -134,6 +136,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   const diaryStats = monthlyData.length > 0 ? transformDiaryStats(monthlyData, movies) : undefined;
   const viewingInsight = analytics && diaryStats ? computeViewingInsight(analytics, monthlyData, diaryStats) : "";
   const yearlyComparisonData = transformYearlyComparison(movies);
+  const yearlyTotalsData = transformYearlyTotals(movies);
 
   // SECTION 2B: Like Timeline
   const hasLikesData = movies.some((m: Movie) => m.liked === true) && hasDiaryData;
@@ -294,13 +297,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                 {/* SECONDARY SECTION: Yearly Comparison */}
                 <SectionLayout.Secondary>
                   <YearlyComparisonChart data={yearlyComparisonData} />
-                  <div className="h-[300px] rounded-lg border-2 border-dashed border-slate-200 dark:border-white/10 bg-slate-50/30 dark:bg-white/5 flex items-center justify-center">
-                    <div className="text-center">
-                      <p className="text-sm text-slate-500 dark:text-white/50">
-                        Future insight visualization
-                      </p>
-                    </div>
-                  </div>
+                  <YearlyTotalsBarChart data={yearlyTotalsData} />
                 </SectionLayout.Secondary>
 
                 {/* SUBSECTION 2B: Like Timeline */}

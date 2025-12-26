@@ -945,3 +945,62 @@ export function transformYearlyComparison(
     return row
   })
 }
+
+/**
+ * Transform movies to yearly totals with year-over-year change
+ * Calculates total movies watched per year and percentage change from previous year
+ *
+ * @param movies - Array of movies with watchedDate
+ * @returns Array of { year: string, total: number, change: number | null }
+ *          change is null for the first year (no previous year to compare)
+ */
+export function transformYearlyTotals(
+  movies: Movie[]
+): Array<{ year: string; total: number; change: number | null }> {
+  // Group movies by year
+  const yearTotals: Record<number, number> = {}
+
+  movies.forEach((movie) => {
+    const date = movie.watchedDate
+    if (!date) return
+
+    try {
+      const dateObj = typeof date === 'string' ? new Date(date) : date
+      if (isNaN(dateObj.getTime())) return
+
+      const year = dateObj.getFullYear()
+      yearTotals[year] = (yearTotals[year] || 0) + 1
+    } catch (error) {
+      console.warn('Error parsing date for movie:', movie.title, error)
+    }
+  })
+
+  // Convert to array and sort by year
+  const sortedYears = Object.keys(yearTotals)
+    .map(y => parseInt(y))
+    .sort((a, b) => a - b)
+
+  // Calculate year-over-year changes
+  const result = sortedYears.map((year, index) => {
+    const total = yearTotals[year]
+    let change: number | null = null
+
+    if (index > 0) {
+      const prevYear = sortedYears[index - 1]
+      const prevTotal = yearTotals[prevYear]
+
+      if (prevTotal > 0) {
+        change = Math.round(((total - prevTotal) / prevTotal) * 100)
+      }
+    }
+
+    return {
+      year: year.toString(),
+      total,
+      change,
+    }
+  })
+
+  // Limit to last 5 years (same as yearly comparison)
+  return result.slice(-5)
+}
