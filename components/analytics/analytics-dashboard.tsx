@@ -12,6 +12,7 @@ import { SectionLayout } from "./SectionLayout";
 // Import chart components
 import { DiaryAreaChart } from "@/components/charts/diary-area-chart";
 import { DiaryStatistics } from "@/components/charts/diary-statistics";
+import { ViewingRhythmInsights } from "@/components/charts/viewing-rhythm-insights";
 import { ReleasedYearAnalysis } from "@/components/charts/release-year-analysis";
 import { ReleasedYearBarHorizontal } from "@/components/charts/released-year-bar-horizont";
 import { ReleasedYearPieChart } from "@/components/charts/released-year-pie-chart";
@@ -125,10 +126,11 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
 
   // SECTION 2A: Watching Timeline
   const hasDiaryData = dataset?.uploadedFiles?.includes("diary") ?? false;
-  const monthlyData = hasDiaryData ? transformMonthlyData(movies) : [];
-  const yearMonthlyData = hasDiaryData ? transformYearMonthlyData(movies) : [];
-  const diaryStats = hasDiaryData ? transformDiaryStats(monthlyData, movies.length) : undefined;
-  const viewingInsight = analytics ? computeViewingInsight(analytics, monthlyData) : "";
+  // Always compute data (now has fallback logic to use dateMarkedWatched)
+  const monthlyData = transformMonthlyData(movies);
+  const yearMonthlyData = transformYearMonthlyData(movies);
+  const diaryStats = monthlyData.length > 0 ? transformDiaryStats(monthlyData, movies) : undefined;
+  const viewingInsight = analytics && diaryStats ? computeViewingInsight(analytics, monthlyData, diaryStats) : "";
 
   // SECTION 2B: Like Timeline
   const hasLikesData = movies.some((m: Movie) => m.liked === true) && hasDiaryData;
@@ -172,7 +174,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* INTRO SECTION - Shown when no profile data */}
         {/* ============================================================================ */}
         {!dataset?.userProfile && (
-          <div className="space-y-6 pb-12 border-b-2 border-slate-200 dark:border-white/10">
+          <div className="space-y-6 pb-36 border-b-2 border-slate-200 dark:border-white/10">
             <SectionLayout.Header
               title="Welcome to Your Cinematic Identity"
               subtitle="Discover the data behind your film taste"
@@ -229,7 +231,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* ============================================================================ */}
         {/* SECTION 2: VIEWING RHYTHM */}
         {/* ============================================================================ */}
-        {loading && hasDiaryData ? (
+        {loading && monthlyData.length > 0 ? (
           <SectionLayout.Loading />
         ) : (
           <SectionLayout>
@@ -239,37 +241,70 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
               description="An examination of your engagement over time. This analysis highlights peak viewing periods and quieter months, visualizing how your watching frequency fluctuates across the calendar year and over longer historical spans."
               highlightWord="Viewing"
               highlightColor="#06b6d4"
-              showDescription={hasDiaryData}
+              showDescription={monthlyData.length > 0}
             />
 
-            {!hasDiaryData ? (
+            {monthlyData.length === 0 ? (
               <SectionLayout.EmptyWithSplit
                 subtitle="The tempo of your movie-watching life, month by month"
                 description="An examination of your engagement over time. This analysis highlights peak viewing periods and quieter months, visualizing how your watching frequency fluctuates across the calendar year and over longer historical spans."
-                requiredFiles={["diary.csv"]}
-                actionText="Upload Diary"
+                requiredFiles={["diary.csv or watched.csv with dates"]}
+                actionText="Upload Data"
                 onAction={onUploadClick}
               />
             ) : (
               <>
-                {/* SUBSECTION 2A: Watching Timeline */}
-                <SectionLayout.Subsection>
-                  <SectionLayout.SubHeader
-                    title="Watching Timeline"
-                    description="Your viewing activity over time"
-                    insight={viewingInsight}
-                  />
+                {/* TOP SECTION: Insights & Summary */}
+                {viewingInsight ? (
+                  <ViewingRhythmInsights insight={viewingInsight} />
+                ) : (
+                  <div className="p-4 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-lg text-sm text-yellow-800 dark:text-yellow-200">
+                    Loading insights...
+                  </div>
+                )}
 
-                  {diaryStats && (
-                    <DiaryStatistics stats={diaryStats} />
-                  )}
+                {/* MAIN SECTION: Stats (left 1/4) + Chart (right 3/4) */}
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                  {/* Left: Statistics (1/4 width on desktop) */}
+                  <div className="lg:col-span-1">
+                    {diaryStats ? (
+                      <DiaryStatistics stats={diaryStats} />
+                    ) : (
+                      <div className="p-4 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-lg text-sm text-yellow-800 dark:text-yellow-200">
+                        Loading statistics...
+                      </div>
+                    )}
+                  </div>
 
-                  {monthlyData.length > 0 && (
-                    <SectionLayout.Primary>
+                  {/* Right: Chart (3/4 width on desktop) */}
+                  <div className="lg:col-span-3">
+                    {monthlyData.length > 0 ? (
                       <DiaryAreaChart data={monthlyData} />
-                    </SectionLayout.Primary>
-                  )}
-                </SectionLayout.Subsection>
+                    ) : (
+                      <div className="p-4 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-lg text-sm text-yellow-800 dark:text-yellow-200">
+                        No monthly data available - diary may not have date information
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* SECONDARY SECTION: Empty space for future content */}
+                <SectionLayout.Secondary>
+                  <div className="h-[300px] rounded-lg border-2 border-dashed border-slate-200 dark:border-white/10 bg-slate-50/30 dark:bg-white/5 flex items-center justify-center">
+                    <div className="text-center">
+                      <p className="text-sm text-slate-500 dark:text-white/50">
+                        Future insight visualization
+                      </p>
+                    </div>
+                  </div>
+                  <div className="h-[300px] rounded-lg border-2 border-dashed border-slate-200 dark:border-white/10 bg-slate-50/30 dark:bg-white/5 flex items-center justify-center">
+                    <div className="text-center">
+                      <p className="text-sm text-slate-500 dark:text-white/50">
+                        Future insight visualization
+                      </p>
+                    </div>
+                  </div>
+                </SectionLayout.Secondary>
 
                 {/* SUBSECTION 2B: Like Timeline */}
                 {hasLikesData && (

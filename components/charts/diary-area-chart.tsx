@@ -197,7 +197,7 @@ export function DiaryAreaChart({ data }: DiaryAreaChartProps) {
   }
 
   return (
-    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent mb-4">
+    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full flex flex-col">
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -275,10 +275,10 @@ export function DiaryAreaChart({ data }: DiaryAreaChartProps) {
         </div>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="flex-1 flex flex-col">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto h-[300px] w-full"
+          className="flex-1 w-full"
         >
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
