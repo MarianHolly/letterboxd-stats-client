@@ -144,10 +144,17 @@ export function transformMonthlyData(
 ): Array<{ month: string; count: number }> {
   const monthMap: Record<string, number> = {}
 
+  // Debug: Track rewatch statistics
+  let totalInitialWatches = 0
+  let totalRewatchesFromDates = 0
+  let totalRewatchesFromCount = 0
+
   movies.forEach((movie) => {
-    // ONLY use watchedDate from diary.csv - no fallback to unreliable data
+    // Only process movies with watchedDate from diary.csv
+    // Do NOT use dateMarkedWatched fallback - we only want diary entries
     const date = movie.watchedDate
 
+    // Count the initial watch
     if (date) {
       try {
         // Handle both Date objects and date strings
@@ -163,12 +170,58 @@ export function transformMonthlyData(
           year: 'numeric',
         })
         monthMap[monthKey] = (monthMap[monthKey] || 0) + 1
+        totalInitialWatches++
       } catch (error) {
         // Skip movies with date parsing errors
         console.warn('Error parsing date for movie:', movie.title, error)
       }
     }
+
+    // Count all rewatches
+    if (movie.rewatchDates && movie.rewatchDates.length > 0) {
+      // Case 1: We have explicit rewatch dates
+      movie.rewatchDates.forEach((rewatchDate) => {
+        try {
+          const dateObj = typeof rewatchDate === 'string' ? new Date(rewatchDate) : rewatchDate
+
+          if (isNaN(dateObj.getTime())) {
+            return // Skip invalid dates
+          }
+
+          const monthKey = dateObj.toLocaleDateString('en-US', {
+            month: 'short',
+            year: 'numeric',
+          })
+          monthMap[monthKey] = (monthMap[monthKey] || 0) + 1
+          totalRewatchesFromDates++
+        } catch (error) {
+          console.warn('Error parsing rewatch date for movie:', movie.title, error)
+        }
+      })
+    } else if (movie.rewatchCount && movie.rewatchCount > 0 && date) {
+      // Case 2: Single "Rewatch: Yes" entry - no explicit dates
+      // Add rewatchCount to the same month as watchedDate
+      try {
+        const dateObj = typeof date === 'string' ? new Date(date) : date
+        const monthKey = dateObj.toLocaleDateString('en-US', {
+          month: 'short',
+          year: 'numeric',
+        })
+        monthMap[monthKey] = (monthMap[monthKey] || 0) + movie.rewatchCount
+        totalRewatchesFromCount += movie.rewatchCount
+      } catch (error) {
+        console.warn('Error counting rewatches for movie:', movie.title, error)
+      }
+    }
   })
+
+  // Debug logging
+  console.log('=== transformMonthlyData Debug ===')
+  console.log('Total movies processed:', movies.length)
+  console.log('Initial watches counted:', totalInitialWatches)
+  console.log('Rewatches from rewatchDates:', totalRewatchesFromDates)
+  console.log('Rewatches from rewatchCount:', totalRewatchesFromCount)
+  console.log('Total viewing events:', totalInitialWatches + totalRewatchesFromDates + totalRewatchesFromCount)
 
   return Object.entries(monthMap)
     .map(([month, count]) => ({ month, count }))
@@ -186,7 +239,7 @@ export function transformYearMonthlyData(
   const yearMap: Record<number, Record<string, number>> = {}
 
   movies.forEach((movie) => {
-    // For diary section: ONLY use watchedDate (from diary.csv)
+    // Only process movies with watchedDate from diary.csv
     const date = movie.watchedDate
     if (date) {
       try {
@@ -222,9 +275,10 @@ export function transformYearMonthlyData(
  */
 export function transformDiaryStats(
   monthlyData: Array<{ month: string; count: number }>,
-  moviesLength: number
+  movies: Movie[]
 ): {
-  totalEntries: number
+  totalUniqueMovies: number
+  totalViewingEvents: number
   averagePerMonth: number
   busiestMonth: string
   busiestMonthCount: number
@@ -237,7 +291,7 @@ export function transformDiaryStats(
   const monthlyAverages = monthlyData.map((m) => m.count)
   const averagePerMonth =
     monthlyAverages.length > 0
-      ? monthlyAverages.reduce((a, b) => a + b, 0) / monthlyAverages.length
+      ? Math.floor(monthlyAverages.reduce((a, b) => a + b, 0) / monthlyAverages.length)
       : 0
 
   const busiestMonth = monthlyData.reduce((max, m) =>
@@ -247,9 +301,16 @@ export function transformDiaryStats(
     m.count < min.count ? m : min
   )
 
+  // monthlyData now includes ALL viewing events (initial watches + rewatches)
+  const totalViewingEvents = monthlyData.reduce((sum, m) => sum + m.count, 0)
+
+  // Calculate unique movies - only count movies that appear in diary.csv (have watchedDate)
+  const totalUniqueMovies = movies.filter(m => m.watchedDate).length
+
   return {
-    totalEntries: moviesLength,
-    averagePerMonth: Math.round(averagePerMonth * 10) / 10,
+    totalUniqueMovies,
+    totalViewingEvents,
+    averagePerMonth, // Already floored above
     busiestMonth: busiestMonth?.month || 'Unknown',
     busiestMonthCount: busiestMonth?.count || 0,
     quietestMonth: quietestMonth?.month || 'Unknown',
@@ -266,17 +327,48 @@ export function transformDiaryStats(
  */
 export function computeViewingInsight(
   analytics: AnalyticsOverview,
-  monthlyData: Array<{ month: string; count: number }>
+  monthlyData: Array<{ month: string; count: number }>,
+  diaryStats?: {
+    averagePerMonth: number
+    busiestMonth: string
+    busiestMonthCount: number
+    quietestMonth: string
+    quietestMonthCount: number
+  }
 ): string {
   if (!analytics.trackingSpan || monthlyData.length === 0) return ''
 
   const avgPerDay = analytics.totalMoviesWatched / Math.max(analytics.trackingSpan, 1)
+  const avgPerMonth = diaryStats?.averagePerMonth ?? 0
 
   let viewingType = 'casual'
-  if (avgPerDay > 0.5) viewingType = 'consistent'
-  if (avgPerDay > 1) viewingType = 'intensive'
+  let intensity = ''
+  if (avgPerDay > 0.5) {
+    viewingType = 'consistent'
+    intensity = 'a regular rhythm to your watching'
+  }
+  if (avgPerDay > 1) {
+    viewingType = 'intensive'
+    intensity = 'an passionate dedication to cinema'
+  }
+  if (avgPerDay <= 0.5) {
+    intensity = 'a relaxed approach to film consumption'
+  }
 
-  return `You're a ${viewingType} watcher — averaging ${avgPerDay.toFixed(1)} movies per day`
+  // Calculate variance in watching patterns
+  const counts = monthlyData.map(m => m.count)
+  const mean = counts.reduce((a, b) => a + b, 0) / counts.length
+  const variance = counts.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / counts.length
+  const isConsistent = variance < mean * 0.5
+
+  let pattern = ''
+  if (isConsistent) {
+    pattern = 'You maintain a steady watching schedule throughout the year.'
+  } else {
+    pattern = `Your watching varies significantly, peaking at ${diaryStats?.busiestMonthCount ?? 0} movies in ${diaryStats?.busiestMonth ?? 'your busiest month'}.`
+  }
+
+  return `You're a ${viewingType} watcher with ${intensity}. Averaging ${avgPerMonth.toFixed(1)} movies per month. ${pattern}`
 }
 
 // ============================================================================
