@@ -17,6 +17,14 @@ import { groupBy } from './utils'
 // ============================================================================
 
 /**
+ * Generate composite key for matching movies across different CSV files
+ * Uses title + year since diary.csv uses diary entry URIs while watched.csv uses film URIs
+ */
+function getMovieKey(movie: Movie): string {
+  return `${movie.title.toLowerCase().trim()}|${movie.year}`
+}
+
+/**
  * Deduplicates movies by Letterboxd URI, keeping complete entries
  * When duplicates exist, keeps the one with most data
  */
@@ -140,14 +148,14 @@ export function resolveConflicts(
 
 /**
  * Aggregate rewatches from multiple diary entries
- * Groups entries by URI and counts rewatches
+ * Groups entries by title+year (not URI, since diary uses entry URIs)
  *
  * Handles two cases:
  * 1. Multiple entries for same movie = each entry is a watch/rewatch
  * 2. Single entry with Rewatch: Yes = explicitly marked as rewatch, count = 1
  */
 function aggregateRewatches(diaryMovies: Movie[]): Movie[] {
-  const grouped = groupBy(diaryMovies, (movie) => movie.id)
+  const grouped = groupBy(diaryMovies, (movie) => getMovieKey(movie))
   const aggregated: Movie[] = []
 
   grouped.forEach((entries) => {
@@ -182,6 +190,11 @@ function aggregateRewatches(diaryMovies: Movie[]): Movie[] {
 
     aggregated.push(base)
   })
+
+  // Debug: Count rewatches after aggregation
+  const rewatchCount = aggregated.filter(m => m.rewatch && m.rewatchCount).length
+  const totalRewatchCount = aggregated.reduce((sum, m) => sum + (m.rewatchCount || 0), 0)
+  console.log(`[aggregateRewatches] ${aggregated.length} unique movies, ${rewatchCount} with rewatchCount, total rewatches: ${totalRewatchCount}`)
 
   return aggregated
 }
@@ -220,10 +233,10 @@ export function mergeMovieSources(
   // Merge films.csv first (only provides 'liked' flag, no conflicts)
   if (films && films.length > 0) {
     uploadedFiles.push('films')
-    const filmsMap = new Map(films.map((m) => [m.id, m]))
+    const filmsMap = new Map(films.map((m) => [getMovieKey(m), m]))
 
     merged = merged.map((movie) => {
-      const filmsEntry = filmsMap.get(movie.id)
+      const filmsEntry = filmsMap.get(getMovieKey(movie))
       if (filmsEntry && filmsEntry.liked) {
         return { ...movie, liked: true }
       }
@@ -237,15 +250,29 @@ export function mergeMovieSources(
 
     // First aggregate rewatches within diary
     const aggregated = aggregateRewatches(diary)
-    const diaryMap = new Map(aggregated.map((m) => [m.id, m]))
+    // Use title+year key instead of URI since diary uses diary entry URIs
+    const diaryMap = new Map(aggregated.map((m) => [getMovieKey(m), m]))
 
+    // Debug: Check diary entries before merge
+    console.log(`[mergeMovieSources] Diary has ${diaryMap.size} unique movies`)
+    console.log(`[mergeMovieSources] Watched has ${merged.length} movies`)
+
+    let matchedCount = 0
     merged = merged.map((movie) => {
-      const diaryEntry = diaryMap.get(movie.id)
+      const diaryEntry = diaryMap.get(getMovieKey(movie))
       if (diaryEntry) {
+        matchedCount++
         return resolveConflicts(movie, diaryEntry, 'diary')
       }
       return movie
     })
+
+    console.log(`[mergeMovieSources] Matched ${matchedCount} movies from diary to watched`)
+
+    // Debug: Count rewatches after merge
+    const rewatchCountAfterMerge = merged.filter(m => m.rewatch && m.rewatchCount).length
+    const totalRewatchCount = merged.reduce((sum, m) => sum + (m.rewatchCount || 0), 0)
+    console.log(`[mergeMovieSources] After merge: ${rewatchCountAfterMerge} with rewatchCount, total rewatches: ${totalRewatchCount}`)
 
     // Note: We do NOT add diary entries that aren't in watched.csv
     // All movies in diary.csv should already exist in watched.csv
@@ -255,10 +282,10 @@ export function mergeMovieSources(
   // Merge ratings.csv (highest priority for ratings)
   if (ratings && ratings.length > 0) {
     uploadedFiles.push('ratings')
-    const ratingsMap = new Map(ratings.map((m) => [m.id, m]))
+    const ratingsMap = new Map(ratings.map((m) => [getMovieKey(m), m]))
 
     merged = merged.map((movie) => {
-      const ratingEntry = ratingsMap.get(movie.id)
+      const ratingEntry = ratingsMap.get(getMovieKey(movie))
       if (ratingEntry) {
         return resolveConflicts(movie, ratingEntry, 'ratings')
       }

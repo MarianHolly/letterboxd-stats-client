@@ -266,17 +266,8 @@ function parseDiaryCSV(rows: DiaryCSVRow[]): ParseResult<Movie[]> {
       const tags = parseTags(row.Tags)
 
       // Watched date from diary is more accurate than Date column
-      const watchedDate = parseDate(row['Watched Date']) || parseDate(row.Date)
-
-      if (!watchedDate) {
-        errors.push({
-          row: index + 2,
-          field: 'Watched Date',
-          value: row['Watched Date'] || row.Date,
-          message: 'Could not parse watched date',
-        })
-        return
-      }
+      // Make this optional - don't skip the entire row if date is missing
+      const watchedDate = parseDate(row['Watched Date']) || parseDate(row.Date) || undefined
 
       const ratingDate = rating ? (parseDate(row.Date) || undefined) : undefined
 
@@ -285,7 +276,7 @@ function parseDiaryCSV(rows: DiaryCSVRow[]): ParseResult<Movie[]> {
         title: row.Name.trim(),
         year,
         watchedDate,
-        dateMarkedWatched: parseDate(row.Date) || watchedDate,
+        dateMarkedWatched: parseDate(row.Date) || watchedDate || new Date(),
         rating,
         ratingDate,
         rewatch,
@@ -305,6 +296,10 @@ function parseDiaryCSV(rows: DiaryCSVRow[]): ParseResult<Movie[]> {
       })
     }
   })
+
+  // Debug: Count rewatches after parsing
+  const rewatchCount = movies.filter(m => m.rewatch && m.rewatchCount).length
+  console.log(`[parseDiaryCSV] Parsed ${movies.length} entries, ${rewatchCount} marked as rewatches`)
 
   return {
     success: errors.length === 0,
