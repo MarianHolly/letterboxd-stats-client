@@ -857,3 +857,91 @@ export function compute2025Insight(
 
   return `In 2025, you watched ${stats.totalWatched} movies — that's ${yearPercent}% of your all-time collection${avgRatingText}.${busiestMonthText}`
 }
+
+// ============================================================================
+// YEARLY COMPARISON - Compare last 5 complete years
+// ============================================================================
+
+/**
+ * Transform movies to yearly comparison data
+ * Compares monthly movie counts across the last 5 complete years
+ * Omits incomplete years (e.g., if current year only has data up to April)
+ *
+ * @param movies - Array of movies with watchedDate
+ * @returns Array of { month: "Jan", 2021: 45, 2022: 67, ... } for up to 5 years
+ */
+export function transformYearlyComparison(
+  movies: Movie[]
+): Array<{ month: string; [year: string]: string | number }> {
+  const currentYear = new Date().getFullYear()
+  const currentMonth = new Date().getMonth() // 0-11
+
+  // Group movies by year and month
+  const yearMonthMap: Record<number, Record<string, number>> = {}
+
+  movies.forEach((movie) => {
+    const date = movie.watchedDate
+    if (!date) return
+
+    try {
+      const dateObj = typeof date === 'string' ? new Date(date) : date
+      if (isNaN(dateObj.getTime())) return
+
+      const year = dateObj.getFullYear()
+      const monthIndex = dateObj.getMonth()
+      const monthName = dateObj.toLocaleDateString('en-US', { month: 'short' })
+
+      if (!yearMonthMap[year]) yearMonthMap[year] = {}
+      yearMonthMap[year][monthName] = (yearMonthMap[year][monthName] || 0) + 1
+    } catch (error) {
+      console.warn('Error parsing date for movie:', movie.title, error)
+    }
+  })
+
+  // Filter out incomplete years
+  const completeYears = Object.keys(yearMonthMap)
+    .map(y => parseInt(y))
+    .filter(year => {
+      // If it's a past year, include it
+      if (year < currentYear) return true
+
+      // If it's the current year, only include if we have data for all months up to current month
+      if (year === currentYear) {
+        const yearData = yearMonthMap[year]
+        const monthsWithData = Object.keys(yearData).length
+
+        // Check if we have data for at least the current month
+        // If it's early in the year and we only have 1-2 months of data, we might want to include it
+        // But if we're in December and only have data up to April, exclude it
+        const expectedMonths = currentMonth + 1 // +1 because month is 0-indexed
+
+        // Only include current year if we have recent data (within last 3 months)
+        const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        const currentMonthName = allMonths[currentMonth]
+
+        // Check if we have data for current month or the previous month
+        return yearData[currentMonthName] !== undefined ||
+               (currentMonth > 0 && yearData[allMonths[currentMonth - 1]] !== undefined)
+      }
+
+      return false
+    })
+    .sort((a, b) => b - a) // Sort descending (most recent first)
+    .slice(0, 5) // Take only last 5 years
+
+  if (completeYears.length === 0) return []
+
+  // Create the output format: one row per month with columns for each year
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+  return months.map(month => {
+    const row: { month: string; [year: string]: string | number } = { month }
+
+    completeYears.forEach(year => {
+      const count = yearMonthMap[year]?.[month] || 0
+      row[year.toString()] = count
+    })
+
+    return row
+  })
+}
