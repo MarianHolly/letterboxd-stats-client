@@ -295,10 +295,14 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                 </div>
 
                 {/* SECONDARY SECTION: Yearly Comparison */}
-                <SectionLayout.Secondary>
-                  <YearlyComparisonChart data={yearlyComparisonData} />
-                  <YearlyTotalsBarChart data={yearlyTotalsData} />
-                </SectionLayout.Secondary>
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                  <div className="lg:col-span-3">
+                    <YearlyComparisonChart data={yearlyComparisonData} />
+                  </div>
+                  <div className="lg:col-span-2">
+                    <YearlyTotalsBarChart data={yearlyTotalsData} />
+                  </div>
+                </div>
 
                 {/* SUBSECTION 2B: Like Timeline */}
                 {hasLikesData && (

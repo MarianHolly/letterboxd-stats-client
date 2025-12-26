@@ -1,7 +1,6 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell } from "recharts";
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell, LabelList } from "recharts";
 import {
   Card,
   CardContent,
@@ -15,7 +14,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Badge } from "@/components/ui/badge";
 
 interface YearlyTotalsBarChartProps {
   data: Array<{ year: string; total: number; change: number | null }>;
@@ -56,7 +54,16 @@ export function YearlyTotalsBarChart({ data }: YearlyTotalsBarChartProps) {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={data}>
+          <BarChart
+            accessibilityLayer
+            data={data}
+            margin={{
+              top: 30,
+              right: 12,
+              bottom: 12,
+              left: 12,
+            }}
+          >
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
               dataKey="year"
@@ -76,26 +83,9 @@ export function YearlyTotalsBarChart({ data }: YearlyTotalsBarChartProps) {
                   const data = payload[0].payload;
                   return (
                     <div className="rounded-lg border bg-background p-2 shadow-sm">
-                      <div className="grid gap-2">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-sm font-medium">{data.year}</span>
-                        </div>
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-xs text-muted-foreground">Total:</span>
-                          <span className="text-sm font-bold">{data.total} movies</span>
-                        </div>
-                        {data.change !== null && (
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="text-xs text-muted-foreground">Change:</span>
-                            <span className={`text-sm font-medium ${
-                              data.change > 0 ? 'text-green-600 dark:text-green-400' :
-                              data.change < 0 ? 'text-red-600 dark:text-red-400' :
-                              'text-muted-foreground'
-                            }`}>
-                              {data.change > 0 ? '+' : ''}{data.change}%
-                            </span>
-                          </div>
-                        )}
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">{data.year}</span>
+                        <span className="text-sm font-bold">{data.total} movies</span>
                       </div>
                     </div>
                   );
@@ -110,52 +100,68 @@ export function YearlyTotalsBarChart({ data }: YearlyTotalsBarChartProps) {
                   fill="var(--color-total)"
                 />
               ))}
+              <LabelList
+                dataKey="change"
+                position="top"
+                content={({ x, y, width, value, index }) => {
+                  const item = data[index as number];
+                  if (!item || item.change === null) return null;
+
+                  const change = item.change;
+                  const isIncrease = change > 0;
+                  const isDecrease = change < 0;
+
+                  // Calculate center position
+                  const centerX = (x as number) + (width as number) / 2;
+                  const labelY = (y as number) - 18;
+
+                  return (
+                    <g>
+                      <rect
+                        x={centerX - 20}
+                        y={labelY - 10}
+                        width="40"
+                        height="16"
+                        rx="3"
+                        fill={
+                          isIncrease
+                            ? 'rgb(34 197 94 / 0.1)'
+                            : isDecrease
+                            ? 'rgb(239 68 68 / 0.1)'
+                            : 'rgb(148 163 184 / 0.1)'
+                        }
+                        stroke={
+                          isIncrease
+                            ? 'rgb(34 197 94 / 0.3)'
+                            : isDecrease
+                            ? 'rgb(239 68 68 / 0.3)'
+                            : 'rgb(148 163 184 / 0.3)'
+                        }
+                        strokeWidth="1"
+                      />
+                      <text
+                        x={centerX}
+                        y={labelY}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        className="fill-current text-[10px] font-semibold"
+                        style={{
+                          fill: isIncrease
+                            ? 'rgb(22 163 74)'
+                            : isDecrease
+                            ? 'rgb(220 38 38)'
+                            : 'rgb(100 116 139)',
+                        }}
+                      >
+                        {change > 0 ? '+' : ''}{change}%
+                      </text>
+                    </g>
+                  );
+                }}
+              />
             </Bar>
           </BarChart>
         </ChartContainer>
-
-        {/* Year-over-year change badges below the chart */}
-        <div className="mt-4 flex flex-wrap gap-2 justify-center">
-          {data.map((item) => {
-            if (item.change === null) {
-              return (
-                <div
-                  key={item.year}
-                  className="flex items-center gap-1 px-2 py-1 rounded-sm text-xs bg-muted text-muted-foreground"
-                >
-                  <span className="font-medium">{item.year}</span>
-                  <span>—</span>
-                </div>
-              );
-            }
-
-            const isIncrease = item.change > 0;
-            const isDecrease = item.change < 0;
-            const isStable = item.change === 0;
-
-            return (
-              <Badge
-                key={item.year}
-                variant="outline"
-                className={`flex items-center gap-1 ${
-                  isIncrease
-                    ? 'bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400'
-                    : isDecrease
-                    ? 'bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400'
-                    : 'bg-muted border-muted-foreground/20'
-                }`}
-              >
-                <span className="font-medium">{item.year}</span>
-                {isIncrease && <TrendingUp className="h-3 w-3" />}
-                {isDecrease && <TrendingDown className="h-3 w-3" />}
-                {isStable && <Minus className="h-3 w-3" />}
-                <span className="font-semibold">
-                  {item.change > 0 ? '+' : ''}{item.change}%
-                </span>
-              </Badge>
-            );
-          })}
-        </div>
       </CardContent>
     </Card>
   );

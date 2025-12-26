@@ -60,7 +60,7 @@ export function YearlyComparisonChart({ data }: YearlyComparisonChartProps) {
         <CardDescription>
           Showing yearly patterns of the most active and quietest months.
         </CardDescription>
-      </CardHeader>
+      </CardHeader> 
       <CardContent>
         <ChartContainer config={chartConfig}>
           <AreaChart accessibilityLayer data={data}>
