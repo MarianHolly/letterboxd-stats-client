@@ -295,11 +295,11 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                 </div>
 
                 {/* SECONDARY SECTION: Yearly Comparison */}
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
                   <div className="lg:col-span-3">
                     <YearlyComparisonChart data={yearlyComparisonData} />
                   </div>
-                  <div className="lg:col-span-2">
+                  <div className="lg:col-span-3">
                     <YearlyTotalsBarChart data={yearlyTotalsData} />
                   </div>
                 </div>
