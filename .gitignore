@@ -15,6 +15,7 @@
 
 # testing
 /coverage
+.mock/
 
 # next.js
 /.next/
