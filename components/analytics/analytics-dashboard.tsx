@@ -295,8 +295,8 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                 </div>
 
                 {/* SECONDARY SECTION: Yearly Comparison */}
-                <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
-                  <div className="lg:col-span-3">
+                <div className="grid grid-cols-1 lg:grid-cols-7 auto-rows-[minmax(320px,auto)] gap-6">
+                  <div className="lg:col-span-4">
                     <YearlyComparisonChart data={yearlyComparisonData} />
                   </div>
                   <div className="lg:col-span-3">

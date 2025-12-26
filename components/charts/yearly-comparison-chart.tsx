@@ -14,7 +14,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import React from "react";
 
 interface YearlyComparisonChartProps {
   data: Array<{ month: string; [year: string]: string | number }>;

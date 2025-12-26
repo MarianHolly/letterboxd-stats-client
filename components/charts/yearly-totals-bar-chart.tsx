@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -82,7 +83,7 @@ export function YearlyTotalsBarChart({ data }: YearlyTotalsBarChartProps) {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
                   return (
-                    <div className="rounded-lg border bg-background p-2 shadow-sm">
+                    <div className="rounded-lg border bg-background p-1 shadow-sm">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">{data.year}</span>
                         <span className="text-sm font-bold">{data.total} movies</span>
@@ -163,6 +164,14 @@ export function YearlyTotalsBarChart({ data }: YearlyTotalsBarChartProps) {
           </BarChart>
         </ChartContainer>
       </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm pt-4">
+        <div className="flex gap-2 font-medium leading-none">
+          Total: {data.reduce((sum, item) => sum + item.total, 0).toLocaleString()} movies across {data.length} years
+        </div>
+        <div className="leading-none text-muted-foreground">
+          Average: {Math.round(data.reduce((sum, item) => sum + item.total, 0) / data.length).toLocaleString()} movies per year
+        </div>
+      </CardFooter>
     </Card>
   );
 }
