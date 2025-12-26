@@ -46,7 +46,8 @@ import {
 
 interface DiaryStatisticsProps {
   stats?: {
-    totalEntries?: number;
+    totalUniqueMovies?: number;
+    totalViewingEvents?: number;
     averagePerMonth?: number;
     busiestMonth?: string;
     busiestMonthCount?: number;
@@ -57,25 +58,19 @@ interface DiaryStatisticsProps {
 }
 
 interface StatItemProps {
-  label: string;
   value: string | number;
-  description?: string;
+  description: string;
 }
 
-function StatItem({ label, value, description }: StatItemProps) {
+function StatItem({ value, description }: StatItemProps) {
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-xs text-slate-500 dark:text-white/50 font-medium uppercase">
-        {label}
-      </span>
-      <span className="text-2xl font-bold text-black dark:text-white">
+    <div className="flex flex-col gap-2 text-center">
+      <span className="text-4xl font-bold text-black dark:text-white tabular-nums">
         {value}
       </span>
-      {description && (
-        <span className="text-xs text-slate-600 dark:text-white/60">
-          {description}
-        </span>
-      )}
+      <span className="text-sm text-slate-500 dark:text-white/50">
+        {description}
+      </span>
     </div>
   )
 }
@@ -102,50 +97,47 @@ export function DiaryStatistics({ stats }: DiaryStatisticsProps) {
   }
 
   return (
-    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
-      <CardHeader>
-        <CardTitle className="text-black dark:text-white">
-          Your Statistics
+    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg text-black dark:text-white text-center">
+          Statistics
         </CardTitle>
-        <CardDescription className="text-slate-600 dark:text-white/60">
-          Key metrics about your watching habits
-        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-row flex-wrap justify-between gap-6 sm:gap-8">
+      <CardContent className="pt-2">
+        <div className="flex flex-col gap-8">
           <StatItem
-            label="Total Entries"
-            value={stats.totalEntries ?? 0}
-            description="movies logged"
+            value={stats.totalUniqueMovies ?? 0}
+            description="Unique Movies"
           />
           <StatItem
-            label="Average/Month"
-            value={(stats.averagePerMonth ?? 0).toFixed(1)}
-            description="movies per month"
+            value={stats.totalViewingEvents ?? 0}
+            description="Total Viewings"
           />
           <StatItem
-            label="Busiest Month"
+            value={stats.averagePerMonth ?? 0}
+            description="Average per Month"
+          />
+          <StatItem
             value={stats.busiestMonthCount ?? 0}
-            description={stats.busiestMonth}
+            description={`Busiest (${stats.busiestMonth})`}
           />
           <StatItem
-            label="Quietest Month"
             value={stats.quietestMonthCount ?? 0}
-            description={stats.quietestMonth}
+            description={`Quietest (${stats.quietestMonth})`}
           />
         </div>
-      </CardContent>
 
-          {stats.dateRange && (
-            <div className="col-span-2 pt-2 border-t border-slate-200 dark:border-white/10 pl-8">
-              <span className="text-xs text-slate-500 dark:text-white/50 font-medium uppercase">
-                Date Range
-              </span>
-              <p className="text-sm text-black dark:text-white mt-1">
-                {stats.dateRange}
-              </p>
-            </div>
-          )}
+        {stats.dateRange && (
+          <div className="pt-6 mt-6 border-t border-slate-200 dark:border-white/10 text-center">
+            <span className="text-xs text-slate-500 dark:text-white/50 font-medium uppercase tracking-wider block mb-2">
+              Date Range
+            </span>
+            <p className="text-sm text-black dark:text-white font-medium">
+              {stats.dateRange}
+            </p>
+          </div>
+        )}
+      </CardContent>
     </Card>
   )
 }
