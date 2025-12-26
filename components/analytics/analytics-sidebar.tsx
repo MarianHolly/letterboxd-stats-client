@@ -229,10 +229,10 @@ export function AnalyticsSidebar({
 
   return (
     <Sidebar
-      className="bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 border-r border-gray-200 dark:border-white/10"
+      className="bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 border-r border-gray-200 dark:border-white/10"
       {...props}
     >
-      <SidebarHeader className="pb-0 bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 h-16">
+      <SidebarHeader className="pb-0 bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 h-16">
         <div className="flex items-center gap-2 px-2 py-2">
           <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-600 to-rose-600">
             <BarChart3 className="w-4 h-4 text-white" />
@@ -248,7 +248,7 @@ export function AnalyticsSidebar({
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950">
+      <SidebarContent className="bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950">
         {data.navMain.map((group) => (
           <SidebarGroup key={group.title}>
             <SidebarGroupLabel className="text-xs font-semibold text-gray-800 dark:text-white/30 uppercase tracking-wider px-3 py-2">
@@ -302,7 +302,7 @@ export function AnalyticsSidebar({
 
       <SidebarRail />
 
-      <SidebarFooter className="bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 border-t border-gray-200 dark:border-white/10">
+      <SidebarFooter className="bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 border-t border-gray-200 dark:border-white/10">
         {data.footerNav.map((group) => (
           <SidebarGroup key={group.title}>
             <div className="space-y-1">

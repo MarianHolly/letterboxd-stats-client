@@ -18,7 +18,7 @@ export function AnalyticsHeader({
   const { toggleSidebar } = useSidebar();
 
   return (
-    <header className="sticky top-0 z-40 h-16 flex items-center border-b border-gray-200 dark:border-white/10 bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 px-4">
+    <header className="sticky top-0 z-40 h-16 flex items-center border-b border-gray-200 dark:border-white/10 bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 px-4">
       <div className="flex items-center justify-between gap-2 w-full">
         <div className="flex items-center gap-2">
           <Button

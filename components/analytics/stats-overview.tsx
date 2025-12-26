@@ -26,7 +26,7 @@ function StatCard({
 }: StatCardProps) {
   if (isLoading) {
     return (
-      <div className="rounded-sm border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/50 p-5 text-center space-y-3">
+      <div className="rounded-sm border border-slate-200 dark:border-white/10 bg-background dark:bg-slate-900/50 p-5 text-center space-y-3">
         <Skeleton className="h-3 w-20 mx-auto" />
         <Skeleton className="h-10 w-24 mx-auto" />
         <Skeleton className="h-3 w-32 mx-auto" />
@@ -39,28 +39,28 @@ function StatCard({
       value: "text-slate-900 dark:text-white",
       title: "text-slate-500 dark:text-slate-500",
       description: "text-slate-600 dark:text-slate-400",
-      bg: "bg-white dark:bg-slate-900/50",
+      bg: "bg-background dark:bg-slate-900/50",
       border: "border-slate-200 dark:border-white/10",
     },
     success: {
       value: "text-emerald-600 dark:text-emerald-400",
       title: "text-slate-500 dark:text-slate-500",
       description: "text-emerald-600 dark:text-emerald-400",
-      bg: "bg-white dark:bg-slate-900/50",
+      bg: "bg-background dark:bg-slate-900/50",
       border: "border-slate-200 dark:border-white/10",
     },
     warning: {
       value: "text-amber-600 dark:text-amber-400",
       title: "text-slate-500 dark:text-slate-500",
       description: "text-amber-600 dark:text-amber-400",
-      bg: "bg-white dark:bg-slate-900/50",
+      bg: "bg-background dark:bg-slate-900/50",
       border: "border-slate-200 dark:border-white/10",
     },
     primary: {
       value: "text-indigo-600 dark:text-indigo-400",
       title: "text-slate-500 dark:text-slate-500",
       description: "text-indigo-600 dark:text-indigo-400",
-      bg: "bg-white dark:bg-slate-900/50",
+      bg: "bg-background dark:bg-slate-900/50",
       border: "border-slate-200 dark:border-white/10",
     },
   };

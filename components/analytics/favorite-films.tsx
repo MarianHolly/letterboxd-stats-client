@@ -71,7 +71,7 @@ export function FavoriteFilms({
           return (
             <div
               key={film.uri}
-              className="rounded-sm border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/50 overflow-hidden transition-all hover:border-slate-300 dark:hover:border-white/20 hover:shadow-sm"
+              className="rounded-sm border border-slate-200 dark:border-white/10 bg-background dark:bg-slate-900/50 overflow-hidden transition-all hover:border-slate-300 dark:hover:border-white/20 hover:shadow-sm"
             >
               {/* Film Poster Placeholder / Movie Title */}
               <div className="aspect-[2/3] bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center p-4">
@@ -145,7 +145,7 @@ export function FavoriteFilms({
 
       {/* Additional Info about Favorite Films */}
       {watchedMovies && (
-        <div className="rounded-sm border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/50 p-4">
+        <div className="rounded-sm border border-slate-200 dark:border-white/10 bg-background dark:bg-slate-900/50 p-4">
           <p className="text-xs text-slate-600 dark:text-slate-400">
             {(() => {
               const watchedCount = profile.favoriteFilms.filter(

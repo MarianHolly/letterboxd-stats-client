@@ -14,7 +14,7 @@ export function AnalyticsEmptyState({ onUploadClick }: AnalyticsEmptyStateProps)
   const isDark = theme === "dark"
 
   return (
-    <div className={`flex-1 overflow-auto flex items-center justify-center px-4 ${isDark ? "bg-slate-950" : "bg-white"}`}>
+    <div className="flex-1 overflow-auto flex items-center justify-center px-4 bg-background">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
