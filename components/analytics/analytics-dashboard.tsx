@@ -26,6 +26,7 @@ import { RatingDistributionBar } from "@/components/charts/secondary/RatingDistr
 import { RatingByDecadeBar } from "@/components/charts/secondary/RatingByDecadeBar";
 import { RatingVsUnratedRatio } from "@/components/charts/secondary/RatingVsUnratedRatio";
 import { YearRewatchesRatio } from "@/components/charts/secondary/YearRewatchesRatio";
+import { WatchedVsWatchlistRadial } from "@/components/charts/secondary/WatchedVsWatchlistRadial";
 import { YearInReviewStats } from "@/components/charts/year-in-review-stats";
 import { YearlyComparisonChart } from "@/components/charts/yearly-comparison-chart";
 import { YearlyTotalsBarChart } from "@/components/charts/yearly-totals-bar-chart";
