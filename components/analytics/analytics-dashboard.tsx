@@ -29,6 +29,7 @@ import { RatingByDecadeBar } from "@/components/charts/secondary/RatingByDecadeB
 import { RatingVsUnratedRatio } from "@/components/charts/secondary/RatingVsUnratedRatio";
 import { YearRewatchesRatio } from "@/components/charts/secondary/YearRewatchesRatio";
 import { WatchedVsWatchlistRadial } from "@/components/charts/secondary/WatchedVsWatchlistRadial";
+import { WatchlistByDecadeChart } from "@/components/charts/watchlist-by-decade-chart";
 import { YearInReviewStats } from "@/components/charts/year-in-review-stats";
 import { YearlyComparisonChart } from "@/components/charts/yearly-comparison-chart";
 import { YearlyTotalsBarChart } from "@/components/charts/yearly-totals-bar-chart";
@@ -54,6 +55,7 @@ import {
   transformRatedVsUnrated,
   computeRatingInsight,
   transformWatchedVsWatchlist,
+  transformWatchlistByDecade,
   computeWatchlistInsight,
   filter2025Movies,
   transform2025MonthlyData,
@@ -167,6 +169,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   const hasWatchlist = watchlist && watchlist.length > 0;
   const watchlistInsight = hasWatchlist ? computeWatchlistInsight(movies, watchlist) : "";
   const watchedVsWatchlistData = hasWatchlist ? transformWatchedVsWatchlist(movies, watchlist) : null;
+  const watchlistByDecadeData = hasWatchlist ? transformWatchlistByDecade(movies, watchlist) : [];
 
   // SECTION 5: 2025 Year in Review
   const movies2025 = filter2025Movies(movies);
@@ -459,17 +462,21 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                     <WatchedVsWatchlistRadial data={watchedVsWatchlistData} />
                   </div>
 
-                  {/* Right: Primary Chart Placeholder (larger) */}
+                  {/* Right: Primary Chart (larger) */}
                   <div className="lg:col-span-3">
-                    <Card className="h-full flex items-center justify-center border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
-                      <CardContent className="text-center py-12">
-                        <div className="text-muted-foreground">
-                          <Film className="h-12 w-12 mx-auto mb-4 opacity-20" />
-                          <p className="text-sm">Primary watchlist chart coming soon</p>
-                          <p className="text-xs mt-2 opacity-70">This will show detailed breakdown by decade or year</p>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    {watchlistByDecadeData.length > 0 ? (
+                      <WatchlistByDecadeChart data={watchlistByDecadeData} />
+                    ) : (
+                      <Card className="h-full flex items-center justify-center border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+                        <CardContent className="text-center py-12">
+                          <div className="text-muted-foreground">
+                            <Film className="h-12 w-12 mx-auto mb-4 opacity-20" />
+                            <p className="text-sm">No decade data available</p>
+                            <p className="text-xs mt-2 opacity-70">Upload data with release years to see the breakdown</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
                   </div>
                 </div>
               )}
