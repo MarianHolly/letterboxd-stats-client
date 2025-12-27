@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useAnalyticsStore } from "@/hooks/use-analytics-store";
 import type { Movie } from "@/lib/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Film } from "lucide-react";
 
 import { StatsOverview } from "./stats-overview";
 import { AnalyticsEmptyState } from "./analytics-empty-state";
@@ -51,6 +53,7 @@ import {
   transformRatingByDecade,
   transformRatedVsUnrated,
   computeRatingInsight,
+  transformWatchedVsWatchlist,
   computeWatchlistInsight,
   filter2025Movies,
   transform2025MonthlyData,
@@ -163,6 +166,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   // SECTION 4: Watchlist
   const hasWatchlist = watchlist && watchlist.length > 0;
   const watchlistInsight = hasWatchlist ? computeWatchlistInsight(movies, watchlist) : "";
+  const watchedVsWatchlistData = hasWatchlist ? transformWatchedVsWatchlist(movies, watchlist) : null;
 
   // SECTION 5: 2025 Year in Review
   const movies2025 = filter2025Movies(movies);
@@ -432,6 +436,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
             title="Planned vs. Watched"
             subtitle="The gap between intention and experience"
             description="An analysis of your cinematic backlog. This section compares your watchlist against completed viewings and breaks down unwatched titles by decade, highlighting which eras and movements you are most eager to explore next."
+            insight={watchlistInsight}
             highlightWord="Watched"
             highlightColor="#8b5cf6"
             showDescription={hasWatchlist}
@@ -446,9 +451,29 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
               onAction={onUploadClick}
             />
           ) : (
-            <div className="text-center p-8 text-slate-600 dark:text-slate-400">
-              Watchlist content coming soon
-            </div>
+            <>
+              {watchedVsWatchlistData && (
+                <div className="grid grid-cols-1 lg:grid-cols-4 auto-rows-[minmax(400px,auto)] gap-6">
+                  {/* Left: Statistics (smaller) */}
+                  <div className="lg:col-span-1">
+                    <WatchedVsWatchlistRadial data={watchedVsWatchlistData} />
+                  </div>
+
+                  {/* Right: Primary Chart Placeholder (larger) */}
+                  <div className="lg:col-span-3">
+                    <Card className="h-full flex items-center justify-center border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+                      <CardContent className="text-center py-12">
+                        <div className="text-muted-foreground">
+                          <Film className="h-12 w-12 mx-auto mb-4 opacity-20" />
+                          <p className="text-sm">Primary watchlist chart coming soon</p>
+                          <p className="text-xs mt-2 opacity-70">This will show detailed breakdown by decade or year</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </SectionLayout>
 
