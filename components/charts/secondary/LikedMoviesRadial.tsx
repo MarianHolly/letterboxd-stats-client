@@ -1,6 +1,6 @@
 "use client"
 
-import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts"
+import { LabelList, Pie, PieChart } from "recharts"
 import {
   Card,
 } from "@/components/ui/card"
@@ -47,7 +47,7 @@ const chartConfig = {
   },
   unliked: {
     label: "Unliked",
-    color: "#cbd5e1", // Light gray
+    color: "#e2e8f0", // Light gray
   },
 } satisfies ChartConfig
 
@@ -55,7 +55,10 @@ export function LikedMoviesRadial({ data }: LikedMoviesRadialProps) {
   const { watched, liked } = data
   const unliked = watched - liked
 
-  const chartData = [{ liked, unliked }]
+  const chartData = [
+    { category: "liked", value: liked, fill: "var(--color-liked)" },
+    { category: "unliked", value: unliked, fill: "var(--color-unliked)" },
+  ]
   const likedPercentage = watched > 0 ? Math.round((liked / watched) * 100) : 0
 
   // Determine liker profile based on percentage liked
@@ -78,75 +81,45 @@ export function LikedMoviesRadial({ data }: LikedMoviesRadialProps) {
 
   return (
     <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
-      <div className="px-6 py-4 flex flex-row items-center gap-6">
-          {/* LEFT: Donut Chart (Full Circle) */}
-          <div className="flex-shrink-0">
+      <div className="px-6 py-4 flex flex-col md:flex-row items-center gap-6">
+          {/* LEFT: Pie Chart */}
+          <div className="flex-shrink-0 w-full md:w-auto flex justify-center">
             <ChartContainer
               config={chartConfig}
-              className="aspect-square w-[240px]"
+              className="aspect-square w-full max-w-[220px] md:w-[220px] [&_.recharts-text]:fill-background"
             >
-              <RadialBarChart
-                data={chartData}
-                startAngle={90}
-                endAngle={450}
-                innerRadius={60}
-                outerRadius={110}
-              >
+              <PieChart>
                 <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent hideLabel />}
+                  content={<ChartTooltipContent nameKey="value" hideLabel />}
                 />
-                <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
-                  <Label
-                    content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                        return (
-                          <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
-                            <tspan
-                              x={viewBox.cx}
-                              y={(viewBox.cy || 0) - 10}
-                              className="fill-black dark:fill-white text-2xl font-bold"
-                            >
-                              {likedPercentage}%
-                            </tspan>
-                            <tspan
-                              x={viewBox.cx}
-                              y={(viewBox.cy || 0) + 8}
-                              className="fill-slate-500 dark:fill-white/50 text-xs"
-                            >
-                              Liked
-                            </tspan>
-                          </text>
-                        )
-                      }
-                    }}
-                  />
-                </PolarRadiusAxis>
-                {/* Background bar (unliked) - thinner */}
-                <RadialBar
-                  dataKey="unliked"
-                  fill="var(--color-unliked)"
-                  cornerRadius={3}
-                  className="stroke-transparent stroke-1"
-                  background={{ fill: 'transparent' }}
-                />
-                {/* Foreground bar (liked) - thicker and bolder */}
-                <RadialBar
-                  dataKey="liked"
+                <Pie
+                  data={chartData}
+                  dataKey="value"
+                  nameKey="category"
+                  innerRadius={30}
+                  outerRadius={95}
                   cornerRadius={6}
-                  fill="var(--color-liked)"
-                  className="stroke-transparent stroke-[3px]"
-                  barSize={35}
-                />
-              </RadialBarChart>
+                  paddingAngle={2}
+                >
+                  <LabelList
+                    dataKey="value"
+                    stroke="none"
+                    fontSize={14}
+                    fontWeight={600}
+                    fill="currentColor"
+                    formatter={(value: number) => value.toLocaleString()}
+                  />
+                </Pie>
+              </PieChart>
             </ChartContainer>
           </div>
 
           {/* SEPARATOR */}
-          <div className="h-[240px] w-px bg-slate-200 dark:bg-white/10 flex-shrink-0" />
+          <div className="hidden md:block h-[220px] w-px bg-slate-200 dark:bg-white/10 flex-shrink-0" />
+          <div className="md:hidden w-full h-px bg-slate-200 dark:bg-white/10" />
 
           {/* RIGHT: Stats and Profile */}
-          <div className="flex-1 flex flex-col justify-center gap-4">
+          <div className="flex-1 flex flex-col justify-center gap-2 w-full">
             {/* Statistics */}
             <div className="flex flex-row gap-6">
               <StatItem
@@ -171,7 +144,7 @@ export function LikedMoviesRadial({ data }: LikedMoviesRadialProps) {
               <p className="text-sm text-black dark:text-white font-medium">
                 {likerType}
               </p>
-              <p className="text-xs text-slate-500 dark:text-white/50 mt-1">
+              <p className="text-xs text-slate-500 dark:text-white/50 mt-0.5">
                 {likerDescription}
               </p>
             </div>
