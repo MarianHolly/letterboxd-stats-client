@@ -625,6 +625,24 @@ export function computeRatingInsight(analytics: AnalyticsOverview): string {
   return `You're a ${ratingType} rater — ${ratingCoverage}% of movies rated, averaging ${avgRating}★ (${ratingTendency})`
 }
 
+/**
+ * Transform movies to taste preference stats
+ * @returns { watched, rated, liked }
+ */
+export function transformTastePreferenceStats(
+  movies: Movie[]
+): { watched: number; rated: number; liked: number } {
+  const watched = movies.length
+  const rated = movies.filter((m) => m.rating !== undefined).length
+  const liked = movies.filter((m) => m.liked === true).length
+
+  return {
+    watched,
+    rated,
+    liked,
+  }
+}
+
 // ============================================================================
 // SECTION 4: WATCHLIST INSIGHTS
 // ============================================================================
