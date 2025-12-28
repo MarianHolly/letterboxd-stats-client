@@ -18,11 +18,11 @@ interface LikedVsUnlikedDonutProps {
 const chartConfig = {
   liked: {
     label: "Liked",
-    color: "hsl(var(--chart-1))",
+    color: "#9b1c31", // Deep red/maroon
   },
   unliked: {
     label: "Not Liked",
-    color: "hsl(var(--chart-3))",
+    color: "#cbd5e1", // Light gray
   },
 } satisfies ChartConfig
 
@@ -73,12 +73,12 @@ export function LikedVsUnlikedDonut({ data }: LikedVsUnlikedDonutProps) {
           dataKey="liked"
           stackId="a"
           cornerRadius={5}
-          fill="hsl(var(--chart-1))"
+          fill="var(--color-liked)"
           className="stroke-transparent stroke-2"
         />
         <RadialBar
           dataKey="unliked"
-          fill="hsl(var(--chart-3))"
+          fill="var(--color-unliked)"
           stackId="a"
           cornerRadius={5}
           className="stroke-transparent stroke-2"

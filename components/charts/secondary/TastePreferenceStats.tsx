@@ -46,7 +46,7 @@ function StatItem({ value, description, color }: StatItemProps) {
 const chartConfig = {
   rated: {
     label: "Rated",
-    color: "#f59e0b", // Amber/orange
+    color: "#EFBF04", // Gold/yellow
   },
   unrated: {
     label: "Unrated",
@@ -155,12 +155,12 @@ export function TastePreferenceStats({ data }: TastePreferenceStatsProps) {
           <StatItem
             value={rated.toLocaleString()}
             description="Movies Rated"
-            color="#f59e0b"
+            color="#EFBF04"
           />
           <StatItem
             value={liked.toLocaleString()}
             description="Movies Liked"
-            color="#ef4444"
+            color="#9b1c31"
           />
         </div>
 
@@ -168,7 +168,7 @@ export function TastePreferenceStats({ data }: TastePreferenceStatsProps) {
         <div className="pt-5 mt-2 border-t border-slate-200 dark:border-white/10">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="text-center">
-              <span className="text-2xl font-bold text-amber-600 dark:text-amber-500">
+              <span className="text-2xl font-bold" style={{ color: "#EFBF04" }}>
                 {ratedPercentage}%
               </span>
               <p className="text-xs text-slate-500 dark:text-white/50 mt-1">
@@ -176,7 +176,7 @@ export function TastePreferenceStats({ data }: TastePreferenceStatsProps) {
               </p>
             </div>
             <div className="text-center">
-              <span className="text-2xl font-bold text-red-600 dark:text-red-500">
+              <span className="text-2xl font-bold" style={{ color: "#9b1c31" }}>
                 {likedPercentage}%
               </span>
               <p className="text-xs text-slate-500 dark:text-white/50 mt-1">

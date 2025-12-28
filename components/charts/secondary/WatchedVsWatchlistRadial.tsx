@@ -29,14 +29,14 @@ interface StatItemProps {
 
 function StatItem({ value, description, color }: StatItemProps) {
   return (
-    <div className="flex flex-col gap-2 text-center">
+    <div className="flex flex-col gap-1.5 text-center">
       <span
-        className="text-4xl font-bold tabular-nums"
+        className="text-3xl font-bold tabular-nums"
         style={color ? { color } : undefined}
       >
         {value}
       </span>
-      <span className="text-sm text-slate-500 dark:text-white/50">
+      <span className="text-xs text-slate-500 dark:text-white/50 font-medium">
         {description}
       </span>
     </div>
@@ -79,24 +79,19 @@ export function WatchedVsWatchlistRadial({ data }: WatchedVsWatchlistRadialProps
 
   return (
     <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-lg text-black dark:text-white text-center">
-          Statistics
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pt-0 px-2">
-        {/* Radial Chart */}
-        <div className="mb-6 -mt-2">
+      <CardHeader className="pb-6 pt-4">
+        {/* Radial Chart in Header - Centered */}
+        <div className="flex justify-center mb-2">
           <ChartContainer
             config={chartConfig}
-            className="mx-auto aspect-square w-full max-w-[180px]"
+            className="aspect-square w-[240px]"
           >
             <RadialBarChart
               data={chartData}
               startAngle={180}
               endAngle={0}
-              innerRadius={60}
-              outerRadius={100}
+              innerRadius={75}
+              outerRadius={120}
             >
               <ChartTooltip
                 cursor={false}
@@ -110,7 +105,7 @@ export function WatchedVsWatchlistRadial({ data }: WatchedVsWatchlistRadialProps
                         <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
                           <tspan
                             x={viewBox.cx}
-                            y={(viewBox.cy || 0) - 12}
+                            y={(viewBox.cy || 0) - 10}
                             className="fill-black dark:fill-white text-2xl font-bold"
                           >
                             {watchedPercentage}%
@@ -145,9 +140,11 @@ export function WatchedVsWatchlistRadial({ data }: WatchedVsWatchlistRadialProps
             </RadialBarChart>
           </ChartContainer>
         </div>
+      </CardHeader>
 
-        {/* Statistics */}
-        <div className="flex flex-col gap-8 px-2">
+      <CardContent className="pt-2">
+        {/* Vertical Statistics */}
+        <div className="flex flex-col gap-6 py-4 border-t border-slate-200 dark:border-white/10">
           <StatItem
             value={data.watched.toLocaleString()}
             description="Watched"
@@ -164,7 +161,8 @@ export function WatchedVsWatchlistRadial({ data }: WatchedVsWatchlistRadialProps
           />
         </div>
 
-        <div className="pt-6 mt-6 border-t border-slate-200 dark:border-white/10 text-center">
+        {/* Profile Section */}
+        <div className="pt-5 mt-2 border-t border-slate-200 dark:border-white/10 text-center">
           <span className="text-xs text-slate-500 dark:text-white/50 font-medium uppercase tracking-wider block mb-2">
             Your Profile
           </span>

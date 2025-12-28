@@ -18,7 +18,7 @@ interface RatingDistributionBarProps {
 const chartConfig = {
   count: {
     label: "Movies",
-    color: "hsl(var(--chart-1))",
+    color: "#EFBF04", // Gold/yellow - rating color
   },
 } satisfies ChartConfig
 
@@ -50,7 +50,7 @@ export function RatingDistributionBar({ data }: RatingDistributionBarProps) {
           cursor={false}
           content={<ChartTooltipContent hideLabel formatter={(value) => `${value} movies`} />}
         />
-        <Bar dataKey="count" fill="hsl(var(--chart-1))" radius={[8, 8, 0, 0]}>
+        <Bar dataKey="count" fill="var(--color-count)" radius={[8, 8, 0, 0]}>
           <LabelList position="top" offset={12} className="fill-foreground" fontSize={11} />
         </Bar>
       </BarChart>
