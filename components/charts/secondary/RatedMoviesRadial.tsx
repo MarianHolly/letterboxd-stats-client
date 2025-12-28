@@ -1,0 +1,180 @@
+"use client"
+
+import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts"
+import {
+  Card,
+} from "@/components/ui/card"
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart"
+
+interface RatedMoviesRadialProps {
+  data: {
+    watched: number
+    rated: number
+  }
+}
+
+interface StatItemProps {
+  value: string | number
+  description: string
+  color?: string
+}
+
+function StatItem({ value, description, color }: StatItemProps) {
+  return (
+    <div className="flex flex-col gap-1.5 text-center">
+      <span
+        className="text-3xl font-bold tabular-nums"
+        style={color ? { color } : undefined}
+      >
+        {value}
+      </span>
+      <span className="text-xs text-slate-500 dark:text-white/50 font-medium">
+        {description}
+      </span>
+    </div>
+  )
+}
+
+const chartConfig = {
+  rated: {
+    label: "Rated",
+    color: "#EFBF04", // Gold/yellow
+  },
+  unrated: {
+    label: "Unrated",
+    color: "#cbd5e1", // Light gray
+  },
+} satisfies ChartConfig
+
+export function RatedMoviesRadial({ data }: RatedMoviesRadialProps) {
+  const { watched, rated } = data
+  const unrated = watched - rated
+
+  const chartData = [{ rated, unrated }]
+  const ratedPercentage = watched > 0 ? Math.round((rated / watched) * 100) : 0
+
+  // Determine rater profile based on percentage rated
+  let raterType = "Selective Rater"
+  let raterDescription = "You rate movies selectively"
+
+  if (ratedPercentage >= 95) {
+    raterType = "Meticulous Curator"
+    raterDescription = "You meticulously rate almost everything"
+  } else if (ratedPercentage >= 80) {
+    raterType = "Thorough Evaluator"
+    raterDescription = "You consistently rate what you watch"
+  } else if (ratedPercentage >= 50) {
+    raterType = "Active Rater"
+    raterDescription = "You rate most of what you watch"
+  } else if (ratedPercentage < 30) {
+    raterType = "Minimalist Rater"
+    raterDescription = "You rarely rate your films"
+  }
+
+  return (
+    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
+      <div className="px-6 py-0 flex flex-row items-center gap-6">
+          {/* LEFT: Radial Chart */}
+          <div className="flex-shrink-0">
+            <ChartContainer
+              config={chartConfig}
+              className="aspect-square w-[300px]"
+            >
+              <RadialBarChart
+                data={chartData}
+                startAngle={180}
+                endAngle={0}
+                innerRadius={100}
+                outerRadius={150}
+              >
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
+                  <Label
+                    content={({ viewBox }) => {
+                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                        return (
+                          <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
+                            <tspan
+                              x={viewBox.cx}
+                              y={(viewBox.cy || 0) - 10}
+                              className="fill-black dark:fill-white text-2xl font-bold"
+                            >
+                              {ratedPercentage}%
+                            </tspan>
+                            <tspan
+                              x={viewBox.cx}
+                              y={(viewBox.cy || 0) + 8}
+                              className="fill-slate-500 dark:fill-white/50 text-xs"
+                            >
+                              Rated
+                            </tspan>
+                          </text>
+                        )
+                      }
+                    }}
+                  />
+                </PolarRadiusAxis>
+                <RadialBar
+                  dataKey="rated"
+                  stackId="a"
+                  cornerRadius={5}
+                  fill="var(--color-rated)"
+                  className="stroke-transparent stroke-2"
+                />
+                <RadialBar
+                  dataKey="unrated"
+                  fill="var(--color-unrated)"
+                  stackId="a"
+                  cornerRadius={5}
+                  className="stroke-transparent stroke-2"
+                />
+              </RadialBarChart>
+            </ChartContainer>
+          </div>
+
+          {/* SEPARATOR */}
+          <div className="h-[300px] w-px bg-slate-200 dark:bg-white/10 flex-shrink-0" />
+
+          {/* RIGHT: Stats and Profile */}
+          <div className="flex-1 flex flex-col justify-center gap-4">
+            {/* Statistics */}
+            <div className="flex flex-row gap-6">
+              <StatItem
+                value={rated.toLocaleString()}
+                description="Rated"
+                color="#EFBF04"
+              />
+              <StatItem
+                value={unrated.toLocaleString()}
+                description="Unrated"
+              />
+            </div>
+
+            {/* Separator */}
+            <div className="w-full h-px bg-slate-200 dark:bg-white/10" />
+
+            {/* Profile Section */}
+            <div className="text-left">
+              <span className="text-xs text-slate-500 dark:text-white/50 font-medium uppercase tracking-wider block mb-1">
+                Rating Profile
+              </span>
+              <p className="text-sm text-black dark:text-white font-medium">
+                {raterType}
+              </p>
+              <p className="text-xs text-slate-500 dark:text-white/50 mt-1">
+                {raterDescription}
+              </p>
+            </div>
+          </div>
+        </div>
+    </Card>
+  )
+}
