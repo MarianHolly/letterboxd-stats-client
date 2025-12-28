@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, LabelList } from "recharts"
 import {
   Card,
@@ -20,9 +21,14 @@ interface BestRatedDecadeProps {
     decade: string
     avgRating: number
     totalRated: number
-    highlyRated: number
+    fiveStars: number
+    fourHalfStars: number
+    fourStars: number
+    hasEnoughData: boolean
   }>
 }
+
+type ViewMode = "average" | "fiveStars" | "fourHalfStars" | "fourStars"
 
 const chartConfig = {
   avgRating: {
@@ -31,12 +37,49 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
+const viewConfig = {
+  average: {
+    label: "Average",
+    dataKey: "avgRating" as const,
+    yAxisLabel: "Avg Rating",
+    domain: [0, 5] as [number, number],
+    ticks: [0, 1, 2, 3, 4, 5],
+    formatter: (value: number) => `${value}★`,
+  },
+  fiveStars: {
+    label: "5★",
+    dataKey: "fiveStars" as const,
+    yAxisLabel: "Count",
+    domain: undefined,
+    ticks: undefined,
+    formatter: (value: number) => value.toString(),
+  },
+  fourHalfStars: {
+    label: "4.5★",
+    dataKey: "fourHalfStars" as const,
+    yAxisLabel: "Count",
+    domain: undefined,
+    ticks: undefined,
+    formatter: (value: number) => value.toString(),
+  },
+  fourStars: {
+    label: "4★",
+    dataKey: "fourStars" as const,
+    yAxisLabel: "Count",
+    domain: undefined,
+    ticks: undefined,
+    formatter: (value: number) => value.toString(),
+  },
+}
+
 export function BestRatedDecade({ data }: BestRatedDecadeProps) {
+  const [viewMode, setViewMode] = useState<ViewMode>("average")
+
   if (!data || data.length === 0) {
     return (
       <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
         <CardHeader>
-          <CardTitle className="text-base font-semibold">Best Rated Decade</CardTitle>
+          <CardTitle className="text-base font-semibold">Highest Rated Decade</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground text-center py-8">
@@ -47,35 +90,82 @@ export function BestRatedDecade({ data }: BestRatedDecadeProps) {
     )
   }
 
-  // Find the decade with highest average rating
-  const topDecade = data.reduce((max, item) =>
-    item.avgRating > max.avgRating ? item : max
-  , data[0])
+  const currentView = viewConfig[viewMode]
+
+  // Filter data based on view mode
+  // For average view, only show decades with 10+ movies
+  // For count views, show all decades with any ratings
+  const filteredData = viewMode === "average"
+    ? data.filter(d => d.hasEnoughData)
+    : data
+
+  if (filteredData.length === 0) {
+    return (
+      <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+        <CardHeader>
+          <CardTitle className="text-base font-semibold">Highest Rated Decade</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground text-center py-8">
+            Not enough data. Rate at least 10 movies per decade to see this chart.
+          </p>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // Find the decade with highest value for current view
+  const topDecade = filteredData.reduce((max, item) => {
+    const maxValue = max[currentView.dataKey] as number
+    const itemValue = item[currentView.dataKey] as number
+    return itemValue > maxValue ? item : max
+  }, filteredData[0])
 
   return (
     <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-semibold">Best Rated Decade</CardTitle>
+          <CardTitle className="text-base font-semibold">Highest Rated Decade</CardTitle>
           {topDecade && (
             <Badge
               variant="secondary"
               className="text-xs font-medium"
               style={{ backgroundColor: "#EFBF04", color: "black" }}
             >
-              {topDecade.decade}: {topDecade.avgRating}★
+              {topDecade.decade}: {viewMode === "average"
+                ? `${topDecade.avgRating}★`
+                : `${topDecade[currentView.dataKey]} movies`}
             </Badge>
           )}
         </div>
         <p className="text-xs text-muted-foreground mt-1">
-          Only decades with 10+ rated movies
+          {viewMode === "average"
+            ? "Your highest-rated eras (10+ films minimum)"
+            : "Top-rated films by decade"}
         </p>
+
+        {/* View Toggle Buttons */}
+        <div className="flex gap-2 mt-3 flex-wrap">
+          {(Object.keys(viewConfig) as ViewMode[]).map((mode) => (
+            <button
+              key={mode}
+              onClick={() => setViewMode(mode)}
+              className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
+                viewMode === mode
+                  ? "bg-[#EFBF04] text-black"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+              }`}
+            >
+              {viewConfig[mode].label}
+            </button>
+          ))}
+        </div>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[280px] w-full">
           <BarChart
             accessibilityLayer
-            data={data}
+            data={filteredData}
             margin={{ top: 20, left: 12, right: 12, bottom: 12 }}
           >
             <CartesianGrid vertical={false} />
@@ -86,9 +176,9 @@ export function BestRatedDecade({ data }: BestRatedDecadeProps) {
               tickMargin={8}
             />
             <YAxis
-              domain={[0, 5]}
-              ticks={[0, 1, 2, 3, 4, 5]}
-              label={{ value: "Avg Rating", angle: -90, position: "insideLeft" }}
+              domain={currentView.domain}
+              ticks={currentView.ticks}
+              label={{ value: currentView.yAxisLabel, angle: -90, position: "insideLeft" }}
             />
             <ChartTooltip
               cursor={false}
@@ -110,9 +200,18 @@ export function BestRatedDecade({ data }: BestRatedDecadeProps) {
                           <span className="text-muted-foreground">Total Rated:</span>
                           <span className="font-medium">{data.totalRated}</span>
                         </div>
+                        <div className="h-px bg-border my-1" />
                         <div className="flex items-center justify-between gap-4">
-                          <span className="text-muted-foreground">4★+ Movies:</span>
-                          <span className="font-medium">{data.highlyRated}</span>
+                          <span className="text-muted-foreground">5★:</span>
+                          <span className="font-medium">{data.fiveStars}</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-4">
+                          <span className="text-muted-foreground">4.5★:</span>
+                          <span className="font-medium">{data.fourHalfStars}</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-4">
+                          <span className="text-muted-foreground">4★:</span>
+                          <span className="font-medium">{data.fourStars}</span>
                         </div>
                       </div>
                     </div>
@@ -120,30 +219,17 @@ export function BestRatedDecade({ data }: BestRatedDecadeProps) {
                 )
               }}
             />
-            <Bar dataKey="avgRating" fill="var(--color-avgRating)" radius={[8, 8, 0, 0]}>
+            <Bar dataKey={currentView.dataKey} fill="var(--color-avgRating)" radius={[8, 8, 0, 0]}>
               <LabelList
                 position="top"
                 offset={8}
                 className="fill-foreground"
                 fontSize={11}
-                formatter={(value: number) => `${value}★`}
+                formatter={currentView.formatter}
               />
             </Bar>
           </BarChart>
         </ChartContainer>
-
-        {/* Legend with badges showing highly rated count */}
-        <div className="mt-4 flex flex-wrap gap-2">
-          {data.map((item) => (
-            <Badge
-              key={item.decade}
-              variant="outline"
-              className="text-xs"
-            >
-              {item.decade}: {item.highlyRated} movies 4★+
-            </Badge>
-          ))}
-        </div>
       </CardContent>
     </Card>
   )
