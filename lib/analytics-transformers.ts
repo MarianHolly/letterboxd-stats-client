@@ -538,6 +538,40 @@ export function computeLikeInsight(
   return `You're a ${likeType} liker — you like ${likePercent}% of movies you watch`
 }
 
+/**
+ * Transform movies to liked vs total by decade (for stacked chart)
+ * @returns Array of { decade: "1990s", total, liked, percentage }
+ */
+export function transformMostLikedDecade(
+  movies: Movie[]
+): Array<{ decade: string; total: number; liked: number; percentage: number }> {
+  const decadeMap: Record<string, { total: number; liked: number }> = {}
+
+  movies.forEach((movie) => {
+    const decadeLabel = `${movie.decade}s`
+    if (!decadeMap[decadeLabel]) {
+      decadeMap[decadeLabel] = { total: 0, liked: 0 }
+    }
+    decadeMap[decadeLabel].total++
+    if (movie.liked === true) {
+      decadeMap[decadeLabel].liked++
+    }
+  })
+
+  return Object.entries(decadeMap)
+    .map(([decade, data]) => ({
+      decade,
+      total: data.total,
+      liked: data.liked,
+      percentage: data.total > 0 ? Math.round((data.liked / data.total) * 100) : 0,
+    }))
+    .sort((a, b) => {
+      const yearA = parseInt(a.decade)
+      const yearB = parseInt(b.decade)
+      return yearA - yearB
+    })
+}
+
 // ============================================================================
 // SECTION 3B: LIKES & RATINGS - RATING PATTERNS
 // ============================================================================
@@ -604,6 +638,45 @@ export function transformRatedVsUnrated(movies: Movie[]): { rated: number; unrat
     rated,
     unrated,
   }
+}
+
+/**
+ * Transform best rated decades (only decades with 10+ rated movies)
+ * @returns Array of { decade: "1990s", avgRating, totalRated, highlyRated }
+ */
+export function transformBestRatedDecade(
+  movies: Movie[]
+): Array<{ decade: string; avgRating: number; totalRated: number; highlyRated: number }> {
+  const ratedMovies = movies.filter((m) => m.rating !== undefined)
+
+  if (ratedMovies.length === 0) {
+    return []
+  }
+
+  const grouped = groupBy(ratedMovies, (m) => `${m.decade}s`)
+  const result: Array<{ decade: string; avgRating: number; totalRated: number; highlyRated: number }> = []
+
+  grouped.forEach((decadeMovies, decade) => {
+    // Only include decades with 10+ rated movies
+    if (decadeMovies.length >= 10) {
+      const ratings = decadeMovies.map((m) => m.rating as number)
+      const avgRating = average(ratings)
+      const highlyRated = decadeMovies.filter((m) => (m.rating as number) >= 4).length
+
+      result.push({
+        decade,
+        avgRating: Math.round(avgRating * 10) / 10,
+        totalRated: decadeMovies.length,
+        highlyRated,
+      })
+    }
+  })
+
+  return result.sort((a, b) => {
+    const yearA = parseInt(a.decade)
+    const yearB = parseInt(b.decade)
+    return yearA - yearB
+  })
 }
 
 /**
