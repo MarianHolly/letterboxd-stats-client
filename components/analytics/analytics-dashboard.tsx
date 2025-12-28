@@ -34,15 +34,18 @@ import { RatedMoviesRadial } from "@/components/charts/secondary/RatedMoviesRadi
 import { LikedMoviesRadial } from "@/components/charts/secondary/LikedMoviesRadial";
 import { MostLikedDecade } from "@/components/charts/secondary/MostLikedDecade";
 import { BestRatedDecade } from "@/components/charts/secondary/BestRatedDecade";
+import { LikedMoviesRatingDistribution } from "@/components/charts/secondary/LikedMoviesRatingDistribution";
 import { WatchlistByDecadeChart } from "@/components/charts/watchlist-by-decade-chart";
 import { YearInReviewStats } from "@/components/charts/year-in-review-stats";
 import { YearlyComparisonChart } from "@/components/charts/yearly-comparison-chart";
 import { YearlyTotalsBarChart } from "@/components/charts/yearly-totals-bar-chart";
+import { YearByDecadeBar } from "@/components/charts/secondary/YearByDecadeBar";
 
 // Import data transformers
 import {
   transformReleaseYearData,
   transformReleaseYearToDecades,
+  transformReleaseYearToFiveYearPeriods,
   transformReleaseYearToEras,
   transformMonthlyData,
   transformYearMonthlyData,
@@ -62,6 +65,7 @@ import {
   transformTastePreferenceStats,
   transformMostLikedDecade,
   transformBestRatedDecade,
+  transformLikedMoviesRatingDistribution,
   transformWatchedVsWatchlist,
   transformWatchlistByDecade,
   computeWatchlistInsight,
@@ -179,6 +183,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
     : null;
   const mostLikedDecadeData = hasMoviesLiked ? transformMostLikedDecade(movies) : [];
   const bestRatedDecadeData = hasRatings ? transformBestRatedDecade(movies) : [];
+  const likedMoviesRatingDistribution = hasMoviesLiked ? transformLikedMoviesRatingDistribution(movies) : [];
 
   // SECTION 4: Watchlist
   const hasWatchlist = watchlist && watchlist.length > 0;
@@ -192,8 +197,8 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   const monthly2025Data = has2025Data ? transform2025MonthlyData(movies) : [];
   const stats2025 = has2025Data ? transform2025Stats(movies2025) : null;
   const rating2025Distribution = has2025Data ? transform2025RatingDistribution(movies2025) : [];
-  const rewatch2025Data = has2025Data ? transform2025RewatchData(movies2025) : null;
-  const likes2025Data = has2025Data ? transform2025LikesAndFavorites(movies2025) : null;
+  const decade2025Data = has2025Data ? transformReleaseYearToDecades(movies2025) : [];
+  const fiveYear2025Data = has2025Data ? transformReleaseYearToFiveYearPeriods(movies2025) : [];
   const insight2025 = stats2025 ? compute2025Insight(stats2025, movies.length) : "";
 
   return (
@@ -285,15 +290,6 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
               />
             ) : (
               <>
-                {/* TOP SECTION: Insights & Summary */}
-                {viewingInsight ? (
-                  <ViewingRhythmInsights insight={viewingInsight} />
-                ) : (
-                  <div className="p-4 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-lg text-sm text-yellow-800 dark:text-yellow-200">
-                    Loading insights...
-                  </div>
-                )}
-
                 {/* MAIN SECTION: Stats (left 1/4) + Chart (right 3/4) */}
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                   {/* Left: Statistics (1/4 width on desktop) */}
@@ -328,31 +324,6 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                     <YearlyTotalsBarChart data={yearlyTotalsData} />
                   </div>
                 </div>
-
-                {/* SUBSECTION 2B: Like Timeline */}
-                {hasLikesData && (
-                  <SectionLayout.Subsection>
-                    <SectionLayout.SubHeader
-                      title="Like Timeline"
-                      description="When did you start liking movies?"
-                      insight={likeTimelineInsight}
-                    />
-
-                    {likesByMonth.length > 0 && (
-                      <>
-                        <SectionLayout.Primary>
-                          <LikesByMonthArea data={likesByMonth} />
-                        </SectionLayout.Primary>
-
-                        <SectionLayout.Secondary>
-                          <div className="col-span-1 md:col-span-2">
-                            <LikesVsUnlikesOverTimeArea data={likesVsUnlikesOverTime} />
-                          </div>
-                        </SectionLayout.Secondary>
-                      </>
-                    )}
-                  </SectionLayout.Subsection>
-                )}
               </>
             )}
           </SectionLayout>
@@ -410,21 +381,15 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                     />
                   )}
 
+                  {/* Liked Movies Rating Distribution */}
+                  {hasMoviesLiked && (
+                    <LikedMoviesRatingDistribution data={likedMoviesRatingDistribution} />
+                  )}
+
                   {/* Most Liked Decade */}
                   {hasMoviesLiked && mostLikedDecadeData.length > 0 && (
                     <MostLikedDecade data={mostLikedDecadeData} />
                   )}
-
-                  {/* Empty Placeholder */}
-                  <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent border-dashed">
-                    <CardContent className="text-center py-16">
-                      <div className="text-muted-foreground">
-                        <Film className="h-12 w-12 mx-auto mb-4 opacity-20" />
-                        <p className="text-sm font-medium">Additional Insights</p>
-                        <p className="text-xs mt-2 opacity-70">Coming soon</p>
-                      </div>
-                    </CardContent>
-                  </Card>
                 </div>
               </div>
             )}
@@ -510,32 +475,28 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
             />
           ) : (
             <>
-              {stats2025 && <YearInReviewStats stats={stats2025} />}
+              {/* First row: Quick Stats (2/3) + Rating Distribution (1/3) */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {stats2025 && (
+                  <div className="md:col-span-2">
+                    <YearInReviewStats stats={stats2025} />
+                  </div>
+                )}
+                {rating2025Distribution.length > 0 && (
+                  <div className="md:col-span-1">
+                    <RatingDistributionBar data={rating2025Distribution} />
+                  </div>
+                )}
+              </div>
 
+              {/* Second row: Timeline + Decade Chart */}
               {monthly2025Data.length > 0 && (
-                <>
-                  <SectionLayout.Primary>
-                    <DiaryAreaChart data={monthly2025Data} />
-                  </SectionLayout.Primary>
-
-                  <SectionLayout.Secondary>
-                    {rating2025Distribution.length > 0 && (
-                      <div className="col-span-1">
-                        <RatingDistributionBar data={rating2025Distribution} />
-                      </div>
-                    )}
-                    {rewatch2025Data && (
-                      <div className="col-span-1">
-                        <YearRewatchesRatio data={rewatch2025Data} />
-                      </div>
-                    )}
-                    {likes2025Data && (
-                      <div className="col-span-1 md:col-span-2">
-                        <LikedVsUnlikedDonut data={likes2025Data} />
-                      </div>
-                    )}
-                  </SectionLayout.Secondary>
-                </>
+                <SectionLayout.Secondary>
+                  <DiaryAreaChart data={monthly2025Data} />
+                  {decade2025Data.length > 0 && fiveYear2025Data.length > 0 && (
+                    <YearByDecadeBar decadeData={decade2025Data} fiveYearData={fiveYear2025Data} />
+                  )}
+                </SectionLayout.Secondary>
               )}
             </>
           )}
