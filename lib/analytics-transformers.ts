@@ -53,6 +53,35 @@ export function transformReleaseYearToDecades(
 }
 
 /**
+ * Transform movies to 5-year period breakdown
+ * @returns Array of { decade: string (e.g., "1990-1994"), count: number }
+ */
+export function transformReleaseYearToFiveYearPeriods(
+  movies: Movie[]
+): Array<{ decade: string; count: number }> {
+  const periodMap: Record<string, number> = {}
+
+  movies.forEach((movie) => {
+    if (movie.year) {
+      const year = parseInt(String(movie.year))
+      // Calculate 5-year period (e.g., 1990-1994, 1995-1999)
+      const periodStart = Math.floor(year / 5) * 5
+      const periodEnd = periodStart + 4
+      const periodLabel = `${periodStart}-${periodEnd}`
+      periodMap[periodLabel] = (periodMap[periodLabel] || 0) + 1
+    }
+  })
+
+  return Object.entries(periodMap)
+    .map(([decade, count]) => ({ decade, count }))
+    .sort((a, b) => {
+      const yearA = parseInt(a.decade.split('-')[0])
+      const yearB = parseInt(b.decade.split('-')[0])
+      return yearA - yearB
+    })
+}
+
+/**
  * Transform movies to era breakdown with colors
  * @returns Array of { era, count, fill (color) }
  */
@@ -578,18 +607,75 @@ export function transformMostLikedDecade(
 
 /**
  * Transform rating distribution for bar chart
+ * Shows all possible ratings (0.5-5.0), even if count is 0
  * @param ratingDist From AnalyticsOverview.ratingDistribution
  * @returns Array of { rating: "5.0", count }
  */
 export function transformRatingDistribution(
   ratingDist: Record<string, number>
 ): Array<{ rating: string; count: number }> {
-  return Object.entries(ratingDist)
-    .map(([rating, count]) => ({
+  // Generate all possible ratings from 0.5 to 5.0 in 0.5 increments
+  const allRatings: Array<{ rating: string; count: number }> = []
+  for (let i = 0.5; i <= 5.0; i += 0.5) {
+    const rating = i.toFixed(1)
+    allRatings.push({
       rating,
-      count,
-    }))
-    .sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating))
+      count: ratingDist[rating] || 0,
+    })
+  }
+  return allRatings
+}
+
+/**
+ * Transform liked movies rating distribution
+ * Shows how user rates movies they like
+ * Includes all possible ratings (0.5-5.0) and a special "Not Rated" bar
+ * @returns Array of { rating: "5.0" | "Not Rated", count, isNotRated }
+ */
+export function transformLikedMoviesRatingDistribution(
+  movies: Movie[]
+): Array<{ rating: string; count: number; isNotRated?: boolean }> {
+  const likedMovies = movies.filter((m) => m.liked === true)
+
+  if (likedMovies.length === 0) {
+    return []
+  }
+
+  // Count liked movies without ratings
+  const likedNotRated = likedMovies.filter((m) => m.rating === undefined).length
+
+  // Filter for movies that are both liked AND rated
+  const likedAndRated = likedMovies.filter((m) => m.rating !== undefined)
+
+  // Group by rating
+  const ratingMap: Record<string, number> = {}
+  likedAndRated.forEach((movie) => {
+    const rating = movie.rating!.toFixed(1)
+    ratingMap[rating] = (ratingMap[rating] || 0) + 1
+  })
+
+  // Generate all possible ratings from 0.5 to 5.0
+  const allRatings: Array<{ rating: string; count: number; isNotRated?: boolean }> = []
+
+  // Add "Not Rated" bar first if there are any
+  if (likedNotRated > 0) {
+    allRatings.push({
+      rating: "Not Rated",
+      count: likedNotRated,
+      isNotRated: true,
+    })
+  }
+
+  // Add all rating values
+  for (let i = 0.5; i <= 5.0; i += 0.5) {
+    const rating = i.toFixed(1)
+    allRatings.push({
+      rating,
+      count: ratingMap[rating] || 0,
+    })
+  }
+
+  return allRatings
 }
 
 /**
@@ -641,12 +727,22 @@ export function transformRatedVsUnrated(movies: Movie[]): { rated: number; unrat
 }
 
 /**
- * Transform best rated decades (only decades with 10+ rated movies)
- * @returns Array of { decade: "1990s", avgRating, totalRated, highlyRated }
+ * Transform rated movies by decade
+ * Returns ALL decades with rated movies (no minimum threshold)
+ * Includes average rating and counts for each rating tier
+ * @returns Array of { decade, avgRating, totalRated, fiveStars, fourHalfStars, fourStars, hasEnoughData }
  */
 export function transformBestRatedDecade(
   movies: Movie[]
-): Array<{ decade: string; avgRating: number; totalRated: number; highlyRated: number }> {
+): Array<{
+  decade: string
+  avgRating: number
+  totalRated: number
+  fiveStars: number
+  fourHalfStars: number
+  fourStars: number
+  hasEnoughData: boolean
+}> {
   const ratedMovies = movies.filter((m) => m.rating !== undefined)
 
   if (ratedMovies.length === 0) {
@@ -654,22 +750,32 @@ export function transformBestRatedDecade(
   }
 
   const grouped = groupBy(ratedMovies, (m) => `${m.decade}s`)
-  const result: Array<{ decade: string; avgRating: number; totalRated: number; highlyRated: number }> = []
+  const result: Array<{
+    decade: string
+    avgRating: number
+    totalRated: number
+    fiveStars: number
+    fourHalfStars: number
+    fourStars: number
+    hasEnoughData: boolean
+  }> = []
 
   grouped.forEach((decadeMovies, decade) => {
-    // Only include decades with 10+ rated movies
-    if (decadeMovies.length >= 10) {
-      const ratings = decadeMovies.map((m) => m.rating as number)
-      const avgRating = average(ratings)
-      const highlyRated = decadeMovies.filter((m) => (m.rating as number) >= 4).length
+    const ratings = decadeMovies.map((m) => m.rating as number)
+    const avgRating = average(ratings)
+    const fiveStars = decadeMovies.filter((m) => (m.rating as number) === 5).length
+    const fourHalfStars = decadeMovies.filter((m) => (m.rating as number) === 4.5).length
+    const fourStars = decadeMovies.filter((m) => (m.rating as number) === 4).length
 
-      result.push({
-        decade,
-        avgRating: Math.round(avgRating * 10) / 10,
-        totalRated: decadeMovies.length,
-        highlyRated,
-      })
-    }
+    result.push({
+      decade,
+      avgRating: Math.round(avgRating * 10) / 10,
+      totalRated: decadeMovies.length,
+      fiveStars,
+      fourHalfStars,
+      fourStars,
+      hasEnoughData: decadeMovies.length >= 10, // Flag for filtering
+    })
   })
 
   return result.sort((a, b) => {
