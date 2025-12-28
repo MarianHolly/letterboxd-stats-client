@@ -215,11 +215,13 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* ============================================================================ */}
         {/* STATS OVERVIEW - KPI Cards */}
         {/* ============================================================================ */}
-        <StatsOverview
-          analytics={analytics}
-          profile={dataset?.userProfile}
-          isLoading={!analytics}
-        />
+        <div className="pb-16 mb-8 border-b-2 border-slate-200 dark:border-white/10">
+          <StatsOverview
+            analytics={analytics}
+            profile={dataset?.userProfile}
+            isLoading={!analytics}
+          />
+        </div>
 
         {/* ============================================================================ */}
         {/* SECTION 1: YOUR CINEMATIC TIMELINE */}
