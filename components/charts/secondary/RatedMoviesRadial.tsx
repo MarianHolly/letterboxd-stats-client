@@ -1,6 +1,6 @@
 "use client"
 
-import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts"
+import { LabelList, Pie, PieChart } from "recharts"
 import {
   Card,
 } from "@/components/ui/card"
@@ -47,7 +47,7 @@ const chartConfig = {
   },
   unrated: {
     label: "Unrated",
-    color: "#cbd5e1", // Light gray
+    color: "#e2e8f0", // Light gray
   },
 } satisfies ChartConfig
 
@@ -55,7 +55,10 @@ export function RatedMoviesRadial({ data }: RatedMoviesRadialProps) {
   const { watched, rated } = data
   const unrated = watched - rated
 
-  const chartData = [{ rated, unrated }]
+  const chartData = [
+    { category: "rated", value: rated, fill: "var(--color-rated)" },
+    { category: "unrated", value: unrated, fill: "var(--color-unrated)" },
+  ]
   const ratedPercentage = watched > 0 ? Math.round((rated / watched) * 100) : 0
 
   // Determine rater profile based on percentage rated
@@ -78,73 +81,45 @@ export function RatedMoviesRadial({ data }: RatedMoviesRadialProps) {
 
   return (
     <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
-      <div className="px-6 py-0 flex flex-row items-center gap-6">
-          {/* LEFT: Radial Chart */}
-          <div className="flex-shrink-0">
+      <div className="px-6 py-4 flex flex-col md:flex-row items-center gap-6">
+          {/* LEFT: Pie Chart */}
+          <div className="flex-shrink-0 w-full md:w-auto flex justify-center">
             <ChartContainer
               config={chartConfig}
-              className="aspect-square w-[300px]"
+              className="aspect-square w-full max-w-[220px] md:w-[220px] [&_.recharts-text]:fill-background"
             >
-              <RadialBarChart
-                data={chartData}
-                startAngle={180}
-                endAngle={0}
-                innerRadius={100}
-                outerRadius={150}
-              >
+              <PieChart>
                 <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent hideLabel />}
+                  content={<ChartTooltipContent nameKey="value" hideLabel />}
                 />
-                <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
-                  <Label
-                    content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                        return (
-                          <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
-                            <tspan
-                              x={viewBox.cx}
-                              y={(viewBox.cy || 0) - 10}
-                              className="fill-black dark:fill-white text-2xl font-bold"
-                            >
-                              {ratedPercentage}%
-                            </tspan>
-                            <tspan
-                              x={viewBox.cx}
-                              y={(viewBox.cy || 0) + 8}
-                              className="fill-slate-500 dark:fill-white/50 text-xs"
-                            >
-                              Rated
-                            </tspan>
-                          </text>
-                        )
-                      }
-                    }}
+                <Pie
+                  data={chartData}
+                  dataKey="value"
+                  nameKey="category"
+                  innerRadius={30}
+                  outerRadius={95}
+                  cornerRadius={6}
+                  paddingAngle={2}
+                >
+                  <LabelList
+                    dataKey="value"
+                    stroke="none"
+                    fontSize={14}
+                    fontWeight={600}
+                    fill="currentColor"
+                    formatter={(value: number) => value.toLocaleString()}
                   />
-                </PolarRadiusAxis>
-                <RadialBar
-                  dataKey="rated"
-                  stackId="a"
-                  cornerRadius={5}
-                  fill="var(--color-rated)"
-                  className="stroke-transparent stroke-2"
-                />
-                <RadialBar
-                  dataKey="unrated"
-                  fill="var(--color-unrated)"
-                  stackId="a"
-                  cornerRadius={5}
-                  className="stroke-transparent stroke-2"
-                />
-              </RadialBarChart>
+                </Pie>
+              </PieChart>
             </ChartContainer>
           </div>
 
           {/* SEPARATOR */}
-          <div className="h-[300px] w-px bg-slate-200 dark:bg-white/10 flex-shrink-0" />
+          <div className="hidden md:block h-[220px] w-px bg-slate-200 dark:bg-white/10 flex-shrink-0" />
+          <div className="md:hidden w-full h-px bg-slate-200 dark:bg-white/10" />
 
           {/* RIGHT: Stats and Profile */}
-          <div className="flex-1 flex flex-col justify-center gap-4">
+          <div className="flex-1 flex flex-col justify-center gap-2 w-full">
             {/* Statistics */}
             <div className="flex flex-row gap-6">
               <StatItem
@@ -169,7 +144,7 @@ export function RatedMoviesRadial({ data }: RatedMoviesRadialProps) {
               <p className="text-sm text-black dark:text-white font-medium">
                 {raterType}
               </p>
-              <p className="text-xs text-slate-500 dark:text-white/50 mt-1">
+              <p className="text-xs text-slate-500 dark:text-white/50 mt-0.5">
                 {raterDescription}
               </p>
             </div>
