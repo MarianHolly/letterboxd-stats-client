@@ -146,30 +146,22 @@ function getYearBoundaries(
 }
 
 export function DiaryAreaChart({ data }: DiaryAreaChartProps) {
-  const [timeRange, setTimeRange] = React.useState<TimeRange>('all');
   const [smoothing, setSmoothing] = React.useState<SmoothingLevel>('none');
 
   // Process data based on selected options
   const processedData = React.useMemo(() => {
     let processed = [...data];
 
-    // Apply time range filter
-    if (timeRange === 'last12') {
-      processed = filterLastMonths(processed, 12);
-    }
-
     // Apply smoothing
     if (smoothing === 'two-month') {
       processed = smoothData(processed, 2);
-    } else if (smoothing === 'three-month') {
-      processed = smoothData(processed, 3);
     }
 
     // Apply interpolation for smoother curves
     processed = interpolateData(processed);
 
     return processed;
-  }, [data, timeRange, smoothing]);
+  }, [data, smoothing]);
 
   // Get year boundaries for reference lines
   const yearBoundaries = React.useMemo(() => {
@@ -205,72 +197,34 @@ export function DiaryAreaChart({ data }: DiaryAreaChartProps) {
               Watching Timeline
             </CardTitle>
             <CardDescription className="text-slate-600 dark:text-white/60">
-              Movies watched {timeRange === 'last12' ? 'in last 12 months' : 'across all time'}
+              Movies watched throughout the year
             </CardDescription>
           </div>
 
           {/* Controls */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            {/* Time Range Selector */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => setTimeRange('all')}
-                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                  timeRange === 'all'
-                    ? 'bg-slate-200 dark:bg-white/10 text-black dark:text-white'
-                    : 'bg-transparent text-slate-600 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/5'
-                }`}
-              >
-                All Time
-              </button>
-              <button
-                onClick={() => setTimeRange('last12')}
-                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                  timeRange === 'last12'
-                    ? 'bg-slate-200 dark:bg-white/10 text-black dark:text-white'
-                    : 'bg-transparent text-slate-600 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/5'
-                }`}
-              >
-                Last 12M
-              </button>
-            </div>
-
-            {/* Smoothing Selector */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => setSmoothing('none')}
-                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                  smoothing === 'none'
-                    ? 'bg-slate-200 dark:bg-white/10 text-black dark:text-white'
-                    : 'bg-transparent text-slate-600 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/5'
-                }`}
-                title="Show monthly data"
-              >
-                Monthly
-              </button>
-              <button
-                onClick={() => setSmoothing('two-month')}
-                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                  smoothing === 'two-month'
-                    ? 'bg-slate-200 dark:bg-white/10 text-black dark:text-white'
-                    : 'bg-transparent text-slate-600 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/5'
-                }`}
-                title="Average every 2 months"
-              >
-                2M Avg
-              </button>
-              <button
-                onClick={() => setSmoothing('three-month')}
-                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                  smoothing === 'three-month'
-                    ? 'bg-slate-200 dark:bg-white/10 text-black dark:text-white'
-                    : 'bg-transparent text-slate-600 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/5'
-                }`}
-                title="Average every 3 months"
-              >
-                3M Avg
-              </button>
-            </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setSmoothing('none')}
+              className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                smoothing === 'none'
+                  ? 'bg-slate-200 dark:bg-white/10 text-black dark:text-white'
+                  : 'bg-transparent text-slate-600 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/5'
+              }`}
+              title="Show monthly data"
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setSmoothing('two-month')}
+              className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                smoothing === 'two-month'
+                  ? 'bg-slate-200 dark:bg-white/10 text-black dark:text-white'
+                  : 'bg-transparent text-slate-600 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/5'
+              }`}
+              title="Average every 2 months"
+            >
+              2M Avg
+            </button>
           </div>
         </div>
       </CardHeader>

@@ -29,7 +29,7 @@ interface StatItemProps {
 
 function StatItem({ label, value, description }: StatItemProps) {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-0.5 text-center">
       <span className="text-xs text-slate-500 dark:text-white/50 font-medium uppercase">
         {label}
       </span>
@@ -50,8 +50,17 @@ export function YearInReviewStats({ stats }: YearInReviewStatsProps) {
     return null
   }
 
+  // Calculate derived stats
+  const uniqueFilms = (stats.totalWatched ?? 0) - (stats.totalRewatches ?? 0)
+  const rewatchRate = stats.totalWatched && stats.totalWatched > 0
+    ? ((stats.totalRewatches ?? 0) / stats.totalWatched * 100).toFixed(1)
+    : 0
+  const likeRate = stats.totalWatched && stats.totalWatched > 0
+    ? ((stats.totalLiked ?? 0) / stats.totalWatched * 100).toFixed(1)
+    : 0
+
   return (
-    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full flex flex-col">
       <CardHeader>
         <CardTitle className="text-black dark:text-white">
           2025 Quick Stats
@@ -60,8 +69,9 @@ export function YearInReviewStats({ stats }: YearInReviewStatsProps) {
           Your viewing year at a glance
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-row flex-wrap justify-between gap-6 sm:gap-8">
+      <CardContent className="flex-1 flex flex-col justify-center">
+        {/* Main Stats */}
+        <div className="flex flex-row flex-wrap justify-center gap-6 sm:gap-8 mb-6">
           <StatItem
             label="Total Watched"
             value={stats.totalWatched ?? 0}
@@ -70,17 +80,7 @@ export function YearInReviewStats({ stats }: YearInReviewStatsProps) {
           <StatItem
             label="Average Rating"
             value={(stats.avgRating ?? 0).toFixed(1)}
-            description="rating (out of 5)"
-          />
-          <StatItem
-            label="Rewatches"
-            value={stats.totalRewatches ?? 0}
-            description="movies rewatched"
-          />
-          <StatItem
-            label="Liked"
-            value={stats.totalLiked ?? 0}
-            description="movies added to likes"
+            description="out of 5 stars"
           />
           <StatItem
             label="Monthly Average"
@@ -94,6 +94,28 @@ export function YearInReviewStats({ stats }: YearInReviewStatsProps) {
               description={stats.busiestMonth}
             />
           )}
+        </div>
+
+        {/* Separator */}
+        <div className="h-px bg-slate-200 dark:bg-white/10 my-6" />
+
+        {/* Breakdown Stats */}
+        <div className="flex flex-row flex-wrap justify-center gap-6 sm:gap-8">
+          <StatItem
+            label="New Films"
+            value={uniqueFilms}
+            description="first-time watches"
+          />
+          <StatItem
+            label="Rewatches"
+            value={stats.totalRewatches ?? 0}
+            description={`${rewatchRate}% of total`}
+          />
+          <StatItem
+            label="Liked"
+            value={stats.totalLiked ?? 0}
+            description={`${likeRate}% of watched`}
+          />
         </div>
       </CardContent>
     </Card>
