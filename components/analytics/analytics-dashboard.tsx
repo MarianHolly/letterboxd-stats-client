@@ -29,6 +29,11 @@ import { RatingByDecadeBar } from "@/components/charts/secondary/RatingByDecadeB
 import { RatingVsUnratedRatio } from "@/components/charts/secondary/RatingVsUnratedRatio";
 import { YearRewatchesRatio } from "@/components/charts/secondary/YearRewatchesRatio";
 import { WatchedVsWatchlistRadial } from "@/components/charts/secondary/WatchedVsWatchlistRadial";
+import { TastePreferenceStats } from "@/components/charts/secondary/TastePreferenceStats";
+import { RatedMoviesRadial } from "@/components/charts/secondary/RatedMoviesRadial";
+import { LikedMoviesRadial } from "@/components/charts/secondary/LikedMoviesRadial";
+import { MostLikedDecade } from "@/components/charts/secondary/MostLikedDecade";
+import { BestRatedDecade } from "@/components/charts/secondary/BestRatedDecade";
 import { WatchlistByDecadeChart } from "@/components/charts/watchlist-by-decade-chart";
 import { YearInReviewStats } from "@/components/charts/year-in-review-stats";
 import { YearlyComparisonChart } from "@/components/charts/yearly-comparison-chart";
@@ -54,6 +59,9 @@ import {
   transformRatingByDecade,
   transformRatedVsUnrated,
   computeRatingInsight,
+  transformTastePreferenceStats,
+  transformMostLikedDecade,
+  transformBestRatedDecade,
   transformWatchedVsWatchlist,
   transformWatchlistByDecade,
   computeWatchlistInsight,
@@ -164,6 +172,13 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   const ratingByDecade = hasRatings ? transformRatingByDecade(movies) : [];
   const ratedVsUnrated = hasRatings ? transformRatedVsUnrated(movies) : null;
   const ratingInsight = analytics ? computeRatingInsight(analytics) : "";
+
+  // SECTION 3: Overall Taste & Preference Stats
+  const tastePreferenceStats = (hasMoviesLiked || hasRatings)
+    ? transformTastePreferenceStats(movies)
+    : null;
+  const mostLikedDecadeData = hasMoviesLiked ? transformMostLikedDecade(movies) : [];
+  const bestRatedDecadeData = hasRatings ? transformBestRatedDecade(movies) : [];
 
   // SECTION 4: Watchlist
   const hasWatchlist = watchlist && watchlist.length > 0;
@@ -355,79 +370,64 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
               showDescription={Boolean(hasMoviesLiked || hasRatings)}
             />
 
-            {/* SUBSECTION 3A: Likes Analysis */}
-            {hasMoviesLiked && (
-              <SectionLayout.Subsection>
-                <SectionLayout.SubHeader
-                  title="Your Likes"
-                  description="Which movies do you love?"
-                  insight={likeInsight}
-                />
+            {/* LAYOUT: 2 Columns - Rated (Left) and Liked (Right) */}
+            {tastePreferenceStats && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* LEFT COLUMN: Rated Stats */}
+                <div className="flex flex-col gap-6">
+                  {/* Rated Movies Radial */}
+                  {hasRatings && (
+                    <RatedMoviesRadial
+                      data={{
+                        watched: tastePreferenceStats.watched,
+                        rated: tastePreferenceStats.rated
+                      }}
+                    />
+                  )}
 
-                {likedVsUnliked ? (
-                  <>
-                    <SectionLayout.Primary>
-                      <LikedVsUnlikedDonut data={likedVsUnliked} />
-                    </SectionLayout.Primary>
+                  {/* Rating Distribution */}
+                  {ratingDistribution.length > 0 && (
+                    <RatingDistributionBar data={ratingDistribution} />
+                  )}
 
-                    {likesByDecade.length > 0 && (
-                      <SectionLayout.Secondary>
-                        <div className="col-span-1">
-                          <LikesByDecadeBar data={likesByDecade} />
-                        </div>
-                      </SectionLayout.Secondary>
-                    )}
-                  </>
-                ) : (
-                  <SectionLayout.EmptyWithSplit
-                    subtitle="Which movies do you love?"
-                    description="Discover how you express your feelings about films through likes and ratings. Analyze your rating patterns across genres and decades, and understand the relationship between your ratings and your most-loved movies."
-                    requiredFiles={["watched.csv with like markers"]}
-                    actionText="Mark Likes on Letterboxd"
-                  />
-                )}
-              </SectionLayout.Subsection>
+                  {/* Best Rated Decade */}
+                  {hasRatings && (
+                    <BestRatedDecade data={bestRatedDecadeData} />
+                  )}
+                </div>
+
+                {/* RIGHT COLUMN: Liked Stats */}
+                <div className="flex flex-col gap-6">
+                  {/* Liked Movies Radial */}
+                  {hasMoviesLiked && (
+                    <LikedMoviesRadial
+                      data={{
+                        watched: tastePreferenceStats.watched,
+                        liked: tastePreferenceStats.liked
+                      }}
+                    />
+                  )}
+
+                  {/* Most Liked Decade */}
+                  {hasMoviesLiked && mostLikedDecadeData.length > 0 && (
+                    <MostLikedDecade data={mostLikedDecadeData} />
+                  )}
+
+                  {/* Empty Placeholder */}
+                  <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent border-dashed">
+                    <CardContent className="text-center py-16">
+                      <div className="text-muted-foreground">
+                        <Film className="h-12 w-12 mx-auto mb-4 opacity-20" />
+                        <p className="text-sm font-medium">Additional Insights</p>
+                        <p className="text-xs mt-2 opacity-70">Coming soon</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             )}
 
-            {/* SUBSECTION 3B: Rating Patterns */}
-            {hasRatings && (
-              <SectionLayout.Subsection>
-                <SectionLayout.SubHeader
-                  title="Rating Patterns"
-                  description="How you rate the movies you watch"
-                  insight={ratingInsight}
-                />
-
-                {ratingDistribution.length > 0 ? (
-                  <>
-                    <SectionLayout.Primary>
-                      <RatingDistributionBar data={ratingDistribution} />
-                    </SectionLayout.Primary>
-
-                    <SectionLayout.Secondary>
-                      {ratingByDecade.length > 0 && (
-                        <div className="col-span-1">
-                          <RatingByDecadeBar data={ratingByDecade} />
-                        </div>
-                      )}
-                      {ratedVsUnrated && (
-                        <div className="col-span-1">
-                          <RatingVsUnratedRatio data={ratedVsUnrated} />
-                        </div>
-                      )}
-                    </SectionLayout.Secondary>
-                  </>
-                ) : (
-                  <SectionLayout.EmptyWithSplit
-                    subtitle="How you rate the movies you watch"
-                    description="A breakdown of how you rate what you watch. Compare Liked versus Unliked films, explore your rating distribution, and identify patterns across decades. This section reveals whether your preferences gravitate toward critically acclaimed classics, specific eras, or more overlooked, under-the-radar films."
-                    requiredFiles={["ratings.csv"]}
-                    actionText="Upload Ratings"
-                    onAction={onUploadClick}
-                  />
-                )}
-              </SectionLayout.Subsection>
-            )}
+            
           </SectionLayout>
         )}
 
