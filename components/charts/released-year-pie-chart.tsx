@@ -56,7 +56,7 @@ export function ReleasedYearPieChart({ data }: ReleasedYearPieChartProps) {
           <CardDescription>Distribution by release era</CardDescription>
         </CardHeader>
         <CardContent className="flex-1 pb-0">
-          <div className="flex items-center justify-center h-[350px] text-slate-500 dark:text-white/50">
+          <div className="flex items-center justify-center h-[400px] text-slate-500 dark:text-white/50">
             No era data available
           </div>
         </CardContent>
@@ -75,7 +75,7 @@ export function ReleasedYearPieChart({ data }: ReleasedYearPieChartProps) {
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="[&_.recharts-text]:fill-foreground mx-auto aspect-square max-h-[350px]"
+          className="[&_.recharts-text]:fill-foreground mx-auto aspect-square max-h-[400px]"
         >
           <PieChart>
             <ChartTooltip
@@ -106,12 +106,12 @@ export function ReleasedYearPieChart({ data }: ReleasedYearPieChartProps) {
         </ChartContainer>
       </CardContent>
       <CardContent className="flex flex-row gap-3 text-sm pt-4 px-6 pb-4">
-        <div className="flex gap-4 w-full flex-wrap justify-center md:justify-start">
+        <div className="grid grid-cols-2 gap-4 w-full">
           {data.map((item) => {
             const percentage = ((item.count / totalMovies) * 100).toFixed(1);
             const eraDesc = ERA_DESCRIPTIONS[item.era] || { years: "", description: "" };
             return (
-              <div key={item.era} className="flex flex-col gap-1 flex-1 min-w-[150px]">
+              <div key={item.era} className="flex flex-col gap-1">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div

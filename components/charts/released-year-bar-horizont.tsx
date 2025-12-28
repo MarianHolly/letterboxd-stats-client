@@ -45,13 +45,13 @@ export function ReleasedYearBarHorizontal({ data }: ReleasedYearBarHorizontalPro
 
   if (data.length === 0) {
     return (
-      <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+      <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
         <CardHeader>
           <CardTitle>Release by Decade</CardTitle>
           <CardDescription>Movie count distribution across decades</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center h-[550px] text-slate-500 dark:text-white/50">
+        <CardContent className="h-full">
+          <div className="flex items-center justify-center h-full text-slate-500 dark:text-white/50">
             No decade data available
           </div>
         </CardContent>
@@ -60,13 +60,13 @@ export function ReleasedYearBarHorizontal({ data }: ReleasedYearBarHorizontalPro
   }
 
   return (
-    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
       <CardHeader>
         <CardTitle>Release by Decade</CardTitle>
         <CardDescription>Movie count distribution across decades</CardDescription>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig} className="aspect-auto h-[545px] w-full">
+      <CardContent className="h-full">
+        <ChartContainer config={chartConfig} className="aspect-auto h-full w-full">
           <BarChart
             accessibilityLayer
             data={data}
