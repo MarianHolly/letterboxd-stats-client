@@ -127,25 +127,30 @@ export function StatsOverview({
     : null;
 
   return (
-    <section className="space-y-8">
+    <section className="space-y-16">
       {/* Profile Header Section */}
       {profile && (
-        <div className="space-y-4 text-center mt-8">
-       
-          <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white pt-4">
-            <span className="font-light">Cinematic Identity of</span> @{profile.username}
-          </h1>
-      
-          <h2 className="text-lg font-light text-slate-900 dark:text-white">
-            {displayName}'s Stats
-          </h2>
+        <div className="space-y-8 text-center mt-16 mb-8">
+          <div className="space-y-4">
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">
+              Cinematic Profile
+            </p>
 
-          <Separator className="my-6" />
+            <h1 className="text-6xl md:text-8xl font-bold text-slate-900 dark:text-white tracking-tight">
+              {displayName}
+            </h1>
+
+            <p className="text-base text-slate-600 dark:text-slate-300 font-light">
+              @{profile.username}
+            </p>
+          </div>
+
+          <Separator className="my-12 max-w-md mx-auto" />
         </div>
       )}
 
       {/* Stats Grid - Single Row */}
-      <div className="flex flex-wrap gap-8 justify-center">
+      <div className="flex flex-wrap gap-12 justify-center pb-8">
         {/* Total Movies Watched */}
         <StatCard
           title="Total Movies"
