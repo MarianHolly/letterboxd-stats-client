@@ -92,7 +92,7 @@ export function transformReleaseYearToEras(
     CLASSIC: { min: 1900, max: 1944, label: 'Classic', color: '#06b6d4' },
     GOLDEN: { min: 1945, max: 1969, label: 'Golden', color: '#0891b2' },
     MODERN: { min: 1970, max: 1999, label: 'Modern', color: '#6366f1' },
-    CONTEMPORARY: { min: 2000, max: 2099, label: 'Contemporary', color: '#d946ef' },
+    CONTEMPORARY: { min: 2000, max: 2099, label: 'Current', color: '#d946ef' },
   }
 
   const eraTotals = {

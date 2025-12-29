@@ -219,7 +219,7 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
           <CardTitle className="text-black dark:text-white text-center md:text-start">
             Release Year Analysis
           </CardTitle>
-          <CardDescription className="text-slate-600 dark:text-white/60 hidden md:block md:text-xs">
+          <CardDescription className="text-slate-600 dark:text-white/60 hidden lg:block lg:text-xs">
             Movies watched by release year with era categorization
           </CardDescription>
         </div>
@@ -230,8 +230,8 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
             { key: "classic" as EraFilter, label: "Classic", count: eraTotals.classic, description: ERA_BOUNDARIES.CLASSIC.description },
             { key: "golden" as EraFilter, label: "Golden", count: eraTotals.golden, description: ERA_BOUNDARIES.GOLDEN.description },
             { key: "modern" as EraFilter, label: "Modern", count: eraTotals.modern, description: ERA_BOUNDARIES.MODERN.description },
-            { key: "contemporary" as EraFilter, label: "Contemporary", count: eraTotals.contemporary, description: ERA_BOUNDARIES.CONTEMPORARY.description },
-            { key: "all" as EraFilter, label: "All Years", count: eraTotals.all, description: "Complete" },
+            { key: "contemporary" as EraFilter, label: "Current", count: eraTotals.contemporary, description: ERA_BOUNDARIES.CONTEMPORARY.description },
+            { key: "all" as EraFilter, label: "All", count: eraTotals.all, description: "Complete" },
           ].map(({ key, label, count, description }) => (
             <button
               key={key}
@@ -250,7 +250,7 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
               <span className="text-xs text-slate-600 dark:text-white/60">
                 {label}
               </span>
-              <span className="text-xs text-slate-500 dark:text-white/50 w-full hidden md:block whitespace-nowrap">
+              <span className="text-xs text-slate-500 dark:text-white/50 w-full hidden lg:block whitespace-nowrap">
                 {description}
               </span>
             </button>

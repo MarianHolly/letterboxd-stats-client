@@ -35,7 +35,7 @@ const ERA_DESCRIPTIONS: Record<string, { years: string; description: string }> =
     years: "1970–1999",
     description: "New Hollywood and blockbusters"
   },
-  "Contemporary": {
+  "Current": {
     years: "2000–Present",
     description: "Digital era and modern cinema"
   },
@@ -122,7 +122,7 @@ export function ReleasedYearPieChart({ data }: ReleasedYearPieChartProps) {
                   </div>
                   <span className="text-xs font-medium text-slate-600 dark:text-white/70">{percentage}%</span>
                 </div>
-                <div className="ml-5 flex flex-col gap-1">
+                <div className="ml-5 flex-col gap-1 hidden lg:flex">
                   <p className="text-xs text-slate-500 dark:text-white/50">{eraDesc.years}</p>
                   <p className="text-xs text-slate-600 dark:text-white/70">{eraDesc.description}</p>
                 </div>

@@ -63,10 +63,10 @@ export function ReleasedYearBarHorizontal({ data }: ReleasedYearBarHorizontalPro
     <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
       <CardHeader>
         <CardTitle>Release by Decade</CardTitle>
-        <CardDescription>Movie count distribution across decades</CardDescription>
+        <CardDescription className="hidden lg:block">Movie count distribution across decades</CardDescription>
       </CardHeader>
-      <CardContent className="h-full">
-        <ChartContainer config={chartConfig} className="aspect-auto h-full w-full">
+      <CardContent className="h-full min-h-[300px]">
+        <ChartContainer config={chartConfig} className="aspect-auto h-full w-full min-h-[280px]">
           <BarChart
             accessibilityLayer
             data={data}
