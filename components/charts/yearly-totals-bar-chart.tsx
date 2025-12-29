@@ -49,7 +49,7 @@ export function YearlyTotalsBarChart({ data }: YearlyTotalsBarChartProps) {
     <Card>
       <CardHeader>
         <CardTitle>Yearly Totals</CardTitle>
-        <CardDescription>
+        <CardDescription className="hidden lg:block">
           Total movies watched each year with year-over-year change
         </CardDescription>
       </CardHeader>
@@ -164,11 +164,11 @@ export function YearlyTotalsBarChart({ data }: YearlyTotalsBarChartProps) {
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm pt-4">
+      <CardFooter className="flex flex-col items-start gap-2 text-sm pt-4">
         <div className="flex gap-2 font-medium leading-none">
           Total: {data.reduce((sum, item) => sum + item.total, 0).toLocaleString()} movies across {data.length} years
         </div>
-        <div className="leading-none text-muted-foreground">
+        <div className="hidden lg:block leading-none text-muted-foreground">
           Average: {Math.round(data.reduce((sum, item) => sum + item.total, 0) / data.length).toLocaleString()} movies per year
         </div>
       </CardFooter>

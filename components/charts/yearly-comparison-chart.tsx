@@ -55,11 +55,11 @@ export function YearlyComparisonChart({ data }: YearlyComparisonChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Comparing Last Years based on Monthly Watching</CardTitle>
-        <CardDescription>
+        <CardTitle>Yearly Monthly Trends</CardTitle>
+        <CardDescription className="hidden lg:block">
           Showing yearly patterns of the most active and quietest months.
         </CardDescription>
-      </CardHeader> 
+      </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <AreaChart accessibilityLayer data={data}>
