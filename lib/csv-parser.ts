@@ -298,8 +298,8 @@ function parseDiaryCSV(rows: DiaryCSVRow[]): ParseResult<Movie[]> {
   })
 
   // Debug: Count rewatches after parsing
-  const rewatchCount = movies.filter(m => m.rewatch && m.rewatchCount).length
-  console.log(`[parseDiaryCSV] Parsed ${movies.length} entries, ${rewatchCount} marked as rewatches`)
+  // const rewatchCount = movies.filter(m => m.rewatch && m.rewatchCount).length
+  // console.log(`[parseDiaryCSV] Parsed ${movies.length} entries, ${rewatchCount} marked as rewatches`)
 
   return {
     success: errors.length === 0,
