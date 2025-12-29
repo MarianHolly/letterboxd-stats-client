@@ -1,16 +1,17 @@
 "use client"
 
-import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts"
+import {
+  Label,
+  PolarGrid,
+  PolarRadiusAxis,
+  RadialBar,
+  RadialBarChart,
+} from "recharts"
 import {
   Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 import {
   ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
 
@@ -55,9 +56,19 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export function WatchedVsWatchlistRadial({ data }: WatchedVsWatchlistRadialProps) {
-  const chartData = [{ watched: data.watched, watchlist: data.watchlist }]
   const total = data.watched + data.watchlist
   const watchedPercentage = total > 0 ? Math.round((data.watched / total) * 100) : 0
+
+  // Chart data for radial bar
+  const chartData = [
+    {
+      percentage: watchedPercentage,
+      fill: "var(--color-watched)",
+    },
+  ]
+
+  // Calculate end angle based on percentage (0-360 degrees)
+  const endAngle = (watchedPercentage / 100) * 360
 
   // Calculate watchlist-to-watched ratio
   const ratio = data.watched > 0 ? (data.watchlist / data.watched) : 0
@@ -78,102 +89,103 @@ export function WatchedVsWatchlistRadial({ data }: WatchedVsWatchlistRadialProps
   }
 
   return (
-    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
-      <CardHeader className="pb-6 pt-4">
-        {/* Radial Chart in Header - Centered */}
-        <div className="flex justify-center mb-2">
-          <ChartContainer
-            config={chartConfig}
-            className="aspect-square w-[240px]"
+    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full p-6">
+      {/* Radial Chart - Centered */}
+      <div className="flex justify-center mb-2">
+        <ChartContainer
+          config={chartConfig}
+          className="mx-auto aspect-square w-[300px]"
+        >
+          <RadialBarChart
+            data={chartData}
+            startAngle={0}
+            endAngle={endAngle}
+            innerRadius={80}
+            outerRadius={130}
           >
-            <RadialBarChart
-              data={chartData}
-              startAngle={180}
-              endAngle={0}
-              innerRadius={75}
-              outerRadius={120}
-            >
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
+            <PolarGrid
+              gridType="circle"
+              radialLines={false}
+              stroke="none"
+              className="first:fill-muted last:fill-background"
+              polarRadius={[86, 74]}
+            />
+            <RadialBar
+              dataKey="percentage"
+              background
+              cornerRadius={10}
+            />
+            <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
+              <Label
+                content={({ viewBox }) => {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                    return (
+                      <text
+                        x={viewBox.cx}
+                        y={viewBox.cy}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                      >
+                        <tspan
+                          x={viewBox.cx}
+                          y={viewBox.cy}
+                          className="fill-black dark:fill-white text-4xl font-bold"
+                        >
+                          {watchedPercentage}%
+                        </tspan>
+                        <tspan
+                          x={viewBox.cx}
+                          y={(viewBox.cy || 0) + 24}
+                          className="fill-slate-500 dark:fill-white/50"
+                        >
+                          Completed
+                        </tspan>
+                      </text>
+                    )
+                  }
+                }}
               />
-              <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
-                <Label
-                  content={({ viewBox }) => {
-                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                      return (
-                        <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
-                          <tspan
-                            x={viewBox.cx}
-                            y={(viewBox.cy || 0) - 10}
-                            className="fill-black dark:fill-white text-2xl font-bold"
-                          >
-                            {watchedPercentage}%
-                          </tspan>
-                          <tspan
-                            x={viewBox.cx}
-                            y={(viewBox.cy || 0) + 8}
-                            className="fill-slate-500 dark:fill-white/50 text-xs"
-                          >
-                            Completed
-                          </tspan>
-                        </text>
-                      )
-                    }
-                  }}
-                />
-              </PolarRadiusAxis>
-              <RadialBar
-                dataKey="watched"
-                stackId="a"
-                cornerRadius={5}
-                fill="var(--color-watched)"
-                className="stroke-transparent stroke-2"
-              />
-              <RadialBar
-                dataKey="watchlist"
-                fill="var(--color-watchlist)"
-                stackId="a"
-                cornerRadius={5}
-                className="stroke-transparent stroke-2"
-              />
-            </RadialBarChart>
-          </ChartContainer>
-        </div>
-      </CardHeader>
+            </PolarRadiusAxis>
+          </RadialBarChart>
+        </ChartContainer>
+      </div>
 
-      <CardContent className="pt-2">
-        {/* Vertical Statistics */}
-        <div className="flex flex-col gap-6 py-4 border-t border-slate-200 dark:border-white/10">
-          <StatItem
-            value={data.watched.toLocaleString()}
-            description="Watched"
-            color="#1e40af"
-          />
-          <StatItem
-            value={data.watchlist.toLocaleString()}
-            description="Watchlist"
-            color="#6d28d9"
-          />
-          <StatItem
-            value={total.toLocaleString()}
-            description="Total Films"
-          />
-        </div>
+      {/* Separator */}
+      <div className="border-t border-slate-200 dark:border-white/10 my-4" />
 
-        {/* Profile Section */}
-        <div className="pt-5 mt-2 border-t border-slate-200 dark:border-white/10 text-center">
-          <span className="text-xs text-slate-500 dark:text-white/50 font-medium uppercase tracking-wider block mb-2">
-            Your Profile
-          </span>
-          <p className="text-sm text-black dark:text-white font-medium">
-            {collectorType}
-          </p>
-          <p className="text-xs text-slate-500 dark:text-white/50 mt-1">
-            {collectorDescription}
-          </p>
-        </div>
-      </CardContent>
+      {/* Vertical Statistics */}
+      <div className="flex flex-col gap-6 py-2">
+        <StatItem
+          value={data.watched.toLocaleString()}
+          description="Watched"
+          color="#1e40af"
+        />
+        <StatItem
+          value={data.watchlist.toLocaleString()}
+          description="Watchlist"
+          color="#6d28d9"
+        />
+        <StatItem
+          value={total.toLocaleString()}
+          description="Total Films"
+        />
+      </div>
+
+      {/* Separator */}
+      <div className="border-t border-slate-200 dark:border-white/10 my-4" />
+
+      {/* Profile Section */}
+      <div className="text-center">
+        <span className="text-xs text-slate-500 dark:text-white/50 font-medium uppercase tracking-wider block mb-2">
+          Your Profile
+        </span>
+        <p className="text-sm text-black dark:text-white font-medium">
+          {collectorType}
+        </p>
+        <p className="text-xs text-slate-500 dark:text-white/50 mt-1">
+          {collectorDescription}
+        </p>
+      </div>
     </Card>
   )
 }

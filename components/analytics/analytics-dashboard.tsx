@@ -40,6 +40,7 @@ import { YearInReviewStats } from "@/components/charts/year-in-review-stats";
 import { YearlyComparisonChart } from "@/components/charts/yearly-comparison-chart";
 import { YearlyTotalsBarChart } from "@/components/charts/yearly-totals-bar-chart";
 import { YearByDecadeBar } from "@/components/charts/secondary/YearByDecadeBar";
+import { CanonListsGrid } from "@/components/charts/canon-lists-grid";
 
 // Import data transformers
 import {
@@ -509,16 +510,13 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
           <SectionLayout.Header
             title="The Canon"
             subtitle="Essential Cinema Collections"
-            description="Track your progress through the world's most iconic film lists and cinematic movements. See how much of the 'Top 250' or specific genres (like French New Wave or Noir) you've conquered compared to the global film community."
+            description="Track your progress through the world's most iconic film lists and cinematic movements. Discover how many classics from the IMDb Top 250, Oscar Best Picture winners, Cannes Palme d'Or, AFI's greatest films, and Letterboxd Top 250 you've watched."
             highlightWord="Canon"
             highlightColor="#10b981"
             showDescription={true}
           />
 
-          <div className="text-center p-8 text-slate-600 dark:text-slate-400">
-            <p className="mb-4">Essential cinema collections coming soon</p>
-            <p className="text-sm">Track progress through iconic film lists and cinematic movements</p>
-          </div>
+          <CanonListsGrid />
         </SectionLayout>
       </div>
     </div>
