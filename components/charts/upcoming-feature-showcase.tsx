@@ -35,7 +35,6 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   Radar,
-  ResponsiveContainer,
   Dot,
 } from "recharts"
 
@@ -286,64 +285,62 @@ export function DiaryMonthlyRadarChart({ data, size = 'compact' }: DiaryMonthlyR
             config={{}}
             className={`aspect-square ${chartHeight} w-full ${size === 'large' ? 'max-w-2xl' : 'max-w-md'} mx-auto`}
           >
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart
-                data={radarData}
-                onMouseMove={(state: any) => {
-                  if (state?.activeTooltipIndex !== undefined && radarData[state.activeTooltipIndex]) {
-                    const monthValue = radarData[state.activeTooltipIndex].month;
-                    setHighlightedMonth(typeof monthValue === 'string' ? monthValue : null);
-                  }
+            <RadarChart
+              data={radarData}
+              onMouseMove={(state: any) => {
+                if (state?.activeTooltipIndex !== undefined && radarData[state.activeTooltipIndex]) {
+                  const monthValue = radarData[state.activeTooltipIndex].month;
+                  setHighlightedMonth(typeof monthValue === 'string' ? monthValue : null);
+                }
+              }}
+              onMouseLeave={() => setHighlightedMonth(null)}
+            >
+              <PolarGrid
+                stroke="rgba(0,0,0,0.12)"
+                fill="rgba(0,0,0,0.02)"
+                strokeDasharray="0"
+                radialLines={isLarge}
+                gridType="circle"
+                className="dark:[&_circle]:stroke-white/15 dark:fill-white/[0.02]"
+              />
+              <PolarAngleAxis
+                dataKey="month"
+                tick={{ fontSize: isLarge ? 14 : 12, fill: "rgba(0,0,0,0.6)" }}
+                className="dark:[&_text]:fill-white/70"
+              />
+              <PolarRadiusAxis
+                angle={90}
+                domain={[0, Math.ceil(maxCount * 1.2)]}
+                tick={{ fontSize: isLarge ? 13 : 11, fill: "rgba(0,0,0,0.5)" }}
+                className="dark:[&_text]:fill-white/60"
+              />
+              <ChartTooltip
+                content={({ active, payload, label }) => {
+                  if (!active || !payload || payload.length === 0) return null;
+                  return (
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded shadow-lg p-3">
+                      <p className="font-medium text-sm text-slate-900 dark:text-white mb-2">
+                        {label}
+                      </p>
+                      <p className="text-xs text-slate-700 dark:text-white/80">
+                        <span style={{ color: yearColors[0] }}>●</span> {smoothedData[0]?.year}: {payload[0]?.value} {payload[0]?.value === 1 ? 'movie' : 'movies'}
+                      </p>
+                    </div>
+                  );
                 }}
-                onMouseLeave={() => setHighlightedMonth(null)}
-              >
-                <PolarGrid
-                  stroke="rgba(0,0,0,0.12)"
-                  fill="rgba(0,0,0,0.02)"
-                  strokeDasharray="0"
-                  radialLines={isLarge}
-                  gridType="circle"
-                  className="dark:[&_circle]:stroke-white/15 dark:fill-white/[0.02]"
-                />
-                <PolarAngleAxis
-                  dataKey="month"
-                  tick={{ fontSize: isLarge ? 14 : 12, fill: "rgba(0,0,0,0.6)" }}
-                  className="dark:[&_text]:fill-white/70"
-                />
-                <PolarRadiusAxis
-                  angle={90}
-                  domain={[0, Math.ceil(maxCount * 1.2)]}
-                  tick={{ fontSize: isLarge ? 13 : 11, fill: "rgba(0,0,0,0.5)" }}
-                  className="dark:[&_text]:fill-white/60"
-                />
-                <ChartTooltip
-                  content={({ active, payload, label }) => {
-                    if (!active || !payload || payload.length === 0) return null;
-                    return (
-                      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded shadow-lg p-3">
-                        <p className="font-medium text-sm text-slate-900 dark:text-white mb-2">
-                          {label}
-                        </p>
-                        <p className="text-xs text-slate-700 dark:text-white/80">
-                          <span style={{ color: yearColors[0] }}>●</span> {smoothedData[0]?.year}: {payload[0]?.value} {payload[0]?.value === 1 ? 'movie' : 'movies'}
-                        </p>
-                      </div>
-                    );
-                  }}
-                  cursor={{ fill: "rgba(0,0,0,0.05)" }}
-                />
-                <Radar
-                  name={`${smoothedData[0].year}`}
-                  dataKey="count"
-                  stroke={yearColors[0]}
-                  fill={yearColors[0]}
-                  fillOpacity={0.6}
-                  isAnimationActive={false}
-                  dot={{ r: isLarge ? 5 : 4, fill: yearColors[0] }}
-                  activeDot={{ r: isLarge ? 8 : 6 }}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
+                cursor={{ fill: "rgba(0,0,0,0.05)" }}
+              />
+              <Radar
+                name={`${smoothedData[0].year}`}
+                dataKey="count"
+                stroke={yearColors[0]}
+                fill={yearColors[0]}
+                fillOpacity={0.6}
+                isAnimationActive={false}
+                dot={{ r: isLarge ? 5 : 4, fill: yearColors[0] }}
+                activeDot={{ r: isLarge ? 8 : 6 }}
+              />
+            </RadarChart>
           </ChartContainer>
         ) : (
           // Multiple years radar
@@ -351,78 +348,76 @@ export function DiaryMonthlyRadarChart({ data, size = 'compact' }: DiaryMonthlyR
             config={{}}
             className={`aspect-square ${chartHeight} w-full ${size === 'large' ? 'max-w-2xl' : 'max-w-md'} mx-auto`}
           >
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart
-                data={radarData}
-                onMouseMove={(state: any) => {
-                  if (state?.activeTooltipIndex !== undefined && radarData[state.activeTooltipIndex]) {
-                    const monthValue = radarData[state.activeTooltipIndex].month;
-                    setHighlightedMonth(typeof monthValue === 'string' ? monthValue : null);
-                  }
-                }}
-                onMouseLeave={() => setHighlightedMonth(null)}
-              >
-                <PolarGrid
-                  stroke="rgba(0,0,0,0.12)"
-                  fill="rgba(0,0,0,0.02)"
-                  strokeDasharray="0"
-                  radialLines={isLarge}
-                  gridType="circle"
-                  className="dark:[&_circle]:stroke-white/15 dark:fill-white/[0.02]"
-                />
-                <PolarAngleAxis
-                  dataKey="month"
-                  tick={{ fontSize: isLarge ? 14 : 12, fill: "rgba(0,0,0,0.6)" }}
-                  className="dark:[&_text]:fill-white/70"
-                />
-                <PolarRadiusAxis
-                  angle={90}
-                  domain={[0, Math.ceil(maxCount * 1.2)]}
-                  tick={{ fontSize: isLarge ? 13 : 11, fill: "rgba(0,0,0,0.5)" }}
-                  className="dark:[&_text]:fill-white/60"
-                />
-                <ChartTooltip
-                  content={({ active, payload, label }) => {
-                    if (!active || !payload || payload.length === 0) return null;
-                    return (
-                      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded shadow-lg p-3">
-                        <p className="font-medium text-sm text-slate-900 dark:text-white mb-2">
-                          {label}
-                        </p>
-                        {payload.map((entry, index) => {
-                          const dataKey = entry.dataKey as string | undefined;
-                          const year = dataKey?.replace('year', '') || entry.name;
-                          const dataKeyIndex = smoothedData.findIndex(y => `year${y.year}` === dataKey);
-                          const color = dataKeyIndex >= 0 ? yearColors[dataKeyIndex % yearColors.length] : 'inherit';
-                          return (
-                            <p key={index} className="text-xs text-slate-700 dark:text-white/80">
-                              <span style={{ color }}>●</span> {year}: {entry.value} {entry.value === 1 ? 'movie' : 'movies'}
-                            </p>
-                          );
-                        })}
-                      </div>
-                    );
-                  }}
-                  cursor={{ fill: "rgba(0,0,0,0.05)" }}
-                />
-                {smoothedData.map((yearData) => {
-                  const color = yearColorMap[yearData.year] || yearColors[0];
+            <RadarChart
+              data={radarData}
+              onMouseMove={(state: any) => {
+                if (state?.activeTooltipIndex !== undefined && radarData[state.activeTooltipIndex]) {
+                  const monthValue = radarData[state.activeTooltipIndex].month;
+                  setHighlightedMonth(typeof monthValue === 'string' ? monthValue : null);
+                }
+              }}
+              onMouseLeave={() => setHighlightedMonth(null)}
+            >
+              <PolarGrid
+                stroke="rgba(0,0,0,0.12)"
+                fill="rgba(0,0,0,0.02)"
+                strokeDasharray="0"
+                radialLines={isLarge}
+                gridType="circle"
+                className="dark:[&_circle]:stroke-white/15 dark:fill-white/[0.02]"
+              />
+              <PolarAngleAxis
+                dataKey="month"
+                tick={{ fontSize: isLarge ? 14 : 12, fill: "rgba(0,0,0,0.6)" }}
+                className="dark:[&_text]:fill-white/70"
+              />
+              <PolarRadiusAxis
+                angle={90}
+                domain={[0, Math.ceil(maxCount * 1.2)]}
+                tick={{ fontSize: isLarge ? 13 : 11, fill: "rgba(0,0,0,0.5)" }}
+                className="dark:[&_text]:fill-white/60"
+              />
+              <ChartTooltip
+                content={({ active, payload, label }) => {
+                  if (!active || !payload || payload.length === 0) return null;
                   return (
-                    <Radar
-                      key={`radar-${yearData.year}`}
-                      name={`${yearData.year}`}
-                      dataKey={`year${yearData.year}`}
-                      stroke={color}
-                      fill={color}
-                      fillOpacity={highlightedMonth ? 0.15 : 0.35}
-                      isAnimationActive={false}
-                      dot={{ r: isLarge ? 4 : 3, fill: color }}
-                      activeDot={{ r: isLarge ? 7 : 5 }}
-                    />
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded shadow-lg p-3">
+                      <p className="font-medium text-sm text-slate-900 dark:text-white mb-2">
+                        {label}
+                      </p>
+                      {payload.map((entry, index) => {
+                        const dataKey = entry.dataKey as string | undefined;
+                        const year = dataKey?.replace('year', '') || entry.name;
+                        const dataKeyIndex = smoothedData.findIndex(y => `year${y.year}` === dataKey);
+                        const color = dataKeyIndex >= 0 ? yearColors[dataKeyIndex % yearColors.length] : 'inherit';
+                        return (
+                          <p key={index} className="text-xs text-slate-700 dark:text-white/80">
+                            <span style={{ color }}>●</span> {year}: {entry.value} {entry.value === 1 ? 'movie' : 'movies'}
+                          </p>
+                        );
+                      })}
+                    </div>
                   );
-                })}
-              </RadarChart>
-            </ResponsiveContainer>
+                }}
+                cursor={{ fill: "rgba(0,0,0,0.05)" }}
+              />
+              {smoothedData.map((yearData) => {
+                const color = yearColorMap[yearData.year] || yearColors[0];
+                return (
+                  <Radar
+                    key={`radar-${yearData.year}`}
+                    name={`${yearData.year}`}
+                    dataKey={`year${yearData.year}`}
+                    stroke={color}
+                    fill={color}
+                    fillOpacity={highlightedMonth ? 0.15 : 0.35}
+                    isAnimationActive={false}
+                    dot={{ r: isLarge ? 4 : 3, fill: color }}
+                    activeDot={{ r: isLarge ? 7 : 5 }}
+                  />
+                );
+              })}
+            </RadarChart>
           </ChartContainer>
         )}
 
