@@ -2,7 +2,7 @@
 
 export function AnalyticsSkeleton() {
   return (
-    <div className="flex-1 overflow-auto scroll-smooth animate-pulse">
+    <div className="flex-1 overflow-y-auto overflow-x-hidden animate-pulse">
       <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full">
         {/* Overview Section Skeleton */}
         <section>

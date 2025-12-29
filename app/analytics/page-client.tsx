@@ -62,13 +62,13 @@ export function AnalyticsPageClient({ defaultSidebarOpen }: AnalyticsPageClientP
   }
 
   return (
-    <SidebarProvider defaultOpen={defaultSidebarOpen} suppressHydrationWarning>
+    <SidebarProvider defaultOpen={defaultSidebarOpen} suppressHydrationWarning className="min-w-0 overflow-x-hidden">
       <AnalyticsSidebar
         onUploadClick={() => setIsUploadModalOpen(true)}
         onClearClick={handleClearData}
       />
-      <SidebarInset suppressHydrationWarning>
-        <div className="flex flex-col h-full bg-background dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 scroll-smooth" suppressHydrationWarning>
+      <SidebarInset suppressHydrationWarning className="min-w-0 overflow-x-hidden">
+        <div className="flex flex-col h-full min-w-0 w-full overflow-x-hidden bg-background dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" suppressHydrationWarning>
           <AnalyticsHeader
             title="Your true cinematic identity"
             description="Discover and explore your personality through Letterboxd statistics"
