@@ -117,7 +117,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   // Error state
   if (error) {
     return (
-      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden scroll-smooth" data-analytics-scroll-container>
         <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full min-w-0">
           <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6">
             <h3 className="font-semibold text-destructive mb-2">Error</h3>
@@ -203,7 +203,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   const insight2025 = stats2025 ? compute2025Insight(stats2025, movies.length) : "";
 
   return (
-    <div className="flex-1 overflow-y-auto overflow-x-hidden">
+    <div className="flex-1 overflow-y-auto overflow-x-hidden scroll-smooth" data-analytics-scroll-container>
       <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full min-w-0">
         {/* ============================================================================ */}
         {/* INTRO SECTION - Shown when no profile data */}

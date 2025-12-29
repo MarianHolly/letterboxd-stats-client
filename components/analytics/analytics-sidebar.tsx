@@ -136,7 +136,7 @@ export function AnalyticsSidebar({
 }: AnalyticsSidebarProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = React.useState(false);
-  const [activeSection, setActiveSection] = React.useState<string>("");
+  const [activeSection, setActiveSection] = React.useState<string>("#cinematic-timeline");
 
   // Detect which section is currently in view using Intersection Observer
   React.useEffect(() => {
@@ -151,16 +151,17 @@ export function AnalyticsSidebar({
 
     // Wait for DOM to be fully rendered
     const timer = setTimeout(() => {
-      // Find the scrollable container (SidebarInset which is <main>)
+      // Find the scrollable container (AnalyticsDashboard div)
       const scrollContainer = document.querySelector(
-        '[data-slot="sidebar-inset"]'
+        '[data-analytics-scroll-container]'
       ) as HTMLElement;
 
-      if (!scrollContainer) return;
+      if (!scrollContainer) {
+        return;
+      }
 
       const observer = new IntersectionObserver(
         (entries) => {
-          // Get the topmost visible section
           let topMostSection: IntersectionObserverEntry | null = null;
 
           for (const entry of entries) {
@@ -182,8 +183,8 @@ export function AnalyticsSidebar({
         },
         {
           root: scrollContainer,
-          rootMargin: "-50px 0px -80% 0px", // Trigger when section enters top of viewport
-          threshold: 0,
+          rootMargin: "0px 0px -80% 0px",
+          threshold: [0, 0.25, 0.5, 0.75, 1],
         }
       );
 
@@ -210,12 +211,9 @@ export function AnalyticsSidebar({
   }, []);
 
   const isActive = (href: string) => {
-    // Check if it's a hash link (analytics section)
     if (href.startsWith("#")) {
       return activeSection === href;
     }
-
-    // Check if it's a regular route
     if (href === "/dashboard") {
       return pathname === "/dashboard";
     }
@@ -227,8 +225,8 @@ export function AnalyticsSidebar({
       className="bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 border-r border-gray-200 dark:border-white/10"
       {...props}
     >
-      <SidebarHeader className="pb-0 bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 h-16">
-        <div className="flex items-center gap-2 px-2 py-2">
+      <SidebarHeader className="sticky top-0 z-20 pb-2 bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 h-16 border-b border-gray-200/50 dark:border-white/5">
+        <div className="flex items-center gap-2 px-2 py-1">
           <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-600 to-rose-600">
             <BarChart3 className="w-4 h-4 text-white" />
           </div>
@@ -243,7 +241,7 @@ export function AnalyticsSidebar({
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950">
+      <SidebarContent className="flex-1 overflow-y-auto overflow-x-hidden bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950">
         {data.navMain.map((group) => (
           <SidebarGroup key={group.title}>
             <SidebarGroupLabel className="text-xs font-semibold text-gray-800 dark:text-white/30 uppercase tracking-wider px-3 py-2">
@@ -255,11 +253,12 @@ export function AnalyticsSidebar({
                   <Link
                     key={item.href}
                     href={item.href}
+                    data-active={isActive(item.href) ? "true" : "false"}
                     className={cn(
-                      "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 scroll-smooth",
+                      "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 border",
                       isActive(item.href)
-                        ? "bg-indigo-600/10 dark:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30"
-                        : "text-gray-700 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 border border-transparent"
+                        ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-700 font-semibold"
+                        : "text-gray-700 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 border-transparent"
                     )}
                   >
                     <div
@@ -309,7 +308,7 @@ export function AnalyticsSidebar({
                       key={item.href}
                       onClick={onUploadClick}
                       className={cn(
-                        "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 scroll-smooth text-left",
+                        "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-left",
                         "text-gray-700 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 border border-transparent"
                       )}
                     >
@@ -335,7 +334,7 @@ export function AnalyticsSidebar({
                       key={item.href}
                       onClick={onClearClick}
                       className={cn(
-                        "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 scroll-smooth text-left",
+                        "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-left",
                         "text-gray-700 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 border border-transparent"
                       )}
                     >
@@ -358,11 +357,12 @@ export function AnalyticsSidebar({
                   <Link
                     key={item.href}
                     href={item.href}
+                    data-active={isActive(item.href) ? "true" : "false"}
                     className={cn(
-                      "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 scroll-smooth",
+                      "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 border",
                       isActive(item.href)
-                        ? "bg-indigo-600/10 dark:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30"
-                        : "text-gray-700 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 border border-transparent"
+                        ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-700 font-semibold"
+                        : "text-gray-700 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 border-transparent"
                     )}
                   >
                     <div

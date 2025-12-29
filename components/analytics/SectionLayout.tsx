@@ -20,7 +20,7 @@ interface SectionLayoutProps {
  */
 export function SectionLayout({ children, id }: SectionLayoutProps) {
   return (
-    <div id={id} className="space-y-6 border-b border-slate-200 dark:border-white/10 pb-8 md:pb-12 md:border-b-2 md:dark:border-white/15">
+    <div id={id} className="space-y-6 border-b border-slate-200 dark:border-white/10 pb-8 md:pb-12 md:border-b-2 md:dark:border-white/15 scroll-mt-24">
       {children}
     </div>
   )
