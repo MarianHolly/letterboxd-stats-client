@@ -192,9 +192,9 @@ function aggregateRewatches(diaryMovies: Movie[]): Movie[] {
   })
 
   // Debug: Count rewatches after aggregation
-  const rewatchCount = aggregated.filter(m => m.rewatch && m.rewatchCount).length
-  const totalRewatchCount = aggregated.reduce((sum, m) => sum + (m.rewatchCount || 0), 0)
-  console.log(`[aggregateRewatches] ${aggregated.length} unique movies, ${rewatchCount} with rewatchCount, total rewatches: ${totalRewatchCount}`)
+  // const rewatchCount = aggregated.filter(m => m.rewatch && m.rewatchCount).length
+  // const totalRewatchCount = aggregated.reduce((sum, m) => sum + (m.rewatchCount || 0), 0)
+  // console.log(`[aggregateRewatches] ${aggregated.length} unique movies, ${rewatchCount} with rewatchCount, total rewatches: ${totalRewatchCount}`)
 
   return aggregated
 }
@@ -254,25 +254,25 @@ export function mergeMovieSources(
     const diaryMap = new Map(aggregated.map((m) => [getMovieKey(m), m]))
 
     // Debug: Check diary entries before merge
-    console.log(`[mergeMovieSources] Diary has ${diaryMap.size} unique movies`)
-    console.log(`[mergeMovieSources] Watched has ${merged.length} movies`)
+    // console.log(`[mergeMovieSources] Diary has ${diaryMap.size} unique movies`)
+    // console.log(`[mergeMovieSources] Watched has ${merged.length} movies`)
 
-    let matchedCount = 0
+    // let matchedCount = 0
     merged = merged.map((movie) => {
       const diaryEntry = diaryMap.get(getMovieKey(movie))
       if (diaryEntry) {
-        matchedCount++
+        // matchedCount++
         return resolveConflicts(movie, diaryEntry, 'diary')
       }
       return movie
     })
 
-    console.log(`[mergeMovieSources] Matched ${matchedCount} movies from diary to watched`)
+    // console.log(`[mergeMovieSources] Matched ${matchedCount} movies from diary to watched`)
 
     // Debug: Count rewatches after merge
-    const rewatchCountAfterMerge = merged.filter(m => m.rewatch && m.rewatchCount).length
-    const totalRewatchCount = merged.reduce((sum, m) => sum + (m.rewatchCount || 0), 0)
-    console.log(`[mergeMovieSources] After merge: ${rewatchCountAfterMerge} with rewatchCount, total rewatches: ${totalRewatchCount}`)
+    // const rewatchCountAfterMerge = merged.filter(m => m.rewatch && m.rewatchCount).length
+    // const totalRewatchCount = merged.reduce((sum, m) => sum + (m.rewatchCount || 0), 0)
+    // console.log(`[mergeMovieSources] After merge: ${rewatchCountAfterMerge} with rewatchCount, total rewatches: ${totalRewatchCount}`)
 
     // Note: We do NOT add diary entries that aren't in watched.csv
     // All movies in diary.csv should already exist in watched.csv
