@@ -18,9 +18,11 @@ import {
   Zap,
   Star,
   Calendar,
-  RotateCcw,
   Clock,
-  Sparkles,
+  Heart,
+  ListChecks,
+  CalendarDays,
+  Trophy,
 } from "lucide-react";
 
 import {
@@ -56,46 +58,40 @@ const data = {
       href: "#",
       items: [
         {
-          title: "At a Glance",
-          href: "#analytics-overview",
-          icon: <Zap className="w-5 h-5" />,
-          description: "Key metrics snapshot",
-        },
-        {
-          title: "Rating Patterns",
-          href: "#analytics-ratings",
-          icon: <Star className="w-5 h-5" />,
-          description: "How you rate films",
-        },
-        {
-          title: "Viewing Trends",
-          href: "#analytics-timeline",
-          icon: <TrendingUp className="w-5 h-5" />,
-          description: "When you watch most",
-        },
-        {
-          title: "Seasonal Rhythms",
-          href: "#analytics-seasonal",
-          icon: <Calendar className="w-5 h-5" />,
-          description: "Monthly viewing cycles",
-        },
-        {
-          title: "Cinema Through Time",
-          href: "#analytics-decades",
+          title: "Cinematic Timeline",
+          href: "#cinematic-timeline",
           icon: <Clock className="w-5 h-5" />,
-          description: "Films by era",
+          description: "Film history explored",
         },
         {
-          title: "Taste Profile",
-          href: "#analytics-genres",
-          icon: <Film className="w-5 h-5" />,
-          description: "Genres & filmmakers",
+          title: "Viewing Rhythm",
+          href: "#viewing-rhythm",
+          icon: <TrendingUp className="w-5 h-5" />,
+          description: "Watching patterns",
         },
         {
-          title: "Treasured Rewatches",
-          href: "#analytics-rewatches",
-          icon: <Sparkles className="w-5 h-5" />,
-          description: "Favorites & repeats",
+          title: "Taste & Judgment",
+          href: "#taste-judgment",
+          icon: <Heart className="w-5 h-5" />,
+          description: "Likes & ratings",
+        },
+        {
+          title: "Planned vs. Watched",
+          href: "#planned-watched",
+          icon: <ListChecks className="w-5 h-5" />,
+          description: "Watchlist analysis",
+        },
+        {
+          title: "Your Year in Film",
+          href: "#year-in-film",
+          icon: <CalendarDays className="w-5 h-5" />,
+          description: "Annual review",
+        },
+        {
+          title: "The Canon",
+          href: "#the-canon",
+          icon: <Trophy className="w-5 h-5" />,
+          description: "Essential cinema",
         }
       ],
     }
@@ -145,13 +141,12 @@ export function AnalyticsSidebar({
   // Detect which section is currently in view using Intersection Observer
   React.useEffect(() => {
     const sections = [
-      "analytics-overview",
-      "analytics-ratings",
-      "analytics-timeline",
-      "analytics-seasonal",
-      "analytics-decades",
-      "analytics-genres",
-      "analytics-rewatches",
+      "cinematic-timeline",
+      "viewing-rhythm",
+      "taste-judgment",
+      "planned-watched",
+      "year-in-film",
+      "the-canon",
     ];
 
     // Wait for DOM to be fully rendered

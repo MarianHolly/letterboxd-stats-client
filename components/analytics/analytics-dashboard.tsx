@@ -233,7 +233,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* SECTION 1: YOUR CINEMATIC TIMELINE */}
         {/* ============================================================================ */}
         {Object.keys(releaseYearData).length > 0 && (
-          <SectionLayout>
+          <SectionLayout id="cinematic-timeline">
             <SectionLayout.Header
               title="Your Cinematic Timeline"
               subtitle="A chronological map of the film history you've explored"
@@ -271,7 +271,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {loading && monthlyData.length > 0 ? (
           <SectionLayout.Loading />
         ) : (
-          <SectionLayout>
+          <SectionLayout id="viewing-rhythm">
             <SectionLayout.Header
               title="Viewing Rhythm"
               subtitle="The tempo of your movie-watching life, month by month"
@@ -334,7 +334,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* SECTION 3: TASTE, PREFERENCE, AND JUDGMENT */}
         {/* ============================================================================ */}
         {(hasMoviesLiked || hasRatings) && (
-          <SectionLayout>
+          <SectionLayout id="taste-judgment">
             <SectionLayout.Header
               title="Taste, Preference, and Judgment"
               subtitle="How you evaluate cinema—and what it says about your taste"
@@ -402,7 +402,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* ============================================================================ */}
         {/* SECTION 4: PLANNED VS. WATCHED */}
         {/* ============================================================================ */}
-        <SectionLayout>
+        <SectionLayout id="planned-watched">
           <SectionLayout.Header
             title="Planned vs. Watched"
             subtitle="The gap between intention and experience"
@@ -455,7 +455,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* ============================================================================ */}
         {/* SECTION 5: YOUR YEAR IN FILM */}
         {/* ============================================================================ */}
-        <SectionLayout>
+        <SectionLayout id="year-in-film">
           <SectionLayout.Header
             title="Your Year in Film"
             subtitle="A concise summary of volume, taste, and discovery"
@@ -506,7 +506,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* ============================================================================ */}
         {/* SECTION 6: THE CANON */}
         {/* ============================================================================ */}
-        <SectionLayout>
+        <SectionLayout id="the-canon">
           <SectionLayout.Header
             title="The Canon"
             subtitle="Essential Cinema Collections"
