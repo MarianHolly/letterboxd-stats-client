@@ -98,12 +98,7 @@ export function DiaryStatistics({ stats }: DiaryStatisticsProps) {
 
   return (
     <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-lg text-black dark:text-white text-center">
-          Statistics
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pt-2">
+      <CardContent className="pt-6">
         <div className="flex flex-col gap-8">
           <StatItem
             value={stats.totalUniqueMovies ?? 0}
