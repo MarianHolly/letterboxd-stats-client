@@ -17,7 +17,7 @@ Released Year Analysis for Analytics Page (Enhanced V1 - Vibrant Cyan-to-Magenta
 "use client"
 
 import * as React from "react"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell, ResponsiveContainer, ReferenceLine } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell, ReferenceLine } from "recharts"
 
 import {
   Card,
@@ -267,99 +267,97 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
             config={chartConfig}
             className="aspect-auto h-[300px] w-full"
           >
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                accessibilityLayer
-                data={processedData}
-                onMouseMove={(state) => {
-                  if (state.isTooltipActive && state.activeTooltipIndex !== undefined) {
-                    setActiveIndex(state.activeTooltipIndex);
-                  }
-                }}
-                onMouseLeave={() => setActiveIndex(null)}
-                margin={{
-                  left: 12,
-                  right: 12,
-                  top: 12,
-                  bottom: 12,
-                }}
-              >
-                <rect
-                  x="0"
-                  y="0"
-                  width="100%"
-                  height="85%"
-                  fill="url(#highlighted-pattern-dots)"
-                />
-                <defs>
-                  <DottedBackgroundPattern />
-                </defs>
-                <CartesianGrid vertical={false} stroke="rgba(0,0,0,0.1)" className="dark:stroke-white/10" />
+            <BarChart
+              accessibilityLayer
+              data={processedData}
+              onMouseMove={(state) => {
+                if (state.isTooltipActive && state.activeTooltipIndex !== undefined) {
+                  setActiveIndex(state.activeTooltipIndex);
+                }
+              }}
+              onMouseLeave={() => setActiveIndex(null)}
+              margin={{
+                left: 12,
+                right: 12,
+                top: 12,
+                bottom: 12,
+              }}
+            >
+              <rect
+                x="0"
+                y="0"
+                width="100%"
+                height="85%"
+                fill="url(#highlighted-pattern-dots)"
+              />
+              <defs>
+                <DottedBackgroundPattern />
+              </defs>
+              <CartesianGrid vertical={false} stroke="rgba(0,0,0,0.1)" className="dark:stroke-white/10" />
 
-                {/* Era Separator Lines (positioned between years) */}
-                <ReferenceLine
-                  x={1944.5}
-                  stroke="rgba(0,0,0,0.2)"
-                  strokeWidth={1.5}
-                  className="dark:stroke-white/25"
-                />
-                <ReferenceLine
-                  x={1969.5}
-                  stroke="rgba(0,0,0,0.2)"
-                  strokeWidth={1.5}
-                  className="dark:stroke-white/25"
-                />
-                <ReferenceLine
-                  x={1999.5}
-                  stroke="rgba(0,0,0,0.2)"
-                  strokeWidth={1.5}
-                  className="dark:stroke-white/25"
-                />
+              {/* Era Separator Lines (positioned between years) */}
+              <ReferenceLine
+                x={1944.5}
+                stroke="rgba(0,0,0,0.2)"
+                strokeWidth={1.5}
+                className="dark:stroke-white/25"
+              />
+              <ReferenceLine
+                x={1969.5}
+                stroke="rgba(0,0,0,0.2)"
+                strokeWidth={1.5}
+                className="dark:stroke-white/25"
+              />
+              <ReferenceLine
+                x={1999.5}
+                stroke="rgba(0,0,0,0.2)"
+                strokeWidth={1.5}
+                className="dark:stroke-white/25"
+              />
 
-                <XAxis
-                  dataKey="year"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tick={{ fontSize: 12, fill: "rgba(0,0,0,0.6)" }}
-                  className="dark:[&_text]:fill-white/70"
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tick={{ fontSize: 12, fill: "rgba(0,0,0,0.6)" }}
-                  className="dark:[&_text]:fill-white/70"
-                />
-                <ChartTooltip
-                  cursor={{ fill: "rgba(0,0,0,0.01)" }}
-                  content={({ active, payload }: any) => {
-                    if (active && payload && payload.length > 0) {
-                      const data = payload[0].payload;
-                      return (
-                        <div className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950 px-3.5 py-2 shadow-md">
-                          <div className="text-xs text-center">
-                            <p className="font-light text-black dark:text-white">Year of {data.year}</p>
-                            <p className="text-slate-600 dark:text-white/70 font-semibold">{data.count} movies</p>
-                          </div>
+              <XAxis
+                dataKey="year"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tick={{ fontSize: 12, fill: "rgba(0,0,0,0.6)" }}
+                className="dark:[&_text]:fill-white/70"
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tick={{ fontSize: 12, fill: "rgba(0,0,0,0.6)" }}
+                className="dark:[&_text]:fill-white/70"
+              />
+              <ChartTooltip
+                cursor={{ fill: "rgba(0,0,0,0.01)" }}
+                content={({ active, payload }: any) => {
+                  if (active && payload && payload.length > 0) {
+                    const data = payload[0].payload;
+                    return (
+                      <div className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950 px-3.5 py-2 shadow-md">
+                        <div className="text-xs text-center">
+                          <p className="font-light text-black dark:text-white">Year of {data.year}</p>
+                          <p className="text-slate-600 dark:text-white/70 font-semibold">{data.count} movies</p>
                         </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-                <Bar dataKey="count" radius={[3, 3, 0, 0]} fill="var(--color-count)" isAnimationActive={false}>
-                  {processedData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={entry.count > 0 ? getYearColor(entry.year) : "transparent"}
-                      fillOpacity={activeIndex === null ? 1 : activeIndex === index ? 1 : 0.9}
-                      style={{ transition: "opacity 500ms ease-in-out" }}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Bar dataKey="count" radius={[3, 3, 0, 0]} fill="var(--color-count)" isAnimationActive={false}>
+                {processedData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={entry.count > 0 ? getYearColor(entry.year) : "transparent"}
+                    fillOpacity={activeIndex === null ? 1 : activeIndex === index ? 1 : 0.9}
+                    style={{ transition: "opacity 500ms ease-in-out" }}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
           </ChartContainer>
         )}
       </CardContent>

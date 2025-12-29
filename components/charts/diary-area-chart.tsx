@@ -7,7 +7,6 @@ import {
   CartesianGrid,
   XAxis,
   YAxis,
-  ResponsiveContainer,
   ReferenceLine,
 } from "recharts"
 
@@ -234,81 +233,79 @@ export function DiaryAreaChart({ data }: DiaryAreaChartProps) {
           config={chartConfig}
           className="flex-1 w-full"
         >
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              data={processedData}
-              margin={{
-                left: 12,
-                right: 12,
-                top: 12,
-                bottom: 12,
-              }}
-            >
-              <defs>
-                <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor="var(--chart-1)"
-                    stopOpacity={0.8}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="var(--chart-1)"
-                    stopOpacity={0}
-                  />
-                </linearGradient>
-              </defs>
-              <CartesianGrid vertical={false} stroke="rgba(0,0,0,0.1)" />
-
-              {/* Year boundary lines */}
-              {yearBoundaries.map((monthLabel) => (
-                <ReferenceLine
-                  key={`year-boundary-${monthLabel}`}
-                  x={monthLabel}
-                  stroke="rgba(0,0,0,0.2)"
-                  strokeDasharray="3 3"
-                  strokeWidth={1}
-                  className="dark:stroke-white/25"
+          <AreaChart
+            data={processedData}
+            margin={{
+              left: 12,
+              right: 12,
+              top: 12,
+              bottom: 12,
+            }}
+          >
+            <defs>
+              <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--chart-1)"
+                  stopOpacity={0.8}
                 />
-              ))}
+                <stop
+                  offset="95%"
+                  stopColor="var(--chart-1)"
+                  stopOpacity={0}
+                />
+              </linearGradient>
+            </defs>
+            <CartesianGrid vertical={false} stroke="rgba(0,0,0,0.1)" />
 
-              <XAxis
-                dataKey="month"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                tick={{ fontSize: 12, fill: "rgba(0,0,0,0.6)" }}
-                className="dark:[&_text]:fill-white/70"
+            {/* Year boundary lines */}
+            {yearBoundaries.map((monthLabel) => (
+              <ReferenceLine
+                key={`year-boundary-${monthLabel}`}
+                x={monthLabel}
+                stroke="rgba(0,0,0,0.2)"
+                strokeDasharray="3 3"
+                strokeWidth={1}
+                className="dark:stroke-white/25"
               />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                tick={{ fontSize: 12, fill: "rgba(0,0,0,0.6)" }}
-                className="dark:[&_text]:fill-white/70"
-              />
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent
-                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-lg"
-                    formatter={(value: any) => {
-                      return [typeof value === 'number' ? `${value} movies` : value, 'Count'];
-                    }}
-                  />
-                }
-                cursor={{ fill: "rgba(0,0,0,0.05)" }}
-              />
-              <Area
-                type="basis"
-                dataKey="count"
-                stroke="var(--chart-1)"
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#colorCount)"
-                isAnimationActive={false}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+            ))}
+
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tick={{ fontSize: 12, fill: "rgba(0,0,0,0.6)" }}
+              className="dark:[&_text]:fill-white/70"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tick={{ fontSize: 12, fill: "rgba(0,0,0,0.6)" }}
+              className="dark:[&_text]:fill-white/70"
+            />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-lg"
+                  formatter={(value: any) => {
+                    return [typeof value === 'number' ? `${value} movies` : value, 'Count'];
+                  }}
+                />
+              }
+              cursor={{ fill: "rgba(0,0,0,0.05)" }}
+            />
+            <Area
+              type="basis"
+              dataKey="count"
+              stroke="var(--chart-1)"
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorCount)"
+              isAnimationActive={false}
+            />
+          </AreaChart>
         </ChartContainer>
       </CardContent>
     </Card>
