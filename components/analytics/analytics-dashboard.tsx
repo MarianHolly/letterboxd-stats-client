@@ -14,20 +14,14 @@ import { SectionLayout } from "./SectionLayout";
 // Import chart components
 import { DiaryAreaChart } from "@/components/charts/diary-area-chart";
 import { DiaryStatistics } from "@/components/charts/diary-statistics";
-import { ViewingRhythmInsights } from "@/components/charts/viewing-rhythm-insights";
 import { ReleasedYearAnalysis } from "@/components/charts/release-year-analysis";
 import { ReleasedYearBarHorizontal } from "@/components/charts/released-year-bar-horizont";
 import { ReleasedYearPieChart } from "@/components/charts/released-year-pie-chart";
 
-// Import new secondary chart components
-import { LikedVsUnlikedDonut } from "@/components/charts/secondary/LikedVsUnlikedDonut";
+// Import secondary chart components
 import { LikesByDecadeBar } from "@/components/charts/secondary/LikesByDecadeBar";
-import { LikesByMonthArea } from "@/components/charts/secondary/LikesByMonthArea";
-import { LikesVsUnlikesOverTimeArea } from "@/components/charts/secondary/LikesVsUnlikesOverTimeArea";
 import { RatingDistributionBar } from "@/components/charts/secondary/RatingDistributionBar";
 import { RatingByDecadeBar } from "@/components/charts/secondary/RatingByDecadeBar";
-import { RatingVsUnratedRatio } from "@/components/charts/secondary/RatingVsUnratedRatio";
-import { YearRewatchesRatio } from "@/components/charts/secondary/YearRewatchesRatio";
 import { WatchedVsWatchlistRadial } from "@/components/charts/secondary/WatchedVsWatchlistRadial";
 import { TastePreferenceStats } from "@/components/charts/secondary/TastePreferenceStats";
 import { RatedMoviesRadial } from "@/components/charts/secondary/RatedMoviesRadial";
