@@ -881,6 +881,56 @@ export function transformWatchlistByDecade(
 }
 
 /**
+ * Transform watchlist data by 5-year periods
+ */
+export function transformWatchlistByFiveYear(
+  watched: Movie[],
+  watchlist: Movie[]
+): Array<{ period: string; watched: number; watchlist: number }> {
+  const watchedByPeriod: Record<string, number> = {}
+  const watchlistByPeriod: Record<string, number> = {}
+  const allPeriods = new Set<string>()
+
+  // Helper function to get 5-year period from year
+  const getFiveYearPeriod = (year: number): string => {
+    const startYear = Math.floor(year / 5) * 5
+    const endYear = startYear + 4
+    return `${startYear}-${endYear}`
+  }
+
+  // Group watched by 5-year period
+  watched.forEach((movie) => {
+    if (movie.year) {
+      const period = getFiveYearPeriod(movie.year)
+      watchedByPeriod[period] = (watchedByPeriod[period] || 0) + 1
+      allPeriods.add(period)
+    }
+  })
+
+  // Group watchlist by 5-year period
+  watchlist.forEach((movie) => {
+    if (movie.year) {
+      const period = getFiveYearPeriod(movie.year)
+      watchlistByPeriod[period] = (watchlistByPeriod[period] || 0) + 1
+      allPeriods.add(period)
+    }
+  })
+
+  // Combine into array
+  return Array.from(allPeriods)
+    .map((period) => ({
+      period,
+      watched: watchedByPeriod[period] || 0,
+      watchlist: watchlistByPeriod[period] || 0,
+    }))
+    .sort((a, b) => {
+      const yearA = parseInt(a.period.split('-')[0])
+      const yearB = parseInt(b.period.split('-')[0])
+      return yearA - yearB
+    })
+}
+
+/**
  * Generate insight about watchlist
  */
 export function computeWatchlistInsight(
