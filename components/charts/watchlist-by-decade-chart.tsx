@@ -65,7 +65,7 @@ export function WatchlistByDecadeChart({ data }: WatchlistByDecadeChartProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={chartConfig} className="h-[250px] lg:h-[350px]">
           <BarChart
             accessibilityLayer
             data={data}
@@ -136,7 +136,27 @@ export function WatchlistByDecadeChart({ data }: WatchlistByDecadeChartProps) {
 
         {/* Summary footer */}
         <div className="mt-6 pt-4 border-t border-slate-200 dark:border-white/10">
-          <div className="flex justify-between items-center text-sm">
+          {/* Mobile: Row layout for all stats */}
+          <div className="flex md:hidden justify-between items-center text-sm gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: chartConfig.watched.color }} />
+              <span className="text-slate-600 dark:text-white/60">
+                {totals.watched.toLocaleString()}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: chartConfig.watchlist.color }} />
+              <span className="text-slate-600 dark:text-white/60">
+                {totals.watchlist.toLocaleString()}
+              </span>
+            </div>
+            <div className="text-slate-600 dark:text-white/60">
+              {completionRate}%
+            </div>
+          </div>
+
+          {/* Tablet: Row layout for all stats */}
+          <div className="hidden md:flex lg:hidden justify-between items-center text-sm">
             <div className="flex gap-6">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: chartConfig.watched.color }} />
@@ -150,6 +170,25 @@ export function WatchlistByDecadeChart({ data }: WatchlistByDecadeChartProps) {
                   {totals.watchlist.toLocaleString()} Watchlist
                 </span>
               </div>
+            </div>
+            <div className="text-slate-600 dark:text-white/60">
+              {completionRate}% Completed
+            </div>
+          </div>
+
+          {/* Desktop: Column layout for all stats */}
+          <div className="hidden lg:flex flex-col gap-3 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: chartConfig.watched.color }} />
+              <span className="text-slate-600 dark:text-white/60">
+                {totals.watched.toLocaleString()} Watched
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: chartConfig.watchlist.color }} />
+              <span className="text-slate-600 dark:text-white/60">
+                {totals.watchlist.toLocaleString()} Watchlist
+              </span>
             </div>
             <div className="text-slate-600 dark:text-white/60">
               {completionRate}% Completed

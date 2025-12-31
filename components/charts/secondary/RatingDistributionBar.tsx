@@ -40,12 +40,12 @@ export function RatingDistributionBar({ data }: RatingDistributionBarProps) {
     <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
       <CardHeader className="pb-4">
         <CardTitle className="text-base font-semibold">Your Rating Distribution</CardTitle>
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="hidden md:block text-xs text-muted-foreground mt-1">
           How your ratings spread across the full scale
         </p>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[200px] w-full">
+        <ChartContainer config={chartConfig} className="h-[280px] w-full">
           <BarChart
             accessibilityLayer
             data={sortedData}

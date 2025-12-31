@@ -81,12 +81,20 @@ export function LikedMoviesRadial({ data }: LikedMoviesRadialProps) {
 
   return (
     <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
-      <div className="px-6 py-4 flex flex-col md:flex-row items-center gap-6">
+      {/* Mobile/Tablet Title and Description */}
+      <div className="lg:hidden px-6 pt-4 pb-2 text-center">
+        <h3 className="text-base font-semibold">Your Like Behavior</h3>
+        <p className="text-xs text-slate-500 dark:text-white/50 mt-1">
+          <span className="font-semibold">{likerType}</span> - {likerDescription}
+        </p>
+      </div>
+
+      <div className="px-6 py-4 flex flex-col lg:flex-row items-center gap-6">
           {/* LEFT: Pie Chart */}
-          <div className="flex-shrink-0 w-full md:w-auto flex justify-center">
+          <div className="flex-shrink-0 w-full lg:w-auto flex justify-center">
             <ChartContainer
               config={chartConfig}
-              className="aspect-square w-full max-w-[220px] md:w-[220px] [&_.recharts-text]:fill-background"
+              className="aspect-square w-full max-w-[220px] lg:w-[220px] [&_.recharts-text]:fill-background"
             >
               <PieChart>
                 <ChartTooltip
@@ -114,12 +122,24 @@ export function LikedMoviesRadial({ data }: LikedMoviesRadialProps) {
             </ChartContainer>
           </div>
 
-          {/* SEPARATOR */}
-          <div className="hidden md:block h-[220px] w-px bg-slate-200 dark:bg-white/10 flex-shrink-0" />
-          <div className="md:hidden w-full h-px bg-slate-200 dark:bg-white/10" />
+          {/* MIDDLE: Tablet Stats (row layout) */}
+          <div className="hidden md:flex lg:hidden flex-row gap-6">
+            <StatItem
+              value={liked.toLocaleString()}
+              description="Liked"
+              color="#9b1c31"
+            />
+            <StatItem
+              value={unliked.toLocaleString()}
+              description="Not Liked"
+            />
+          </div>
 
-          {/* RIGHT: Stats and Profile */}
-          <div className="flex-1 flex flex-col justify-center gap-2 w-full">
+          {/* SEPARATOR - Desktop only */}
+          <div className="hidden lg:block h-[220px] w-px bg-slate-200 dark:bg-white/10 flex-shrink-0" />
+
+          {/* RIGHT: Stats and Profile - Desktop only */}
+          <div className="hidden lg:flex flex-1 flex-col justify-center items-center gap-2 w-full">
             {/* Statistics */}
             <div className="flex flex-row gap-6">
               <StatItem
@@ -134,10 +154,10 @@ export function LikedMoviesRadial({ data }: LikedMoviesRadialProps) {
             </div>
 
             {/* Separator */}
-            <div className="w-full h-px bg-slate-200 dark:bg-white/10" />
+            <div className="w-full h-px bg-slate-200 dark:bg-white/10 mt-2" />
 
             {/* Profile Section */}
-            <div className="text-left">
+            <div className="text-center mt-2">
               <span className="text-xs text-slate-500 dark:text-white/50 font-medium uppercase tracking-wider block mb-1">
                 Like Profile
               </span>
