@@ -30,9 +30,9 @@ interface StatItemProps {
 
 function StatItem({ value, description, color }: StatItemProps) {
   return (
-    <div className="flex flex-col gap-1.5 text-center">
+    <div className="flex flex-col gap-1 lg:gap-1.5 text-center">
       <span
-        className="text-3xl font-bold tabular-nums"
+        className="text-2xl md:text-2xl lg:text-3xl font-bold tabular-nums"
         style={color ? { color } : undefined}
       >
         {value}
@@ -89,102 +89,108 @@ export function WatchedVsWatchlistRadial({ data }: WatchedVsWatchlistRadialProps
   }
 
   return (
-    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full p-6">
-      {/* Radial Chart - Centered */}
-      <div className="flex justify-center mb-2">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square w-[300px]"
-        >
-          <RadialBarChart
-            data={chartData}
-            startAngle={0}
-            endAngle={endAngle}
-            innerRadius={80}
-            outerRadius={130}
+    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full p-4 md:p-5 lg:p-6">
+      <div className="flex flex-col md:flex-row lg:flex-col items-center gap-4 md:gap-6 lg:gap-0">
+        {/* LEFT: Radial Chart */}
+        <div className="flex-shrink-0 w-full md:w-auto flex justify-center">
+          <ChartContainer
+            config={chartConfig}
+            className="mx-auto aspect-square w-[200px] md:w-[220px] lg:w-[280px]"
           >
-            <PolarGrid
-              gridType="circle"
-              radialLines={false}
-              stroke="none"
-              className="first:fill-muted last:fill-background"
-              polarRadius={[86, 74]}
-            />
-            <RadialBar
-              dataKey="percentage"
-              background
-              cornerRadius={10}
-            />
-            <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        <tspan
+            <RadialBarChart
+              data={chartData}
+              startAngle={0}
+              endAngle={endAngle}
+              innerRadius={80}
+              outerRadius={130}
+            >
+              <PolarGrid
+                gridType="circle"
+                radialLines={false}
+                stroke="none"
+                className="first:fill-muted last:fill-background"
+                polarRadius={[86, 74]}
+              />
+              <RadialBar
+                dataKey="percentage"
+                background
+                cornerRadius={10}
+              />
+              <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
+                <Label
+                  content={({ viewBox }) => {
+                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                      return (
+                        <text
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-black dark:fill-white text-4xl font-bold"
+                          textAnchor="middle"
+                          dominantBaseline="middle"
                         >
-                          {watchedPercentage}%
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-slate-500 dark:fill-white/50"
-                        >
-                          Completed
-                        </tspan>
-                      </text>
-                    )
-                  }
-                }}
-              />
-            </PolarRadiusAxis>
-          </RadialBarChart>
-        </ChartContainer>
-      </div>
+                          <tspan
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            className="fill-black dark:fill-white text-3xl md:text-4xl font-bold"
+                          >
+                            {watchedPercentage}%
+                          </tspan>
+                          <tspan
+                            x={viewBox.cx}
+                            y={(viewBox.cy || 0) + 24}
+                            className="fill-slate-500 dark:fill-white/50 text-sm"
+                          >
+                            Completed
+                          </tspan>
+                        </text>
+                      )
+                    }
+                  }}
+                />
+              </PolarRadiusAxis>
+            </RadialBarChart>
+          </ChartContainer>
+        </div>
 
-      {/* Separator */}
-      <div className="border-t border-slate-200 dark:border-white/10 my-4" />
+        {/* SEPARATOR - Vertical on tablet, Horizontal on mobile/desktop */}
+        <div className="hidden md:block lg:hidden h-[220px] w-px bg-slate-200 dark:bg-white/10 flex-shrink-0" />
+        <div className="md:hidden lg:block w-full h-px bg-slate-200 dark:bg-white/10 my-3 lg:my-4" />
 
-      {/* Vertical Statistics */}
-      <div className="flex flex-col gap-6 py-2">
-        <StatItem
-          value={data.watched.toLocaleString()}
-          description="Watched"
-          color="#1e40af"
-        />
-        <StatItem
-          value={data.watchlist.toLocaleString()}
-          description="Watchlist"
-          color="#6d28d9"
-        />
-        <StatItem
-          value={total.toLocaleString()}
-          description="Total Films"
-        />
-      </div>
+        {/* RIGHT: Stats and Profile */}
+        <div className="flex-1 flex flex-col justify-center md:justify-center lg:justify-between gap-2 w-full">
+          {/* Statistics */}
+          <div className="flex flex-row md:flex-row lg:flex-col gap-4 md:gap-6 lg:gap-8 justify-between md:justify-between lg:justify-start">
+            <StatItem
+              value={data.watched.toLocaleString()}
+              description="Watched"
+              color="#1e40af"
+            />
+            <StatItem
+              value={data.watchlist.toLocaleString()}
+              description="Watchlist"
+              color="#6d28d9"
+            />
+            <StatItem
+              value={total.toLocaleString()}
+              description="Total Films"
+            />
+          </div>
 
-      {/* Separator */}
-      <div className="border-t border-slate-200 dark:border-white/10 my-4" />
+          {/* Separator */}
+          <div className="w-full h-px bg-slate-200 dark:bg-white/10 my-2 md:my-3 lg:my-6" />
 
-      {/* Profile Section */}
-      <div className="text-center">
-        <span className="text-xs text-slate-500 dark:text-white/50 font-medium uppercase tracking-wider block mb-2">
-          Your Profile
-        </span>
-        <p className="text-sm text-black dark:text-white font-medium">
-          {collectorType}
-        </p>
-        <p className="text-xs text-slate-500 dark:text-white/50 mt-1">
-          {collectorDescription}
-        </p>
+          {/* Profile Section */}
+          <div className="text-center lg:mt-auto">
+            <span className="text-xs text-slate-500 dark:text-white/50 font-medium uppercase tracking-wider block mb-1.5">
+              Your Profile
+            </span>
+            <p className="text-sm text-black dark:text-white font-medium">
+              {collectorType}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-white/50 mt-0.5">
+              {collectorDescription}
+            </p>
+          </div>
+        </div>
       </div>
     </Card>
   )

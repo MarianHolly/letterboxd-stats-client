@@ -69,6 +69,7 @@ import {
   transformLikedMoviesRatingDistribution,
   transformWatchedVsWatchlist,
   transformWatchlistByDecade,
+  transformWatchlistByFiveYear,
   computeWatchlistInsight,
   filter2025Movies,
   transform2025MonthlyData,
@@ -191,6 +192,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   const watchlistInsight = hasWatchlist ? computeWatchlistInsight(movies, watchlist) : "";
   const watchedVsWatchlistData = hasWatchlist ? transformWatchedVsWatchlist(movies, watchlist) : null;
   const watchlistByDecadeData = hasWatchlist ? transformWatchlistByDecade(movies, watchlist) : [];
+  const watchlistByFiveYearData = hasWatchlist ? transformWatchlistByFiveYear(movies, watchlist) : [];
 
   // SECTION 5: 2025 Year in Review
   const movies2025 = filter2025Movies(movies);
@@ -433,7 +435,10 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                   {/* Right: Primary Chart (larger) */}
                   <div className="lg:col-span-3">
                     {watchlistByDecadeData.length > 0 ? (
-                      <WatchlistByDecadeChart data={watchlistByDecadeData} />
+                      <WatchlistByDecadeChart
+                        decadeData={watchlistByDecadeData}
+                        fiveYearData={watchlistByFiveYearData}
+                      />
                     ) : (
                       <Card className="h-full flex items-center justify-center border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
                         <CardContent className="text-center py-12">
