@@ -89,7 +89,7 @@ export function WatchedVsWatchlistRadial({ data }: WatchedVsWatchlistRadialProps
   }
 
   return (
-    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full p-4 md:p-5 lg:p-6">
+    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent p-4 md:p-5 lg:p-6">
       <div className="flex flex-col md:flex-row lg:flex-col items-center gap-4 md:gap-6 lg:gap-0">
         {/* LEFT: Radial Chart */}
         <div className="flex-shrink-0 w-full md:w-auto flex justify-center">
@@ -158,7 +158,7 @@ export function WatchedVsWatchlistRadial({ data }: WatchedVsWatchlistRadialProps
         {/* RIGHT: Stats and Profile */}
         <div className="flex-1 flex flex-col justify-center md:justify-center lg:justify-between gap-2 w-full">
           {/* Statistics */}
-          <div className="flex flex-row md:flex-row lg:flex-col gap-4 md:gap-6 lg:gap-8 justify-between md:justify-between lg:justify-start">
+          <div className="flex flex-row md:flex-row lg:flex-col gap-4 md:gap-6 lg:gap-8 justify-evenly md:justify-evenly lg:justify-start px-4 md:px-4 lg:px-0">
             <StatItem
               value={data.watched.toLocaleString()}
               description="Watched"

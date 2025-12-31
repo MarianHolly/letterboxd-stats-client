@@ -426,7 +426,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
           ) : (
             <>
               {watchedVsWatchlistData && (
-                <div className="grid grid-cols-1 lg:grid-cols-4 auto-rows-[minmax(400px,auto)] gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-4 auto-rows-[minmax(300px,auto)] gap-6">
                   {/* Left: Statistics (smaller) */}
                   <div className="lg:col-span-1">
                     <WatchedVsWatchlistRadial data={watchedVsWatchlistData} />
