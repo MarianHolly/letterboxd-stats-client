@@ -43,20 +43,12 @@ import {
   transformReleaseYearToFiveYearPeriods,
   transformReleaseYearToEras,
   transformMonthlyData,
-  transformYearMonthlyData,
   transformDiaryStats,
   computeReleaseYearInsight,
   computeViewingInsight,
-  transformLikesByMonth,
-  transformLikesVsUnlikesOverTime,
-  computeLikeTimelineInsight,
-  transformLikedVsUnliked,
   transformLikesByDecade,
-  computeLikeInsight,
   transformRatingDistribution,
   transformRatingByDecade,
-  transformRatedVsUnrated,
-  computeRatingInsight,
   transformTastePreferenceStats,
   transformMostLikedDecade,
   transformBestRatedDecade,
@@ -69,8 +61,6 @@ import {
   transform2025MonthlyData,
   transform2025Stats,
   transform2025RatingDistribution,
-  transform2025RewatchData,
-  transform2025LikesAndFavorites,
   compute2025Insight,
   transformYearlyComparison,
   transformYearlyTotals,
@@ -143,26 +133,15 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   const releaseYearInsight = computeReleaseYearInsight(movies, eraData);
 
   // SECTION 2A: Watching Timeline
-  const hasDiaryData = dataset?.uploadedFiles?.includes("diary") ?? false;
-  // Always compute data (now has fallback logic to use dateMarkedWatched)
   const monthlyData = transformMonthlyData(movies);
-  const yearMonthlyData = transformYearMonthlyData(movies);
   const diaryStats = monthlyData.length > 0 ? transformDiaryStats(monthlyData, movies) : undefined;
   const viewingInsight = analytics && diaryStats ? computeViewingInsight(analytics, monthlyData, diaryStats) : "";
   const yearlyComparisonData = transformYearlyComparison(movies);
   const yearlyTotalsData = transformYearlyTotals(movies);
 
-  // SECTION 2B: Like Timeline
-  const hasLikesData = movies.some((m: Movie) => m.liked === true) && hasDiaryData;
-  const likesByMonth = hasLikesData ? transformLikesByMonth(movies) : [];
-  const likesVsUnlikesOverTime = hasLikesData ? transformLikesVsUnlikesOverTime(movies) : [];
-  const likeTimelineInsight = hasLikesData ? computeLikeTimelineInsight(likesByMonth) : "";
-
   // SECTION 3A: Likes Analysis
   const hasMoviesLiked = movies.some((m: Movie) => m.liked === true);
-  const likedVsUnliked = hasMoviesLiked ? transformLikedVsUnliked(movies) : null;
   const likesByDecade = hasMoviesLiked ? transformLikesByDecade(movies) : [];
-  const likeInsight = hasMoviesLiked ? computeLikeInsight(analytics?.moviesLiked || 0, movies.length) : "";
 
   // SECTION 3B: Rating Patterns
   const hasRatings = analytics && analytics.moviesRated > 0;
@@ -170,8 +149,6 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
     ? transformRatingDistribution(analytics?.ratingDistribution || {})
     : [];
   const ratingByDecade = hasRatings ? transformRatingByDecade(movies) : [];
-  const ratedVsUnrated = hasRatings ? transformRatedVsUnrated(movies) : null;
-  const ratingInsight = analytics ? computeRatingInsight(analytics) : "";
 
   // SECTION 3: Overall Taste & Preference Stats
   const tastePreferenceStats = (hasMoviesLiked || hasRatings)

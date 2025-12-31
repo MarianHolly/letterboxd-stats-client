@@ -244,14 +244,6 @@ export function transformMonthlyData(
     }
   })
 
-  // Debug logging
-  // console.log('=== transformMonthlyData Debug ===')
-  // console.log('Total movies processed:', movies.length)
-  // console.log('Initial watches counted:', totalInitialWatches)
-  // console.log('Rewatches from rewatchDates:', totalRewatchesFromDates)
-  // console.log('Rewatches from rewatchCount:', totalRewatchesFromCount)
-  // console.log('Total viewing events:', totalInitialWatches + totalRewatchesFromDates + totalRewatchesFromCount)
-
   return Object.entries(monthMap)
     .map(([month, count]) => ({ month, count }))
     .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime())
