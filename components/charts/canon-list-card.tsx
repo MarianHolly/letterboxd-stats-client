@@ -48,9 +48,50 @@ export function CanonListCard({ progress }: CanonListCardProps) {
   const listData = ALL_CANON_LISTS.find(l => l.id === progress.listId)
   const sourceUrl = listData?.sourceUrl || "#"
 
+  const remaining = progress.totalMovies - progress.watchedCount
+  const bottomText = remaining < 10
+    ? `${remaining} movies remain!`
+    : `${progress.watchedCount} of ${progress.totalMovies}`
+
   return (
-    <Card className="border-none bg-transparent h-full">
-      <div className="flex flex-col items-center justify-center h-full">
+    <Card className="border-none bg-transparent h-full p-0">
+      {/* Mobile: Progress Bar Layout */}
+      <div className="md:hidden flex flex-col p-2 gap-2 h-full justify-center">
+        {/* Top Row: Title and Percentage */}
+        <div className="flex justify-between items-baseline">
+          <a
+            href={sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-base font-light text-black dark:text-white hover:underline"
+          >
+            {progress.listTitle}
+          </a>
+          <span className="text-2xl font-bold text-black dark:text-white">
+            {progress.completionPercentage.toFixed(1)}<span className="font-light ml-0.5">%</span>
+          </span>
+        </div>
+
+        {/* Progress Bar with Gradient */}
+        <div className="space-y-1.5">
+          <div className="relative w-full h-2.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
+            <div
+              className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-blue-600 to-violet-600"
+              style={{
+                width: `${progress.completionPercentage}%`,
+              }}
+            />
+          </div>
+
+          {/* Count below bar */}
+          <div className="text-xs text-slate-500 dark:text-white/50 text-center">
+            {bottomText}
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop: Radial Chart Layout */}
+      <div className="hidden md:flex flex-col items-center justify-center h-full p-2">
         <ChartContainer
           config={chartConfig}
           className="mx-auto w-full max-w-[280px] h-[280px]"
