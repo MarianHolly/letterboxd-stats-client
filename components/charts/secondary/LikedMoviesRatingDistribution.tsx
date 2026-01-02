@@ -38,7 +38,7 @@ export function LikedMoviesRatingDistribution({ data }: LikedMoviesRatingDistrib
     return (
       <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
         <CardHeader className="pb-4">
-          <CardTitle className="text-base font-semibold">Rating Your Favorites</CardTitle>
+          <CardTitle className="text-base font-semibold">Favorites Rating Distribution</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground text-center py-8">
@@ -52,9 +52,9 @@ export function LikedMoviesRatingDistribution({ data }: LikedMoviesRatingDistrib
   return (
     <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
       <CardHeader className="pb-4">
-        <CardTitle className="text-base font-semibold">Rating Your Favorites</CardTitle>
+        <CardTitle className="text-base font-semibold">Favorites Rating Distribution</CardTitle>
         <p className="text-xs text-muted-foreground mt-1">
-          Star ratings for movies you've liked
+          Rating distribution for favorited films
         </p>
       </CardHeader>
       <CardContent>

@@ -217,10 +217,10 @@ export function ReleasedYearAnalysis({ data }: ReleaseYearAnalysisProps) {
         {/* Title Section */}
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 md:!py-0">
           <CardTitle className="text-black dark:text-white text-center md:text-start">
-            Release Year Analysis
+            Release Year Distribution
           </CardTitle>
           <CardDescription className="text-slate-600 dark:text-white/60 hidden lg:block lg:text-xs">
-            Movies watched by release year with era categorization
+            Films viewed categorized by release period
           </CardDescription>
         </div>
 

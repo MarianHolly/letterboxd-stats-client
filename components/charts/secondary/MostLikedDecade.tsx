@@ -61,7 +61,7 @@ export function MostLikedDecade({ data }: MostLikedDecadeProps) {
     <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-semibold">Most Liked Decade</CardTitle>
+          <CardTitle className="text-base font-semibold">Favorite Decades</CardTitle>
           {topDecade && (
             <Badge
               variant="secondary"
@@ -76,8 +76,8 @@ export function MostLikedDecade({ data }: MostLikedDecadeProps) {
         </div>
         <p className="text-xs text-muted-foreground mt-1">
           {viewMode === "count"
-            ? "Decades with most liked films"
-            : "Like rate by decade"}
+            ? "Total favorites by decade"
+            : "Favorite rate by decade"}
         </p>
 
         {/* View Toggle Buttons */}

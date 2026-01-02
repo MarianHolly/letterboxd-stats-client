@@ -40,9 +40,9 @@ export function YearlyComparisonChart({ data }: YearlyComparisonChartProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Yearly Comparison</CardTitle>
+          <CardTitle>Year-over-Year Comparison</CardTitle>
           <CardDescription>
-            No data available for yearly comparison
+            No data available for comparison
           </CardDescription>
         </CardHeader>
         <CardContent className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -55,9 +55,9 @@ export function YearlyComparisonChart({ data }: YearlyComparisonChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Yearly Monthly Trends</CardTitle>
+        <CardTitle>Year-over-Year Comparison</CardTitle>
         <CardDescription className="hidden lg:block">
-          Showing yearly patterns of the most active and quietest months.
+          Monthly viewing patterns across years
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -79,7 +79,7 @@ export function BestRatedDecade({ data }: BestRatedDecadeProps) {
     return (
       <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
         <CardHeader>
-          <CardTitle className="text-base font-semibold">Highest Rated Decade</CardTitle>
+          <CardTitle className="text-base font-semibold">Top-Rated Decades</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground text-center py-8">
@@ -103,7 +103,7 @@ export function BestRatedDecade({ data }: BestRatedDecadeProps) {
     return (
       <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
         <CardHeader>
-          <CardTitle className="text-base font-semibold">Highest Rated Decade</CardTitle>
+          <CardTitle className="text-base font-semibold">Top-Rated Decades</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground text-center py-8">
@@ -125,7 +125,7 @@ export function BestRatedDecade({ data }: BestRatedDecadeProps) {
     <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-semibold">Highest Rated Decade</CardTitle>
+          <CardTitle className="text-base font-semibold">Top-Rated Decades</CardTitle>
           {topDecade && (
             <Badge
               variant="secondary"
@@ -140,8 +140,8 @@ export function BestRatedDecade({ data }: BestRatedDecadeProps) {
         </div>
         <p className="text-xs text-muted-foreground mt-1">
           {viewMode === "average"
-            ? "Your highest-rated eras (10+ films minimum)"
-            : "Top-rated films by decade"}
+            ? "Average ratings by decade (minimum 10 films)"
+            : "High-rated film count by decade"}
         </p>
 
         {/* View Toggle Buttons */}

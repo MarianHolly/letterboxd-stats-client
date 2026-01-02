@@ -33,9 +33,9 @@ export function YearlyTotalsBarChart({ data }: YearlyTotalsBarChartProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Yearly Totals</CardTitle>
+          <CardTitle>Annual Viewing Summary</CardTitle>
           <CardDescription>
-            Total movies watched per year
+            Total films per year
           </CardDescription>
         </CardHeader>
         <CardContent className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -48,9 +48,9 @@ export function YearlyTotalsBarChart({ data }: YearlyTotalsBarChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Yearly Totals</CardTitle>
+        <CardTitle>Annual Viewing Summary</CardTitle>
         <CardDescription className="hidden lg:block">
-          Total movies watched each year with year-over-year change
+          Total films per year with growth metrics
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -79,10 +79,10 @@ export function WatchlistByDecadeChart({ decadeData, fiveYearData }: WatchlistBy
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div className="flex-1">
             <CardTitle className="text-black dark:text-white">
-              Watched vs. Watchlist by {viewMode === 'decade' ? 'Decade' : '5-Year Period'}
+              Viewing Progress by {viewMode === 'decade' ? 'Decade' : '5-Year Period'}
             </CardTitle>
             <CardDescription className="text-slate-600 dark:text-white/60">
-              Comparing your viewing history and future plans across film eras
+              Completed viewings vs. planned watches by era
             </CardDescription>
           </div>
 
