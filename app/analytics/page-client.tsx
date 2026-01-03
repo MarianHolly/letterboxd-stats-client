@@ -68,7 +68,7 @@ export function AnalyticsPageClient({ defaultSidebarOpen }: AnalyticsPageClientP
         onClearClick={handleClearData}
       />
       <SidebarInset suppressHydrationWarning className="min-w-0 overflow-x-hidden">
-        <div className="flex flex-col h-full min-w-0 w-full overflow-x-hidden bg-background dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" suppressHydrationWarning>
+        <div className="flex flex-col h-screen min-w-0 w-full overflow-y-auto overflow-x-hidden bg-background dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" suppressHydrationWarning data-analytics-scroll-container>
           <AnalyticsHeader
             title="Your true cinematic identity"
             description="Discover and explore your personality through Letterboxd statistics"
