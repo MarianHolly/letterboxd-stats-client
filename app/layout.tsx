@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Letterboxd Stats",
   description: "Transform your Letterboxd viewing history into beautiful, interactive analytics",
+  icons: {
+    icon: "/icon",
+  },
 };
 
 export default function RootLayout({
