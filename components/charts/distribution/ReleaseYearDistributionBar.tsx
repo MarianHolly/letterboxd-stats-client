@@ -265,7 +265,7 @@ export function ReleaseYearDistributionBar({ data }: ReleaseYearDistributionBarP
         ) : (
           <ChartContainer
             config={chartConfig}
-            className="aspect-auto h-[300px] w-full"
+            className="aspect-auto h-[300px] md:h-[400px] w-full"
           >
             <BarChart
               accessibilityLayer
