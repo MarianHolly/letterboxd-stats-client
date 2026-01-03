@@ -11,30 +11,34 @@ import { AnalyticsEmptyState } from "./analytics-empty-state";
 import { AnalyticsSkeleton } from "./analytics-skeleton";
 import { SectionLayout } from "./SectionLayout";
 
-// Import chart components
-import { DiaryAreaChart } from "@/components/charts/diary-area-chart";
-import { DiaryStatistics } from "@/components/charts/diary-statistics";
-import { ReleasedYearAnalysis } from "@/components/charts/release-year-analysis";
-import { ReleasedYearBarHorizontal } from "@/components/charts/released-year-bar-horizont";
-import { ReleasedYearPieChart } from "@/components/charts/released-year-pie-chart";
-
-// Import secondary chart components
-import { LikesByDecadeBar } from "@/components/charts/secondary/LikesByDecadeBar";
-import { RatingDistributionBar } from "@/components/charts/secondary/RatingDistributionBar";
-import { RatingByDecadeBar } from "@/components/charts/secondary/RatingByDecadeBar";
-import { WatchedVsWatchlistRadial } from "@/components/charts/secondary/WatchedVsWatchlistRadial";
-import { TastePreferenceStats } from "@/components/charts/secondary/TastePreferenceStats";
-import { RatedMoviesRadial } from "@/components/charts/secondary/RatedMoviesRadial";
-import { LikedMoviesRadial } from "@/components/charts/secondary/LikedMoviesRadial";
-import { MostLikedDecade } from "@/components/charts/secondary/MostLikedDecade";
-import { BestRatedDecade } from "@/components/charts/secondary/BestRatedDecade";
-import { LikedMoviesRatingDistribution } from "@/components/charts/secondary/LikedMoviesRatingDistribution";
-import { WatchlistByDecadeChart } from "@/components/charts/watchlist-by-decade-chart";
-import { YearInReviewStats } from "@/components/charts/year-in-review-stats";
-import { YearlyComparisonChart } from "@/components/charts/yearly-comparison-chart";
-import { YearlyTotalsBarChart } from "@/components/charts/yearly-totals-bar-chart";
-import { YearByDecadeBar } from "@/components/charts/secondary/YearByDecadeBar";
-import { CanonListsGrid } from "@/components/charts/canon-lists-grid";
+// Import chart components from barrel export
+import {
+  // Timeline
+  ViewingTimelineArea,
+  YearOverYearArea,
+  // Distribution
+  RatingDistributionBar,
+  ReleaseYearDistributionBar,
+  LikedRatingDistributionBar,
+  // Decades
+  ReleaseByEraPie,
+  ReleaseByDecadeBar,
+  TopRatedDecadesBar,
+  FavoriteDecadesBar,
+  // Ratios
+  RatedRatioRadial,
+  LikedRatioRadial,
+  WatchlistProgressRadial,
+  // Progress
+  WatchlistProgressChart,
+  CanonListsGrid,
+  // Stats
+  DiaryStats,
+  YearInReviewStats,
+  // Totals
+  AnnualSummaryBar,
+  FilmsByDecadeBar,
+} from "@/components/charts";
 
 // Import data transformers
 import {
@@ -218,19 +222,19 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
             />
 
             <SectionLayout.Primary>
-              <ReleasedYearAnalysis data={releaseYearData} />
+              <ReleaseYearDistributionBar data={releaseYearData} />
             </SectionLayout.Primary>
 
             {(decadeData.length > 0 || eraData.length > 0) && (
               <SectionLayout.Secondary>
                 {decadeData.length > 0 && (
                   <div>
-                    <ReleasedYearBarHorizontal data={decadeData} />
+                    <ReleaseByDecadeBar data={decadeData} />
                   </div>
                 )}
                 {eraData.length > 0 && (
                   <div>
-                    <ReleasedYearPieChart data={eraData} />
+                    <ReleaseByEraPie data={eraData} />
                   </div>
                 )}
               </SectionLayout.Secondary>
@@ -269,7 +273,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                   {/* Left: Statistics (1/4 width on desktop) */}
                   <div className="lg:col-span-1">
                     {diaryStats ? (
-                      <DiaryStatistics stats={diaryStats} />
+                      <DiaryStats stats={diaryStats} />
                     ) : (
                       <div className="p-4 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-lg text-sm text-yellow-800 dark:text-yellow-200">
                         Loading statistics...
@@ -280,7 +284,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                   {/* Right: Chart (3/4 width on desktop) */}
                   <div className="lg:col-span-3">
                     {monthlyData.length > 0 ? (
-                      <DiaryAreaChart data={monthlyData} />
+                      <ViewingTimelineArea data={monthlyData} />
                     ) : (
                       <div className="p-4 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-lg text-sm text-yellow-800 dark:text-yellow-200">
                         No monthly data available - diary may not have date information
@@ -292,10 +296,10 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                 {/* SECONDARY SECTION: Yearly Comparison */}
                 <div className="grid grid-cols-1 md:grid-cols-7 auto-rows-[minmax(320px,auto)] gap-6">
                   <div className="md:col-span-4">
-                    <YearlyComparisonChart data={yearlyComparisonData} />
+                    <YearOverYearArea data={yearlyComparisonData} />
                   </div>
                   <div className="md:col-span-3">
-                    <YearlyTotalsBarChart data={yearlyTotalsData} />
+                    <AnnualSummaryBar data={yearlyTotalsData} />
                   </div>
                 </div>
               </>
@@ -324,7 +328,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                 <div className="flex flex-col gap-6">
                   {/* Rated Movies Radial */}
                   {hasRatings && (
-                    <RatedMoviesRadial
+                    <RatedRatioRadial
                       data={{
                         watched: tastePreferenceStats.watched,
                         rated: tastePreferenceStats.rated
@@ -339,7 +343,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
 
                   {/* Best Rated Decade */}
                   {hasRatings && (
-                    <BestRatedDecade data={bestRatedDecadeData} />
+                    <TopRatedDecadesBar data={bestRatedDecadeData} />
                   )}
                 </div>
 
@@ -347,7 +351,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                 <div className="flex flex-col gap-6">
                   {/* Liked Movies Radial */}
                   {hasMoviesLiked && (
-                    <LikedMoviesRadial
+                    <LikedRatioRadial
                       data={{
                         watched: tastePreferenceStats.watched,
                         liked: tastePreferenceStats.liked
@@ -357,12 +361,12 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
 
                   {/* Liked Movies Rating Distribution */}
                   {hasMoviesLiked && (
-                    <LikedMoviesRatingDistribution data={likedMoviesRatingDistribution} />
+                    <LikedRatingDistributionBar data={likedMoviesRatingDistribution} />
                   )}
 
                   {/* Most Liked Decade */}
                   {hasMoviesLiked && mostLikedDecadeData.length > 0 && (
-                    <MostLikedDecade data={mostLikedDecadeData} />
+                    <FavoriteDecadesBar data={mostLikedDecadeData} />
                   )}
                 </div>
               </div>
@@ -400,13 +404,13 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                 <div className="grid grid-cols-1 lg:grid-cols-4 auto-rows-[minmax(300px,auto)] gap-6">
                   {/* Left: Statistics (smaller) */}
                   <div className="lg:col-span-1">
-                    <WatchedVsWatchlistRadial data={watchedVsWatchlistData} />
+                    <WatchlistProgressRadial data={watchedVsWatchlistData} />
                   </div>
 
                   {/* Right: Primary Chart (larger) */}
                   <div className="lg:col-span-3">
                     {watchlistByDecadeData.length > 0 ? (
-                      <WatchlistByDecadeChart
+                      <WatchlistProgressChart
                         decadeData={watchlistByDecadeData}
                         fiveYearData={watchlistByFiveYearData}
                       />
@@ -469,9 +473,9 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
               {/* Second row: Timeline + Decade Chart */}
               {monthly2025Data.length > 0 && (
                 <SectionLayout.Secondary>
-                  <DiaryAreaChart data={monthly2025Data} />
+                  <ViewingTimelineArea data={monthly2025Data} />
                   {decade2025Data.length > 0 && fiveYear2025Data.length > 0 && (
-                    <YearByDecadeBar decadeData={decade2025Data} fiveYearData={fiveYear2025Data} />
+                    <FilmsByDecadeBar decadeData={decade2025Data} fiveYearData={fiveYear2025Data} />
                   )}
                 </SectionLayout.Secondary>
               )}
