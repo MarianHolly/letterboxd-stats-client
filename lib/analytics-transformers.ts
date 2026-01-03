@@ -997,7 +997,7 @@ export function filterMoviesByYear(movies: Movie[], year: number): Movie[] {
  * Filter movies watched in the last complete year
  * @returns Array of movies with watchedDate in the last complete year
  */
-export function filter2025Movies(movies: Movie[]): Movie[] {
+export function filterLastCompleteYearMovies(movies: Movie[]): Movie[] {
   const lastCompleteYear = getLastCompleteYear(movies)
   return filterMoviesByYear(movies, lastCompleteYear)
 }
@@ -1005,20 +1005,22 @@ export function filter2025Movies(movies: Movie[]): Movie[] {
 /**
  * Transform last complete year movies to monthly viewing data
  * Shows all 12 months with 0 for empty months
+ * Includes both initial watches AND rewatches that occurred in the target year
  * @returns Array of { month: "Jan 2024", count }
  */
-export function transform2025MonthlyData(
+export function transformLastCompleteYearMonthlyData(
   movies: Movie[]
 ): Array<{ month: string; count: number }> {
   const lastCompleteYear = getLastCompleteYear(movies)
-  const moviesInYear = filterMoviesByYear(movies, lastCompleteYear)
-  const monthlyData = transformMonthlyData(moviesInYear)
 
-  // Ensure all 12 months are represented with 0 for empty months
+  // Get monthly data for ALL movies (includes all rewatches with dates)
+  const allMonthlyData = transformMonthlyData(movies)
+
+  // Filter to only include months from the last complete year
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  const allMonths = monthNames.map((month, index) => {
+  const allMonths = monthNames.map((month) => {
     const monthStr = `${month} ${lastCompleteYear}`
-    const existing = monthlyData.find(m => m.month === monthStr)
+    const existing = allMonthlyData.find(m => m.month === monthStr)
     return {
       month: monthStr,
       count: existing?.count || 0
@@ -1031,8 +1033,8 @@ export function transform2025MonthlyData(
 /**
  * Compute statistics for the last complete year
  */
-export function transform2025Stats(
-  movies2025: Movie[]
+export function transformLastCompleteYearStats(
+  moviesLastYear: Movie[]
 ): {
   totalWatched: number
   avgRating: number
@@ -1042,10 +1044,10 @@ export function transform2025Stats(
   busiestMonth?: string
   busiestMonthCount?: number
 } {
-  const monthlyData = transformMonthlyData(movies2025)
-  const ratedMovies = movies2025.filter((m) => m.rating !== undefined)
-  const rewatchedMovies = movies2025.filter((m) => m.rewatch === true)
-  const likedMovies = movies2025.filter((m) => m.liked === true)
+  const monthlyData = transformMonthlyData(moviesLastYear)
+  const ratedMovies = moviesLastYear.filter((m) => m.rating !== undefined)
+  const rewatchedMovies = moviesLastYear.filter((m) => m.rewatch === true)
+  const likedMovies = moviesLastYear.filter((m) => m.liked === true)
 
   const avgRating =
     ratedMovies.length > 0
@@ -1064,7 +1066,7 @@ export function transform2025Stats(
   const busiestMonth = monthlyData.length > 0 ? monthlyData.reduce((max, m) => (m.count > max.count ? m : max)) : undefined
 
   return {
-    totalWatched: movies2025.length,
+    totalWatched: moviesLastYear.length,
     avgRating,
     totalRewatches: rewatchedMovies.length,
     totalLiked: likedMovies.length,
@@ -1078,12 +1080,12 @@ export function transform2025Stats(
  * Transform rating distribution for the last complete year
  * @returns Array of { rating: "5.0", count }
  */
-export function transform2025RatingDistribution(
-  movies2025: Movie[]
+export function transformLastCompleteYearRatingDistribution(
+  moviesLastYear: Movie[]
 ): Array<{ rating: string; count: number }> {
   const ratingDist: Record<string, number> = {}
 
-  movies2025.forEach((movie) => {
+  moviesLastYear.forEach((movie) => {
     if (movie.rating !== undefined) {
       const rating = String(movie.rating)
       ratingDist[rating] = (ratingDist[rating] || 0) + 1
@@ -1173,20 +1175,54 @@ export function transformYearlyComparison(
 
   movies.forEach((movie) => {
     const date = movie.watchedDate
-    if (!date) return
 
-    try {
-      const dateObj = typeof date === 'string' ? new Date(date) : date
-      if (isNaN(dateObj.getTime())) return
+    // Count initial watch
+    if (date) {
+      try {
+        const dateObj = typeof date === 'string' ? new Date(date) : date
+        if (isNaN(dateObj.getTime())) return
 
-      const year = dateObj.getFullYear()
-      const monthIndex = dateObj.getMonth()
-      const monthName = dateObj.toLocaleDateString('en-US', { month: 'short' })
+        const year = dateObj.getFullYear()
+        const monthIndex = dateObj.getMonth()
+        const monthName = dateObj.toLocaleDateString('en-US', { month: 'short' })
 
-      if (!yearMonthMap[year]) yearMonthMap[year] = {}
-      yearMonthMap[year][monthName] = (yearMonthMap[year][monthName] || 0) + 1
-    } catch (error) {
-      console.warn('Error parsing date for movie:', movie.title, error)
+        if (!yearMonthMap[year]) yearMonthMap[year] = {}
+        yearMonthMap[year][monthName] = (yearMonthMap[year][monthName] || 0) + 1
+      } catch (error) {
+        console.warn('Error parsing date for movie:', movie.title, error)
+      }
+    }
+
+    // Count all rewatches (same logic as transformMonthlyData)
+    if (movie.rewatchDates && movie.rewatchDates.length > 0) {
+      // Case 1: We have explicit rewatch dates
+      movie.rewatchDates.forEach((rewatchDate) => {
+        try {
+          const dateObj = typeof rewatchDate === 'string' ? new Date(rewatchDate) : rewatchDate
+          if (isNaN(dateObj.getTime())) return
+
+          const year = dateObj.getFullYear()
+          const monthName = dateObj.toLocaleDateString('en-US', { month: 'short' })
+
+          if (!yearMonthMap[year]) yearMonthMap[year] = {}
+          yearMonthMap[year][monthName] = (yearMonthMap[year][monthName] || 0) + 1
+        } catch (error) {
+          console.warn('Error parsing rewatch date for movie:', movie.title, error)
+        }
+      })
+    } else if (movie.rewatchCount && movie.rewatchCount > 0 && date) {
+      // Case 2: Single "Rewatch: Yes" entry - no explicit dates
+      // Add rewatchCount to the same month as watchedDate
+      try {
+        const dateObj = typeof date === 'string' ? new Date(date) : date
+        const year = dateObj.getFullYear()
+        const monthName = dateObj.toLocaleDateString('en-US', { month: 'short' })
+
+        if (!yearMonthMap[year]) yearMonthMap[year] = {}
+        yearMonthMap[year][monthName] = (yearMonthMap[year][monthName] || 0) + movie.rewatchCount
+      } catch (error) {
+        console.warn('Error counting rewatches for movie:', movie.title, error)
+      }
     }
   })
 
