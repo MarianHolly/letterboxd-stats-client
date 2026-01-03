@@ -498,6 +498,73 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
 
           <CanonListsGrid />
         </SectionLayout>
+
+        {/* ============================================================================ */}
+        {/* DEVELOPMENT NOTICE */}
+        {/* ============================================================================ */}
+        <div className="mt-12 pb-12 md:pb-20">
+          <div className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/30 p-8 md:p-12">
+            {/* Background decoration */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-amber-500/10 to-orange-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+
+            <div className="relative z-10">
+              {/* Header */}
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="w-3 h-3 rounded-full bg-amber-500 animate-pulse" />
+                <h3 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
+                  Active Development
+                </h3>
+              </div>
+
+              <p className="text-center text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
+                This project is continuously evolving. Here's what's coming next:
+              </p>
+
+              {/* Future Steps */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-3xl mx-auto mb-8">
+                {/* Step 1 */}
+                <div className="flex gap-4 p-4 rounded-xl bg-white/60 dark:bg-white/5 border border-slate-200/50 dark:border-white/5">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center">
+                    <span className="text-indigo-600 dark:text-indigo-400 font-bold">1</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 dark:text-white mb-1">Data Enrichment</h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      Enhance your stats with genres, countries, directors, cast, and more metadata.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 2 */}
+                <div className="flex gap-4 p-4 rounded-xl bg-white/60 dark:bg-white/5 border border-slate-200/50 dark:border-white/5">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-500/20 flex items-center justify-center">
+                    <span className="text-purple-600 dark:text-purple-400 font-bold">2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 dark:text-white mb-1">AI-Powered Insights</h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      Smart analysis and personalized movie recommendations based on your taste.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="text-center">
+                <a
+                  href="/roadmap"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-medium hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors"
+                >
+                  Explore Full Roadmap
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
