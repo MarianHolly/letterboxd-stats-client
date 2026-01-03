@@ -220,6 +220,27 @@ export function AnalyticsSidebar({
     return pathname.startsWith(href);
   };
 
+  // Handle smooth scroll to section within the custom scroll container
+  const handleSectionClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (!href.startsWith("#")) return;
+
+    e.preventDefault();
+    const sectionId = href.slice(1);
+    const section = document.getElementById(sectionId);
+    const scrollContainer = document.querySelector('[data-analytics-scroll-container]');
+
+    if (section && scrollContainer) {
+      const headerHeight = 64; // h-16 = 4rem = 64px
+      const sectionTop = section.offsetTop - headerHeight;
+      scrollContainer.scrollTo({
+        top: sectionTop,
+        behavior: 'smooth'
+      });
+      // Update URL hash without triggering navigation
+      window.history.pushState(null, '', href);
+    }
+  };
+
   return (
     <Sidebar
       className="bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 border-r border-gray-200 dark:border-white/10"
@@ -253,6 +274,7 @@ export function AnalyticsSidebar({
                   <Link
                     key={item.href}
                     href={item.href}
+                    onClick={(e) => handleSectionClick(e, item.href)}
                     data-active={isActive(item.href) ? "true" : "false"}
                     className={cn(
                       "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 border",

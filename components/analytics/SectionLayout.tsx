@@ -78,7 +78,7 @@ SectionLayout.Header = function Header({ title, subtitle, description, insight, 
   }
 
   return (
-    <div className="space-y-2 text-center">
+    <div className="space-y-2 text-center mt-6">
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
           {renderTitle()}
