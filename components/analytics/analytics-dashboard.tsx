@@ -181,12 +181,12 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
 
   return (
     <div className="flex-1">
-      <div className="flex flex-1 flex-col gap-8 pt-8 px-8 pb-8 max-w-7xl mx-auto w-full min-w-0">
+      <div className="flex flex-1 flex-col gap-8 pt-12 px-8 max-w-7xl mx-auto w-full min-w-0">
         {/* ============================================================================ */}
         {/* INTRO SECTION - Shown when no profile data */}
         {/* ============================================================================ */}
         {!dataset?.userProfile && (
-          <div className="space-y-6 pb-36 border-b-2 border-slate-200 dark:border-white/10">
+          <div className="space-y-6 pb-20 border-b-2 border-slate-200 dark:border-white/10">
             <SectionLayout.Header
               title="Welcome to Your Cinematic Identity"
               subtitle="Discover the data behind your film taste"
@@ -198,7 +198,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* ============================================================================ */}
         {/* STATS OVERVIEW - KPI Cards */}
         {/* ============================================================================ */}
-        <div className="pb-16 mb-8 border-b-2 border-slate-200 dark:border-white/10">
+        <div className="mb-2 border-b-2 border-slate-200 dark:border-white/10">
           <StatsOverview
             analytics={analytics}
             profile={dataset?.userProfile}
