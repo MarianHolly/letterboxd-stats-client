@@ -950,15 +950,43 @@ export function computeWatchlistInsight(
 // ============================================================================
 
 /**
- * Filter movies watched in 2025
- * @returns Array of movies with watchedDate in 2025
+ * Get the latest complete year in the dataset
+ * A complete year is defined as any year that is not the current year
+ * @returns The year number (e.g., 2024, 2023, etc.)
  */
-export function filter2025Movies(movies: Movie[]): Movie[] {
+export function getLastCompleteYear(movies: Movie[]): number {
+  const currentYear = new Date().getFullYear()
+  let maxYear = currentYear - 1 // Default to previous year
+
+  for (const movie of movies) {
+    if (!movie.watchedDate) continue
+    try {
+      const dateObj = typeof movie.watchedDate === 'string' ? new Date(movie.watchedDate) : movie.watchedDate
+      const year = dateObj.getFullYear()
+      // Use the latest year that is not the current year
+      if (year < currentYear && year > maxYear) {
+        maxYear = year
+      }
+    } catch {
+      continue
+    }
+  }
+
+  return maxYear
+}
+
+/**
+ * Filter movies watched in a specific year
+ * @param movies Array of movies
+ * @param year The year to filter by (e.g., 2024)
+ * @returns Array of movies with watchedDate in the specified year
+ */
+export function filterMoviesByYear(movies: Movie[], year: number): Movie[] {
   return movies.filter((movie) => {
     if (!movie.watchedDate) return false
     try {
       const dateObj = typeof movie.watchedDate === 'string' ? new Date(movie.watchedDate) : movie.watchedDate
-      return dateObj.getFullYear() === 2025
+      return dateObj.getFullYear() === year
     } catch {
       return false
     }
@@ -966,18 +994,42 @@ export function filter2025Movies(movies: Movie[]): Movie[] {
 }
 
 /**
- * Transform 2025 movies to monthly viewing data
- * @returns Array of { month: "Jan 2025", count }
+ * Filter movies watched in the last complete year
+ * @returns Array of movies with watchedDate in the last complete year
+ */
+export function filter2025Movies(movies: Movie[]): Movie[] {
+  const lastCompleteYear = getLastCompleteYear(movies)
+  return filterMoviesByYear(movies, lastCompleteYear)
+}
+
+/**
+ * Transform last complete year movies to monthly viewing data
+ * Shows all 12 months with 0 for empty months
+ * @returns Array of { month: "Jan 2024", count }
  */
 export function transform2025MonthlyData(
   movies: Movie[]
 ): Array<{ month: string; count: number }> {
-  const movies2025 = filter2025Movies(movies)
-  return transformMonthlyData(movies2025)
+  const lastCompleteYear = getLastCompleteYear(movies)
+  const moviesInYear = filterMoviesByYear(movies, lastCompleteYear)
+  const monthlyData = transformMonthlyData(moviesInYear)
+
+  // Ensure all 12 months are represented with 0 for empty months
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const allMonths = monthNames.map((month, index) => {
+    const monthStr = `${month} ${lastCompleteYear}`
+    const existing = monthlyData.find(m => m.month === monthStr)
+    return {
+      month: monthStr,
+      count: existing?.count || 0
+    }
+  })
+
+  return allMonths
 }
 
 /**
- * Compute 2025 specific statistics
+ * Compute statistics for the last complete year
  */
 export function transform2025Stats(
   movies2025: Movie[]
@@ -1023,7 +1075,7 @@ export function transform2025Stats(
 }
 
 /**
- * Transform rating distribution for 2025 movies
+ * Transform rating distribution for the last complete year
  * @returns Array of { rating: "5.0", count }
  */
 export function transform2025RatingDistribution(
@@ -1047,7 +1099,7 @@ export function transform2025RatingDistribution(
 }
 
 /**
- * Transform rewatch data for 2025
+ * Transform rewatch data for the last complete year
  * @returns { rewatched, firstWatch }
  */
 export function transform2025RewatchData(
@@ -1063,7 +1115,7 @@ export function transform2025RewatchData(
 }
 
 /**
- * Transform likes and favorites for 2025
+ * Transform likes and favorites for the last complete year
  * @returns { liked, unliked }
  */
 export function transform2025LikesAndFavorites(
@@ -1079,7 +1131,7 @@ export function transform2025LikesAndFavorites(
 }
 
 /**
- * Generate insight about 2025 viewing year
+ * Generate insight about the last complete year's viewing
  */
 export function compute2025Insight(
   stats: ReturnType<typeof transform2025Stats>,
@@ -1087,6 +1139,7 @@ export function compute2025Insight(
 ): string {
   if (stats.totalWatched === 0) return ''
 
+  const lastCompleteYear = new Date().getFullYear() - 1
   const yearPercent = Math.round((stats.totalWatched / totalMovies) * 100)
   const avgRatingText = stats.avgRating > 0 ? ` with an average rating of ${stats.avgRating}★` : ''
   const busiestMonthText =
@@ -1094,7 +1147,7 @@ export function compute2025Insight(
       ? ` Your busiest month was ${stats.busiestMonth} with ${stats.busiestMonthCount} watches.`
       : ''
 
-  return `In 2025, you watched ${stats.totalWatched} movies — that's ${yearPercent}% of your all-time collection${avgRatingText}.${busiestMonthText}`
+  return `In ${lastCompleteYear}, you watched ${stats.totalWatched} movies — that's ${yearPercent}% of your all-time collection${avgRatingText}.${busiestMonthText}`
 }
 
 // ============================================================================

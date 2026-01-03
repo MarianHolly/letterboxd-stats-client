@@ -45,7 +45,7 @@ export function RatingDistributionBar({ data }: RatingDistributionBarProps) {
         </p>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[280px] w-full">
+        <ChartContainer config={chartConfig} className="h-[280px] md:h-[200px] lg:h-[280px] w-full">
           <BarChart
             accessibilityLayer
             data={sortedData}
