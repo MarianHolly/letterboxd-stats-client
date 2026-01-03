@@ -1104,11 +1104,11 @@ export function transformLastCompleteYearRatingDistribution(
  * Transform rewatch data for the last complete year
  * @returns { rewatched, firstWatch }
  */
-export function transform2025RewatchData(
-  movies2025: Movie[]
+export function transformLastCompleteYearRewatchData(
+  moviesLastYear: Movie[]
 ): { rewatched: number; firstWatch: number } {
-  const rewatched = movies2025.filter((m) => m.rewatch === true).length
-  const firstWatch = movies2025.length - rewatched
+  const rewatched = moviesLastYear.filter((m) => m.rewatch === true).length
+  const firstWatch = moviesLastYear.length - rewatched
 
   return {
     rewatched,
@@ -1120,11 +1120,11 @@ export function transform2025RewatchData(
  * Transform likes and favorites for the last complete year
  * @returns { liked, unliked }
  */
-export function transform2025LikesAndFavorites(
-  movies2025: Movie[]
+export function transformLastCompleteYearLikesAndFavorites(
+  moviesLastYear: Movie[]
 ): { liked: number; unliked: number } {
-  const liked = movies2025.filter((m) => m.liked === true).length
-  const unliked = movies2025.length - liked
+  const liked = moviesLastYear.filter((m) => m.liked === true).length
+  const unliked = moviesLastYear.length - liked
 
   return {
     liked,
@@ -1135,8 +1135,8 @@ export function transform2025LikesAndFavorites(
 /**
  * Generate insight about the last complete year's viewing
  */
-export function compute2025Insight(
-  stats: ReturnType<typeof transform2025Stats>,
+export function computeLastCompleteYearInsight(
+  stats: ReturnType<typeof transformLastCompleteYearStats>,
   totalMovies: number
 ): string {
   if (stats.totalWatched === 0) return ''

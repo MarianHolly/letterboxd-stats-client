@@ -61,11 +61,11 @@ import {
   transformWatchlistByDecade,
   transformWatchlistByFiveYear,
   computeWatchlistInsight,
-  filter2025Movies,
-  transform2025MonthlyData,
-  transform2025Stats,
-  transform2025RatingDistribution,
-  compute2025Insight,
+  filterLastCompleteYearMovies,
+  transformLastCompleteYearMonthlyData,
+  transformLastCompleteYearStats,
+  transformLastCompleteYearRatingDistribution,
+  computeLastCompleteYearInsight,
   transformYearlyComparison,
   transformYearlyTotals,
 } from "@/lib/analytics-transformers";
@@ -169,15 +169,15 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   const watchlistByDecadeData = hasWatchlist ? transformWatchlistByDecade(movies, watchlist) : [];
   const watchlistByFiveYearData = hasWatchlist ? transformWatchlistByFiveYear(movies, watchlist) : [];
 
-  // SECTION 5: 2025 Year in Review
-  const movies2025 = filter2025Movies(movies);
-  const has2025Data = movies2025.length > 0;
-  const monthly2025Data = has2025Data ? transform2025MonthlyData(movies) : [];
-  const stats2025 = has2025Data ? transform2025Stats(movies2025) : null;
-  const rating2025Distribution = has2025Data ? transform2025RatingDistribution(movies2025) : [];
-  const decade2025Data = has2025Data ? transformReleaseYearToDecades(movies2025) : [];
-  const fiveYear2025Data = has2025Data ? transformReleaseYearToFiveYearPeriods(movies2025) : [];
-  const insight2025 = stats2025 ? compute2025Insight(stats2025, movies.length) : "";
+  // SECTION 5: Last Complete Year in Review
+  const moviesLastCompleteYear = filterLastCompleteYearMovies(movies);
+  const hasLastCompleteYearData = moviesLastCompleteYear.length > 0;
+  const monthlyLastCompleteYearData = hasLastCompleteYearData ? transformLastCompleteYearMonthlyData(movies) : [];
+  const statsLastCompleteYear = hasLastCompleteYearData ? transformLastCompleteYearStats(moviesLastCompleteYear) : null;
+  const ratingLastCompleteYearDistribution = hasLastCompleteYearData ? transformLastCompleteYearRatingDistribution(moviesLastCompleteYear) : [];
+  const decadeLastCompleteYearData = hasLastCompleteYearData ? transformReleaseYearToDecades(moviesLastCompleteYear) : [];
+  const fiveYearLastCompleteYearData = hasLastCompleteYearData ? transformReleaseYearToFiveYearPeriods(moviesLastCompleteYear) : [];
+  const insightLastCompleteYear = statsLastCompleteYear ? computeLastCompleteYearInsight(statsLastCompleteYear, movies.length) : "";
 
   return (
     <div className="flex-1">
@@ -440,13 +440,13 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
             title="Your Year in Film"
             subtitle="A concise summary of volume, taste, and discovery"
             description="A high-level snapshot of the past twelve months. This review highlights total films watched, average ratings, rewatches, standout discoveries, and the decades that defined your year—capturing both breadth and depth of your viewing habits."
-            insight={insight2025}
+            insight={insightLastCompleteYear}
             highlightWord="Year"
             highlightColor="#ec4899"
-            showDescription={has2025Data}
+            showDescription={hasLastCompleteYearData}
           />
 
-          {!has2025Data ? (
+          {!hasLastCompleteYearData ? (
             <SectionLayout.EmptyWithSplit
               subtitle="A concise summary of volume, taste, and discovery"
               description="A high-level snapshot of the past twelve months. This review highlights total films watched, average ratings, rewatches, standout discoveries, and the decades that defined your year—capturing both breadth and depth of your viewing habits."
@@ -458,24 +458,24 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
             <>
               {/* First row: Quick Stats (2/3) + Rating Distribution (1/3) */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {stats2025 && (
+                {statsLastCompleteYear && (
                   <div className="md:col-span-2">
-                    <YearInReviewStats stats={stats2025} />
+                    <YearInReviewStats stats={statsLastCompleteYear} />
                   </div>
                 )}
-                {rating2025Distribution.length > 0 && (
+                {ratingLastCompleteYearDistribution.length > 0 && (
                   <div className="md:col-span-1">
-                    <RatingDistributionBar data={rating2025Distribution} />
+                    <RatingDistributionBar data={ratingLastCompleteYearDistribution} />
                   </div>
                 )}
               </div>
 
               {/* Second row: Timeline + Decade Chart */}
-              {monthly2025Data.length > 0 && (
+              {monthlyLastCompleteYearData.length > 0 && (
                 <SectionLayout.Secondary>
-                  <ViewingTimelineArea data={monthly2025Data} />
-                  {decade2025Data.length > 0 && fiveYear2025Data.length > 0 && (
-                    <FilmsByDecadeBar decadeData={decade2025Data} fiveYearData={fiveYear2025Data} />
+                  <ViewingTimelineArea data={monthlyLastCompleteYearData} />
+                  {decadeLastCompleteYearData.length > 0 && fiveYearLastCompleteYearData.length > 0 && (
+                    <FilmsByDecadeBar decadeData={decadeLastCompleteYearData} fiveYearData={fiveYearLastCompleteYearData} />
                   )}
                 </SectionLayout.Secondary>
               )}
