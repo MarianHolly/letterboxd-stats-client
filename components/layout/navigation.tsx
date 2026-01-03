@@ -13,9 +13,9 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-  { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Guide", href: "/guide" },
+  { label: "Roadmap", href: "/roadmap" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -86,7 +86,7 @@ export default function Navigation() {
             <Link href="/analytics">
               <Button
                 size="sm"
-                className="bg-slate-950 hover:bg-slate-900 text-white dark:bg-slate-50 dark:hover:bg-slate-100 dark:text-slate-950 rounded-sm font-semibold px-4 py-1.5 border-0"
+                className="bg-slate-950 hover:bg-slate-900 text-white dark:bg-slate-50 dark:hover:bg-slate-100 dark:text-slate-950 rounded-sm font-semibold px-4 py-1.5 border-0 cursor-pointer"
               >
                 Analytics
               </Button>
