@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Bot, Compass, Milestone, Palette } from "lucide-react";
 
 interface RoadmapItem {
   title: string;
@@ -12,7 +14,7 @@ interface RoadmapPhase {
   phase: string;
   title: string;
   description: string;
-  icon: string;
+  icon: React.ReactNode;
   items: RoadmapItem[];
   color: string;
 }
@@ -22,7 +24,7 @@ const roadmapData: RoadmapPhase[] = [
     phase: "Phase 1",
     title: "Foundation",
     description: "Core analytics and visualization platform",
-    icon: "✓",
+    icon: <Milestone size={20} />,
     color: "emerald",
     items: [
       { title: "CSV file parsing", description: "Import diary, watched, ratings, and watchlist files", status: "done" },
@@ -41,7 +43,7 @@ const roadmapData: RoadmapPhase[] = [
     phase: "Phase 2",
     title: "Data Enrichment",
     description: "Enhanced metadata and deeper insights",
-    icon: "◐",
+    icon: <Compass size={20} />,
     color: "indigo",
     items: [
       { title: "Genre analysis", description: "Breakdown of viewing habits by genre", status: "planned" },
@@ -56,7 +58,7 @@ const roadmapData: RoadmapPhase[] = [
     phase: "Phase 3",
     title: "AI-Powered Insights",
     description: "Intelligent analysis and personalized recommendations",
-    icon: "◯",
+    icon: <Bot size={20} />,
     color: "purple",
     items: [
       { title: "Taste profile generation", description: "AI-generated summary of your cinematic preferences", status: "planned" },
@@ -71,7 +73,7 @@ const roadmapData: RoadmapPhase[] = [
     phase: "Future",
     title: "Long-term Vision",
     description: "Ideas we're exploring for the future",
-    icon: "✦",
+    icon: <Palette size={20} />,
     color: "amber",
     items: [
       { title: "Social features", description: "Compare stats with friends (privacy-preserving)", status: "planned" },
@@ -84,9 +86,9 @@ const roadmapData: RoadmapPhase[] = [
 ];
 
 const statusStyles = {
-  done: "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400",
-  "in-progress": "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400",
-  planned: "bg-slate-100 dark:bg-slate-500/20 text-slate-600 dark:text-slate-400",
+  done: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300",
+  "in-progress": "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300",
+  planned: "bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400",
 };
 
 const statusLabels = {
@@ -104,98 +106,99 @@ const phaseColors: Record<string, string> = {
 
 export default function RoadmapPage() {
   return (
-    <main className="min-h-screen dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 text-sm font-medium mb-6">
-              <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-              Actively Developing
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-              Product Roadmap
-            </h1>
-            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Our vision for Letterboxd Stats—from current features to future possibilities.
-              This project is open source and community-driven.
-            </p>
-          </div>
+    <main className="min-h-screen bg-white dark:bg-slate-950">
+      {/* Hero Section */}
+      <section className="min-h-[66vh] flex flex-col justify-center py-28 md:py-36 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-900/30">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
+            Product Roadmap
+          </h1>
+          <p className="text-lg md:text-xl text-foreground/70 dark:text-foreground/60 leading-relaxed max-w-3xl mx-auto">
+            Our vision for Letterboxd Stats—from current features to future possibilities. This project is open source, community-driven, and built for film lovers like you.
+          </p>
+        </div>
+      </section>
 
-          {/* Roadmap Phases */}
-          <div className="space-y-12">
+      {/* Roadmap Timeline */}
+      <section className="py-20 md:py-32 border-t border-slate-300 dark:border-slate-700">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="space-y-12 relative">
             {roadmapData.map((phase, phaseIndex) => (
-              <div key={phase.phase} className="relative">
+              <div key={phase.phase} className="relative pl-16">
+                {/* Vertical Connector Line */}
+                {phaseIndex < roadmapData.length - 1 && (
+                  <div className="hidden md:block absolute left-[31px] top-12 bottom-0 w-px bg-slate-200 dark:bg-slate-800" />
+                )}
+
                 {/* Phase Header */}
-                <div className="flex items-center gap-4 mb-6">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${phaseColors[phase.color]} flex items-center justify-center text-white text-xl font-bold shadow-lg`}>
+                <div className="absolute left-0 top-0 flex items-center gap-4 mb-8">
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${phaseColors[phase.color]} flex items-center justify-center text-white shadow-lg`}>
                     {phase.icon}
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-slate-500 dark:text-slate-500 uppercase tracking-wider">
-                      {phase.phase}
-                    </div>
-                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-                      {phase.title}
-                    </h2>
-                    <p className="text-slate-600 dark:text-slate-400 text-sm">
-                      {phase.description}
-                    </p>
                   </div>
                 </div>
 
+                <div className="mb-10 ml-4">
+                  <div className="text-sm font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-2">
+                    {phase.phase}
+                  </div>
+                  <h2 className="text-3xl font-bold text-foreground mb-2">
+                    {phase.title}
+                  </h2>
+                  <p className="text-foreground/70 dark:text-foreground/60 text-base">
+                    {phase.description}
+                  </p>
+                </div>
+
                 {/* Items Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-0 md:pl-16">
-                  {phase.items.map((item, itemIndex) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-4">
+                  {phase.items.map((item) => (
                     <div
                       key={item.title}
-                      className="p-4 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 hover:border-slate-300 dark:hover:border-white/20 transition-colors"
+                      className="p-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/30 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
                     >
-                      <div className="flex items-start justify-between gap-3 mb-2">
-                        <h3 className="font-semibold text-slate-900 dark:text-white">
+                      <div className="flex items-center justify-between gap-3 mb-2">
+                        <h3 className="font-semibold text-foreground text-sm">
                           {item.title}
                         </h3>
                         <span className={`flex-shrink-0 px-2 py-0.5 rounded-full text-xs font-medium ${statusStyles[item.status]}`}>
                           {statusLabels[item.status]}
                         </span>
                       </div>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                      <p className="text-sm text-foreground/70 dark:text-foreground/60">
                         {item.description}
                       </p>
                     </div>
                   ))}
                 </div>
-
-                {/* Connector line */}
-                {phaseIndex < roadmapData.length - 1 && (
-                  <div className="hidden md:block absolute left-6 top-16 bottom-0 w-px bg-gradient-to-b from-slate-200 dark:from-white/20 to-transparent" style={{ height: 'calc(100% - 4rem)' }} />
-                )}
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          {/* Footer CTA */}
-          <div className="mt-16 text-center p-8 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5">
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-              Have ideas or feedback?
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 mb-6">
-              We'd love to hear from you. This project is shaped by the community.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-medium hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors"
-              >
+      {/* CTA Section */}
+      <section className="py-20 md:py-32 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-300 dark:border-slate-700">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-6">
+            Have an idea or feedback?
+          </h2>
+          <p className="text-lg text-foreground/70 dark:text-foreground/60 mb-8">
+            This project is shaped by the community. We'd love to hear from you.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/contact">
+              <Button className="bg-slate-950 hover:bg-slate-900 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 rounded-md px-8 py-3 font-semibold inline-flex items-center gap-2">
                 Get in Touch
-              </Link>
-              <Link
-                href="/analytics"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-slate-300 dark:border-white/20 text-slate-700 dark:text-white font-medium hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+              </Button>
+            </Link>
+            <Link href="/analytics">
+              <Button
+                variant="outline"
+                className="border-slate-300 dark:border-slate-700 rounded-md px-8 py-3 font-semibold inline-flex items-center gap-2"
               >
-                Try Analytics
-              </Link>
-            </div>
+                Try Analytics <ArrowRight size={18} />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
