@@ -1,5 +1,5 @@
-List Title: AFI’S 100 YEARS…100 MOVIES
-List Short Version: AFI’S 100 YEARS…100 MOVIES
+List Title: AFI’S 100 Years… 100 Movies
+List Short Version: AFI’S 100 Years… 100 Movies
 List URL: https://letterboxd.com/afi/list/afis-100-years100-movies-10th-anniversary/detail/
 
 Movies:
