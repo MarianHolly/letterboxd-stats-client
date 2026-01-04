@@ -494,6 +494,168 @@ export default function GuidePage() {
         </div>
       </section>
 
+      {/* For Developers */}
+      <section className="py-20 md:py-32 border-t border-slate-300 dark:border-slate-700 bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-slate-900/40 dark:to-blue-900/20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-start gap-x-16 gap-y-10 md:gap-y-0">
+            {/* Left: Title and Description */}
+            <div className="flex-shrink-0 md:min-w-96">
+              <h2 className="text-4xl lg:text-5xl leading-tight font-semibold tracking-tight text-foreground mb-6">
+                For <br /> Developers
+              </h2>
+              <p className="text-lg text-foreground/70 dark:text-foreground/60">
+                Want to test the upload functionality with real Letterboxd data? Download sample CSV files and try uploading them to see how robust the data handling is.
+              </p>
+            </div>
+
+            {/* Right: Content */}
+            <div className="flex-1 w-full space-y-6">
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
+                  <FileJson size={24} className="text-blue-600 dark:text-blue-400" />
+                  Sample Data Files
+                </h3>
+                <p className="text-foreground/70 dark:text-foreground/60">
+                  Test the platform with real Letterboxd data export. These CSV files come from an actual Letterboxd account and include all supported file types.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                  <Download size={20} className="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-foreground mb-1">
+                      Profile 01: Classic Cinema Lover
+                    </h4>
+                    <p className="text-sm text-foreground/60 mb-3">
+                      91 watched films, complete diary with dates and ratings, watchlist items, and favorites
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <a
+                        href="/api/sample-data/file?name=watched.csv&profile=profile_01"
+                        download="watched.csv"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        <Download size={14} />
+                        watched.csv
+                      </a>
+                      <a
+                        href="/api/sample-data/file?name=diary.csv&profile=profile_01"
+                        download="diary.csv"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        <Download size={14} />
+                        diary.csv
+                      </a>
+                      <a
+                        href="/api/sample-data/file?name=ratings.csv&profile=profile_01"
+                        download="ratings.csv"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        <Download size={14} />
+                        ratings.csv
+                      </a>
+                      <a
+                        href="/api/sample-data/file?name=films.csv&profile=profile_01"
+                        download="films.csv"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        <Download size={14} />
+                        films.csv
+                      </a>
+                      <a
+                        href="/api/sample-data/file?name=watchlist.csv&profile=profile_01"
+                        download="watchlist.csv"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        <Download size={14} />
+                        watchlist.csv
+                      </a>
+                      <a
+                        href="/api/sample-data/file?name=profile.csv&profile=profile_01"
+                        download="profile.csv"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        <Download size={14} />
+                        profile.csv
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                  <Download size={20} className="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-foreground mb-1">
+                      Profile 02: Cinema Historian
+                    </h4>
+                    <p className="text-sm text-foreground/60 mb-3">
+                      1,482 watched films, extensive watchlist, comprehensive ratings spanning cinema history
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <a
+                        href="/api/sample-data/file?name=watched.csv&profile=profile_02"
+                        download="watched.csv"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        <Download size={14} />
+                        watched.csv
+                      </a>
+                      <a
+                        href="/api/sample-data/file?name=diary.csv&profile=profile_02"
+                        download="diary.csv"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        <Download size={14} />
+                        diary.csv
+                      </a>
+                      <a
+                        href="/api/sample-data/file?name=ratings.csv&profile=profile_02"
+                        download="ratings.csv"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        <Download size={14} />
+                        ratings.csv
+                      </a>
+                      <a
+                        href="/api/sample-data/file?name=films.csv&profile=profile_02"
+                        download="films.csv"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        <Download size={14} />
+                        films.csv
+                      </a>
+                      <a
+                        href="/api/sample-data/file?name=watchlist.csv&profile=profile_02"
+                        download="watchlist.csv"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        <Download size={14} />
+                        watchlist.csv
+                      </a>
+                      <a
+                        href="/api/sample-data/file?name=profile.csv&profile=profile_02"
+                        download="profile.csv"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        <Download size={14} />
+                        profile.csv
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-lg p-4">
+                <p className="text-sm text-blue-900 dark:text-blue-100 leading-relaxed">
+                  <strong>Tips:</strong> These files are perfect for testing CSV parsing, error handling, and data validation. Try uploading them one by one, in combinations, or even re-uploading them multiple times to see how the platform handles edge cases.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="py-20 md:py-32 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-300 dark:border-slate-700">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
