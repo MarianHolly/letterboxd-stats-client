@@ -19,6 +19,7 @@ import {
   AlertCircle,
   AlertTriangle,
   HelpCircle,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { parseLetterboxdCSV, parseProfileCSVFile } from "@/lib/csv-parser";
@@ -26,6 +27,7 @@ import { mergeMovieSources } from "@/lib/data-merger";
 import { categorizeError, type ErrorCategory } from "@/lib/error-messages";
 import { useAnalyticsStore } from "@/hooks/use-analytics-store";
 import { ProfileReplaceConfirm } from "@/components/dialogs/profile-replace-confirm";
+import { loadSampleData, SAMPLE_DATASETS } from "@/lib/sample-data";
 import type { Movie, MovieDataset, UserProfile } from "@/lib/types";
 
 interface UploadedFile {
@@ -107,6 +109,9 @@ export function UploadModal({
   const [showInvalidWarning, setShowInvalidWarning] = useState(false);
   const [showProfileConfirm, setShowProfileConfirm] = useState(false);
   const [pendingProfileFile, setPendingProfileFile] = useState<UploadedFile | null>(null);
+  const [isLoadingSampleData, setIsLoadingSampleData] = useState(false);
+  const [showSampleDataInfo, setShowSampleDataInfo] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState<string>("profile_01");
 
   const { dataset } = useAnalyticsStore();
   const currentProfile = dataset?.userProfile;
@@ -390,6 +395,55 @@ export function UploadModal({
     setPendingProfileFile(null);
   };
 
+  const handleLoadSampleData = async () => {
+    setIsLoadingSampleData(true);
+    setShowSampleDataInfo(false);
+
+    try {
+      const result = await loadSampleData(selectedProfile);
+
+      if (!result.success || !result.files) {
+        toast.error("Failed to load sample data", {
+          description: result.error || "Unknown error",
+          duration: 4000,
+        });
+        setIsLoadingSampleData(false);
+        return;
+      }
+
+      // Simulate file upload with sample data
+      await onDrop(result.files);
+
+      // Set demo mode flag in store
+      setTimeout(() => {
+        useAnalyticsStore.setState({ isDemoMode: true });
+      }, 100);
+
+      // Show success notification
+      toast.success("Sample data loaded", {
+        description: `Ready to explore with ${result.files.length} files`,
+        duration: 3000,
+      });
+
+      // Show demo mode indicator in bottom-left
+      setTimeout(() => {
+        toast("Demo Mode Active", {
+          description: "You're exploring with sample data",
+          duration: 4000,
+          position: "bottom-left",
+          icon: "✨",
+        });
+      }, 500);
+    } catch (err) {
+      toast.error("Error loading sample data", {
+        description: err instanceof Error ? err.message : "Unknown error",
+        duration: 4000,
+      });
+    } finally {
+      setIsLoadingSampleData(false);
+    }
+  };
+
   const groupedFiles = uploadedFiles.reduce((acc, file, index) => {
     if (!acc[file.type]) {
       acc[file.type] = [];
@@ -423,6 +477,50 @@ export function UploadModal({
             get started.
           </p>
         </DialogHeader>
+
+        {/* Quick Sample Data Option */}
+        <div
+          className={`flex gap-2 px-6 py-3 rounded-sm ${
+            isDark
+              ? "bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20"
+              : "bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200"
+          }`}
+        >
+          <Sparkles
+            className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
+              isDark ? "text-purple-400" : "text-purple-600"
+            }`}
+          />
+          <div className="flex-1">
+            <p
+              className={`text-sm font-medium ${
+                isDark ? "text-purple-300" : "text-purple-900"
+              }`}
+            >
+              Want to explore first?
+            </p>
+            <p
+              className={`text-xs mt-0.5 ${
+                isDark ? "text-purple-400/70" : "text-purple-700"
+              }`}
+            >
+              Try analytics with sample data without uploading
+            </p>
+          </div>
+          <Button
+            onClick={() => setShowSampleDataInfo(true)}
+            disabled={isLoadingSampleData}
+            variant="ghost"
+            size="sm"
+            className={`flex-shrink-0 ${
+              isDark
+                ? "text-purple-300 hover:bg-purple-500/20"
+                : "text-purple-700 hover:bg-purple-100"
+            }`}
+          >
+            Try Sample Data
+          </Button>
+        </div>
 
         <div className="space-y-6 flex-1 overflow-y-auto">
           {/* Two Column Layout: Dropzone on left, File Requirements and Uploaded Files on right */}
@@ -779,6 +877,146 @@ export function UploadModal({
         onReplace={handleReplaceProfile}
         onCancel={handleCancelProfileConfirm}
       />
+
+      {/* Sample Data Info Dialog */}
+      <Dialog open={showSampleDataInfo} onOpenChange={setShowSampleDataInfo}>
+        <DialogContent
+          className={`${
+            isDark ? "bg-slate-950 border-white/10" : "bg-white border-slate-200"
+          } border`}
+        >
+          <DialogHeader>
+            <DialogTitle
+              className={`text-xl flex items-center gap-2 ${
+                isDark ? "text-white" : "text-slate-900"
+              }`}
+            >
+              <Sparkles className="w-5 h-5 text-purple-500" />
+              Try Sample Data
+            </DialogTitle>
+          </DialogHeader>
+
+          <div
+            className={`space-y-4 ${isDark ? "text-slate-300" : "text-slate-700"}`}
+          >
+            <p>
+              No Letterboxd account? No problem! Explore the analytics with a
+              sample film collection to see what's possible.
+            </p>
+
+            {/* Profile Selector */}
+            <div className="space-y-3">
+              <p
+                className={`text-sm font-medium ${
+                  isDark ? "text-slate-300" : "text-slate-900"
+                }`}
+              >
+                Choose a sample profile:
+              </p>
+              <div className="space-y-2">
+                {SAMPLE_DATASETS.map((profile) => (
+                  <label
+                    key={profile.id}
+                    className={`flex items-start gap-3 p-3 rounded-sm border-2 cursor-pointer transition-all ${
+                      selectedProfile === profile.id
+                        ? isDark
+                          ? "border-purple-500/50 bg-purple-500/10"
+                          : "border-purple-400 bg-purple-50"
+                        : isDark
+                        ? "border-slate-700 hover:border-slate-600"
+                        : "border-slate-300 hover:border-slate-400"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="profile"
+                      value={profile.id}
+                      checked={selectedProfile === profile.id}
+                      onChange={(e) => setSelectedProfile(e.target.value)}
+                      className="mt-1 flex-shrink-0"
+                    />
+                    <div className="flex-1">
+                      <p
+                        className={`font-semibold text-sm ${
+                          isDark ? "text-white" : "text-slate-900"
+                        }`}
+                      >
+                        {profile.name}
+                      </p>
+                      <p
+                        className={`text-xs mt-1 ${
+                          isDark ? "text-slate-400" : "text-slate-600"
+                        }`}
+                      >
+                        {profile.description}
+                      </p>
+                      <p
+                        className={`text-xs mt-1.5 font-medium ${
+                          isDark ? "text-slate-500" : "text-slate-500"
+                        }`}
+                      >
+                        {profile.stats}
+                      </p>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div
+              className={`space-y-3 rounded-sm p-4 ${
+                isDark
+                  ? "bg-purple-500/10 border border-purple-500/20"
+                  : "bg-purple-50 border border-purple-200"
+              }`}
+            >
+              <p
+                className={`text-sm font-medium ${
+                  isDark ? "text-purple-300" : "text-purple-900"
+                }`}
+              >
+                What you'll get:
+              </p>
+              <ul className="text-sm space-y-2 ml-4">
+                <li>✓ All 26+ interactive charts</li>
+                <li>✓ Complete analytics dashboard</li>
+                <li>✓ Full exploration experience</li>
+                <li>✓ No data stored or tracked</li>
+              </ul>
+            </div>
+
+            <p
+              className={`text-xs ${
+                isDark ? "text-slate-500" : "text-slate-600"
+              }`}
+            >
+              You can still upload your own data anytime. This is just a quick
+              way to try out the platform.
+            </p>
+          </div>
+
+          <div className="flex gap-2 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowSampleDataInfo(false)}
+              className={
+                isDark
+                  ? "border-white/20 text-white hover:bg-white/10"
+                  : "border-slate-300 text-slate-900 hover:bg-slate-100"
+              }
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleLoadSampleData}
+              disabled={isLoadingSampleData}
+              className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2"
+            >
+              {isLoadingSampleData ? "Loading..." : "Load Sample Data"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
