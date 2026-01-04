@@ -1,200 +1,183 @@
 "use client";
 
 import React from "react";
-import {
-  BarChart,
-  Bar,
-  AreaChart,
-  Area,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  RadialBarChart,
-  RadialBar,
-  Legend,
-} from "recharts";
+import { ReleaseYearDistributionBar } from "@/components/charts/distribution/ReleaseYearDistributionBar";
+import { YearOverYearArea } from "@/components/charts/timeline/YearOverYearArea";
 
 export default function ChartExamples() {
-  // Mock data for showcase charts
-  const viewingTimelineData = [
-    { month: "Jan", count: 12 },
-    { month: "Feb", count: 18 },
-    { month: "Mar", count: 22 },
-    { month: "Apr", count: 28 },
-    { month: "May", count: 32 },
-    { month: "Jun", count: 25 },
-    { month: "Jul", count: 30 },
-    { month: "Aug", count: 35 },
-    { month: "Sep", count: 28 },
-    { month: "Oct", count: 40 },
-    { month: "Nov", count: 38 },
-    { month: "Dec", count: 42 },
-  ];
-
-  const ratingDistData = [
-    { rating: "5★", count: 45 },
-    { rating: "4.5★", count: 62 },
-    { rating: "4★", count: 78 },
-    { rating: "3.5★", count: 48 },
-    { rating: "3★", count: 25 },
-    { rating: "2.5★", count: 12 },
-    { rating: "2★", count: 8 },
-  ];
-
-  const decadeData = [
-    { decade: "1970s", count: 15 },
-    { decade: "1980s", count: 28 },
-    { decade: "1990s", count: 45 },
-    { decade: "2000s", count: 68 },
-    { decade: "2010s", count: 95 },
-    { decade: "2020s", count: 82 },
-  ];
-
-  const ratioData = [
-    { name: "Rated", value: 68, fill: "#EFBF04" },
-    { name: "Unrated", value: 32, fill: "#e2e8f0" },
-  ];
-
-  const COLORS = {
-    primary: "#EFBF04",
-    secondary: "#9b1c31",
-    indigo: "#4f46e5",
-    muted: "#e2e8f0",
+  // Professional mock data for Release Year Distribution
+  // Shows appreciation for cinema history with peaks in 60s-70s and dominant 2000s-2010s era
+  const releaseYearData: Record<string, number> = {
+    "1939": 1,
+    "1945": 1,
+    "1950": 2,
+    "1952": 1,
+    "1954": 2,
+    "1956": 2,
+    "1957": 2,
+    "1958": 2,
+    "1959": 2,
+    "1960": 3,
+    "1961": 3,
+    "1962": 4,
+    "1963": 5,
+    "1964": 5,
+    "1965": 5,
+    "1966": 5,
+    "1967": 5,
+    "1968": 6,
+    "1969": 7,
+    "1970": 8,
+    "1971": 9,
+    "1972": 9,
+    "1973": 8,
+    "1974": 7,
+    "1975": 7,
+    "1976": 6,
+    "1977": 6,
+    "1978": 5,
+    "1979": 5,
+    "1980": 5,
+    "1981": 5,
+    "1982": 6,
+    "1983": 5,
+    "1984": 7,
+    "1985": 7,
+    "1986": 5,
+    "1987": 6,
+    "1988": 7,
+    "1989": 7,
+    "1990": 9,
+    "1991": 10,
+    "1992": 11,
+    "1993": 11,
+    "1994": 13,
+    "1995": 13,
+    "1996": 14,
+    "1997": 15,
+    "1998": 17,
+    "1999": 19,
+    "2000": 21,
+    "2001": 24,
+    "2002": 27,
+    "2003": 30,
+    "2004": 32,
+    "2005": 35,
+    "2006": 37,
+    "2007": 41,
+    "2008": 45,
+    "2009": 49,
+    "2010": 53,
+    "2011": 56,
+    "2012": 59,
+    "2013": 62,
+    "2014": 64,
+    "2015": 68,
+    "2016": 72,
+    "2017": 76,
+    "2018": 80,
+    "2019": 77,
+    "2020": 66,
+    "2021": 70,
+    "2022": 75,
+    "2023": 79,
+    "2024": 45,
   };
 
+  // Professional mock data for Year-over-Year Comparison
+  // Shows growth trajectory with realistic seasonal patterns (summer dips, holiday spikes)
+  const yearOverYearData = [
+    { month: "Jan", "2022": 18, "2023": 22, "2024": 28 },
+    { month: "Feb", "2022": 16, "2023": 20, "2024": 25 },
+    { month: "Mar", "2022": 19, "2023": 24, "2024": 30 },
+    { month: "Apr", "2022": 21, "2023": 26, "2024": 32 },
+    { month: "May", "2022": 20, "2023": 25, "2024": 31 },
+    { month: "Jun", "2022": 14, "2023": 18, "2024": 22 },
+    { month: "Jul", "2022": 12, "2023": 15, "2024": 18 },
+    { month: "Aug", "2022": 11, "2023": 14, "2024": 17 },
+    { month: "Sep", "2022": 17, "2023": 21, "2024": 26 },
+    { month: "Oct", "2022": 22, "2023": 28, "2024": 34 },
+    { month: "Nov", "2022": 24, "2023": 30, "2024": 37 },
+    { month: "Dec", "2022": 26, "2023": 32, "2024": 40 },
+  ];
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {/* Chart 1: Viewing Timeline */}
-      <div className="border border-slate-300 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-950/50">
-        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800">
-          <h4 className="font-semibold text-foreground text-base mb-1">
-            Viewing Timeline
-          </h4>
-          <p className="text-sm text-foreground/70 dark:text-foreground/60">
-            Track your monthly viewing activity and discover seasonal patterns
+    <div className="space-y-16">
+      {/* Chart 1: Release Year Distribution */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        {/* Description */}
+        <div className="space-y-6 flex flex-col justify-start">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="px-3 py-1.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-xs font-medium">
+                Interactive
+              </span>
+            </div>
+            <h3 className="text-3xl font-bold text-foreground">
+              Release Year Distribution
+            </h3>
+          </div>
+          <p className="text-base text-foreground/70 dark:text-foreground/60 leading-relaxed">
+            Explore your viewing history across cinema's entire timeline. This interactive chart reveals which eras dominate your taste—with era-based filtering, historical reference lines, and a gradient that makes decades come alive. Notice how the color shifts from classic films to contemporary releases.
           </p>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-indigo-500 flex-shrink-0" />
+              <span className="text-sm text-foreground/80">Era-based filtering with instant totals</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-indigo-500 flex-shrink-0" />
+              <span className="text-sm text-foreground/80">Historical reference lines marking cinema eras</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-indigo-500 flex-shrink-0" />
+              <span className="text-sm text-foreground/80">Dynamic color gradient spanning 1900-2099</span>
+            </div>
+          </div>
         </div>
-        <div className="p-6">
-          <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={viewingTimelineData}>
-              <defs>
-                <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={COLORS.indigo} stopOpacity={0.8} />
-                  <stop offset="95%" stopColor={COLORS.indigo} stopOpacity={0.1} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis
-                dataKey="month"
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-              />
-              <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
-              <Tooltip />
-              <Area
-                type="monotone"
-                dataKey="count"
-                stroke={COLORS.indigo}
-                strokeWidth={2}
-                fill="url(#colorCount)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+
+        {/* Chart */}
+        <div className="lg:col-span-2 rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950/30">
+          <ReleaseYearDistributionBar data={releaseYearData} />
         </div>
       </div>
 
-      {/* Chart 2: Rating Distribution */}
-      <div className="border border-slate-300 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-950/50">
-        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800">
-          <h4 className="font-semibold text-foreground text-base mb-1">
-            Rating Distribution
-          </h4>
-          <p className="text-sm text-foreground/70 dark:text-foreground/60">
-            See how you rate films and understand your rating tendencies
-          </p>
+      {/* Chart 2: Year-over-Year Comparison */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        {/* Chart */}
+        <div className="lg:col-span-2 rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950/30 order-2 lg:order-1">
+          <YearOverYearArea data={yearOverYearData} />
         </div>
-        <div className="p-6">
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={ratingDistData}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis
-                dataKey="rating"
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-              />
-              <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
-              <Tooltip />
-              <Bar dataKey="count" fill={COLORS.secondary} radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
 
-      {/* Chart 3: Films by Decade */}
-      <div className="border border-slate-300 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-950/50">
-        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800">
-          <h4 className="font-semibold text-foreground text-base mb-1">
-            Films by Decade
-          </h4>
-          <p className="text-sm text-foreground/70 dark:text-foreground/60">
-            Explore which eras of cinema dominate your viewing history
+        {/* Description */}
+        <div className="space-y-6 flex flex-col justify-start order-1 lg:order-2">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-xs font-medium">
+                Multi-year
+              </span>
+            </div>
+            <h3 className="text-3xl font-bold text-foreground">
+              Year-over-Year Comparison
+            </h3>
+          </div>
+          <p className="text-base text-foreground/70 dark:text-foreground/60 leading-relaxed">
+            Track how your viewing habits evolve over time. This stacked visualization compares your monthly activity across multiple years, revealing patterns like summer slowdowns, holiday binges, or steady growth in your cinematic journey. Each year is color-coded for effortless comparison.
           </p>
-        </div>
-        <div className="p-6">
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={decadeData}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis
-                dataKey="decade"
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-              />
-              <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
-              <Tooltip />
-              <Bar dataKey="count" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Chart 4: Rating Coverage Ratio */}
-      <div className="border border-slate-300 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-950/50">
-        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800">
-          <h4 className="font-semibold text-foreground text-base mb-1">
-            Rating Coverage
-          </h4>
-          <p className="text-sm text-foreground/70 dark:text-foreground/60">
-            Percentage of your films you've rated vs. unrated
-          </p>
-        </div>
-        <div className="p-6 flex items-center justify-center">
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={ratioData}
-                cx="50%"
-                cy="50%"
-                innerRadius={50}
-                outerRadius={80}
-                dataKey="value"
-                label={({ name, value }) => `${name} ${value}%`}
-                labelLine={false}
-              >
-                {ratioData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+              <span className="text-sm text-foreground/80">Stacked area visualization for multi-year trends</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+              <span className="text-sm text-foreground/80">Seasonal pattern detection and insights</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+              <span className="text-sm text-foreground/80">Automatically adapts to any number of years</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
