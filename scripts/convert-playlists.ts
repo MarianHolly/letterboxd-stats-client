@@ -36,9 +36,14 @@ function parseMarkdownList(filePath: string): ParsedList | null {
     const shortTitle = shortTitleLine.replace('List Short Version:', '').trim()
     const sourceUrl = urlLine.replace('List URL:', '').trim()
 
-    // Generate ID from filename (e.g., "cannes_palme.md" → "cannes_palme")
+    // Generate ID from filename, converting to valid JavaScript identifier
     const filename = path.basename(filePath, '.md')
+    // Convert to snake_case: remove special chars, replace spaces/hyphens with underscores
     const id = filename
+      .toLowerCase()
+      .replace(/[^a-z0-9\s\-]/g, '') // Remove special characters except spaces and hyphens
+      .replace(/[\s\-]+/g, '_') // Replace spaces/hyphens with underscores
+      .replace(/^(\d)/, 'LIST_$1') // If starts with number, prefix with LIST_
 
     // Parse movies (format: "- Movie Title (Year)")
     const movieLines = lines.filter(l => l.startsWith('- ') && l.includes('(') && l.includes(')'))
