@@ -112,6 +112,7 @@ export function UploadModal({
   const [isLoadingSampleData, setIsLoadingSampleData] = useState(false);
   const [showSampleDataInfo, setShowSampleDataInfo] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<string>("profile_01");
+  const [otherFilesWithPendingProfile, setOtherFilesWithPendingProfile] = useState<UploadedFile[]>([]);
 
   const { dataset } = useAnalyticsStore();
   const currentProfile = dataset?.userProfile;
@@ -122,6 +123,7 @@ export function UploadModal({
       setUploadedFiles([]);
       setShowProfileConfirm(false);
       setPendingProfileFile(null);
+      setOtherFilesWithPendingProfile([]);
     }
     onOpenChange(newOpen);
   };
@@ -222,19 +224,33 @@ export function UploadModal({
       newFiles.push(uploadedFile);
     }
 
-    // Handle duplicates: replace old file of same type
+    // Separate profile file from other files
     // Special handling for profile: check if replacing existing profile from store
     const profileFile = newFiles.find((f) => f.type === "profile");
+    const otherFiles = newFiles.filter((f) => f.type !== "profile");
+
+    // If profile file exists and is valid, and there's an existing profile, show confirmation
     if (profileFile && profileFile.status === "success" && currentProfile) {
-      // Profile is being replaced from store - show confirmation dialog
+      // Store the profile file and other files for later
       setPendingProfileFile(profileFile);
+      setOtherFilesWithPendingProfile(otherFiles);
       setShowProfileConfirm(true);
-      return; // Don't add to uploadedFiles yet
+
+      // Show notification about profile confirmation needed
+      toast.info("Profile file detected", {
+        description: "Please confirm if you want to replace your current profile",
+        duration: 4000,
+      });
+
+      return; // Exit here, profile handling is pending - files will be added after user confirms
     }
+
+    // If no profile conflict, process all files normally
+    const filesToProcess = newFiles;
 
     setUploadedFiles((prev) => {
       const updated = [...prev];
-      const newFilesCopy = [...newFiles];
+      const newFilesCopy = [...filesToProcess];
 
       for (let i = 0; i < newFilesCopy.length; i++) {
         const newFile = newFilesCopy[i];
@@ -393,30 +409,100 @@ export function UploadModal({
 
   // Profile confirmation dialog handlers
   const handleKeepOldProfile = () => {
-    // Discard the new profile file and close dialog
+    // Discard the new profile file but add other files to uploadedFiles
+    if (otherFilesWithPendingProfile.length > 0) {
+      setUploadedFiles((prev) => {
+        const updated = [...prev];
+        const newFilesCopy = [...otherFilesWithPendingProfile];
+        const replacedFiles: string[] = [];
+
+        for (let i = 0; i < newFilesCopy.length; i++) {
+          const newFile = newFilesCopy[i];
+          const existingIndex = updated.findIndex(
+            (f) => f.type === newFile.type && f.type !== "unknown"
+          );
+
+          if (existingIndex !== -1) {
+            replacedFiles.push(newFile.type);
+            updated[existingIndex].isReplaced = true;
+            newFile.replacedPreviousFile = true;
+            updated.splice(existingIndex, 1);
+          }
+        }
+
+        // Show notifications for replaced files
+        replacedFiles.forEach((fileType) => {
+          toast.warning(
+            `⚠️ ${fileType}.csv already uploaded. Replacing with new file.`,
+            {
+              duration: 4000,
+            }
+          );
+        });
+
+        return [...updated, ...newFilesCopy];
+      });
+    }
+
     setShowProfileConfirm(false);
     setPendingProfileFile(null);
-    toast.info("Profile not changed. Using current profile.", {
+    setOtherFilesWithPendingProfile([]);
+    toast.info("Profile not changed. Using current profile. Other files are ready to upload.", {
       duration: 3000,
     });
   };
 
   const handleReplaceProfile = () => {
-    // Add the pending profile file to uploadedFiles and close dialog
+    // Add the pending profile file AND other files to uploadedFiles
     if (pendingProfileFile) {
-      setUploadedFiles((prev) => [...prev, pendingProfileFile]);
+      setUploadedFiles((prev) => {
+        const updated = [...prev];
+        const filesToAdd = [pendingProfileFile, ...otherFilesWithPendingProfile];
+        const replacedFiles: string[] = [];
+
+        for (let i = 0; i < filesToAdd.length; i++) {
+          const newFile = filesToAdd[i];
+          const existingIndex = updated.findIndex(
+            (f) => f.type === newFile.type && f.type !== "unknown"
+          );
+
+          if (existingIndex !== -1) {
+            replacedFiles.push(newFile.type);
+            updated[existingIndex].isReplaced = true;
+            newFile.replacedPreviousFile = true;
+            updated.splice(existingIndex, 1);
+          }
+        }
+
+        // Show notifications for replaced files
+        replacedFiles.forEach((fileType) => {
+          toast.warning(
+            `⚠️ ${fileType}.csv already uploaded. Replacing with new file.`,
+            {
+              duration: 4000,
+            }
+          );
+        });
+
+        return [...updated, ...filesToAdd];
+      });
       setShowProfileConfirm(false);
       setPendingProfileFile(null);
-      toast.success("Profile will be replaced on continue.", {
+      setOtherFilesWithPendingProfile([]);
+      toast.success("Profile will be replaced on continue. All files ready.", {
         duration: 3000,
       });
     }
   };
 
   const handleCancelProfileConfirm = () => {
-    // Cancel the entire upload
+    // Cancel profile replacement and the associated files
     setShowProfileConfirm(false);
     setPendingProfileFile(null);
+    setOtherFilesWithPendingProfile([]);
+    toast.info("Profile upload cancelled.", {
+      duration: 3000,
+    });
   };
 
   const handleLoadSampleData = async () => {
