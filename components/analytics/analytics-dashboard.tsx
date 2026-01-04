@@ -9,6 +9,7 @@ import { Film } from "lucide-react";
 import { StatsOverview } from "./stats-overview";
 import { AnalyticsEmptyState } from "./analytics-empty-state";
 import { AnalyticsSkeleton } from "./analytics-skeleton";
+import { ChartPlaceholder } from "./chart-placeholder";
 import { SectionLayout } from "./SectionLayout";
 
 // Import chart components from barrel export
@@ -286,9 +287,13 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                     {monthlyData.length > 0 ? (
                       <ViewingTimelineArea data={monthlyData} />
                     ) : (
-                      <div className="p-4 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-lg text-sm text-yellow-800 dark:text-yellow-200">
-                        No monthly data available - diary may not have date information
-                      </div>
+                      <ChartPlaceholder
+                        title="Your Viewing Timeline"
+                        description="Track when you watched each film throughout the year"
+                        requiredFile="diary.csv"
+                        height="h-80"
+                        onUploadClick={onUploadClick}
+                      />
                     )}
                   </div>
                 </div>
@@ -327,46 +332,106 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                 {/* LEFT COLUMN: Rated Stats */}
                 <div className="flex flex-col gap-6">
                   {/* Rated Movies Radial */}
-                  {hasRatings && (
+                  {hasRatings ? (
                     <RatedRatioRadial
                       data={{
                         watched: tastePreferenceStats.watched,
                         rated: tastePreferenceStats.rated
                       }}
                     />
+                  ) : (
+                    <ChartPlaceholder
+                      title="Rating Patterns"
+                      description="Upload your ratings to see how you evaluate films"
+                      requiredFile="ratings.csv"
+                      height="h-48"
+                      onUploadClick={onUploadClick}
+                    />
                   )}
 
                   {/* Rating Distribution */}
-                  {ratingDistribution.length > 0 && (
+                  {ratingDistribution.length > 0 ? (
                     <RatingDistributionBar data={ratingDistribution} />
+                  ) : (
+                    hasRatings === false && (
+                      <ChartPlaceholder
+                        title="Rating Distribution"
+                        description="Your rating patterns across the 1-5 star scale"
+                        requiredFile="ratings.csv"
+                        height="h-48"
+                        onUploadClick={onUploadClick}
+                      />
+                    )
                   )}
 
                   {/* Best Rated Decade */}
-                  {hasRatings && (
+                  {hasRatings ? (
                     <TopRatedDecadesBar data={bestRatedDecadeData} />
+                  ) : (
+                    <ChartPlaceholder
+                      title="Best Rated Decades"
+                      description="Which eras contain your highest-rated films"
+                      requiredFile="ratings.csv"
+                      height="h-48"
+                      onUploadClick={onUploadClick}
+                    />
                   )}
                 </div>
 
                 {/* RIGHT COLUMN: Liked Stats */}
                 <div className="flex flex-col gap-6">
                   {/* Liked Movies Radial */}
-                  {hasMoviesLiked && (
+                  {hasMoviesLiked ? (
                     <LikedRatioRadial
                       data={{
                         watched: tastePreferenceStats.watched,
                         liked: tastePreferenceStats.liked
                       }}
                     />
+                  ) : (
+                    <ChartPlaceholder
+                      title="Your Favorites"
+                      description="Mark favorite films in Letterboxd to see them here"
+                      requiredFile="films.csv"
+                      height="h-48"
+                      onUploadClick={onUploadClick}
+                    />
                   )}
 
                   {/* Liked Movies Rating Distribution */}
-                  {hasMoviesLiked && (
+                  {hasMoviesLiked ? (
                     <LikedRatingDistributionBar data={likedMoviesRatingDistribution} />
+                  ) : (
+                    <ChartPlaceholder
+                      title="Favorites Rating Distribution"
+                      description="Ratings distribution of your favorite films"
+                      requiredFile="films.csv"
+                      height="h-48"
+                      onUploadClick={onUploadClick}
+                    />
                   )}
 
                   {/* Most Liked Decade */}
-                  {hasMoviesLiked && mostLikedDecadeData.length > 0 && (
-                    <FavoriteDecadesBar data={mostLikedDecadeData} />
+                  {hasMoviesLiked ? (
+                    mostLikedDecadeData.length > 0 ? (
+                      <FavoriteDecadesBar data={mostLikedDecadeData} />
+                    ) : (
+                      <ChartPlaceholder
+                        title="Favorite Decades"
+                        description="Which eras contain your favorite films"
+                        requiredFile="films.csv"
+                        height="h-48"
+                        onUploadClick={onUploadClick}
+                      />
+                    )
+                  ) : (
+                    <ChartPlaceholder
+                      title="Favorite Decades"
+                      description="Which eras contain your favorite films"
+                      requiredFile="films.csv"
+                      height="h-48"
+                      onUploadClick={onUploadClick}
+                    />
                   )}
                 </div>
               </div>
