@@ -62,13 +62,13 @@ const FILE_TYPES = {
 const FILE_DESCRIPTIONS = {
   diary: {
     label: "Diary",
-    description: "Recommended - Track when you watched & your viewing journey",
+    description: "Recommended - Enables timeline, yearly stats, and rewatches",
     uploadedDescription: "Your viewing timeline with dates and moments",
     required: false,
   },
   ratings: {
     label: "Ratings",
-    description: "Optional - Unlock your rating patterns & preferences",
+    description: "Optional - Enables rating distribution charts and patterns",
     uploadedDescription: "All your ratings showing your taste profile",
     required: false,
   },
@@ -80,19 +80,19 @@ const FILE_DESCRIPTIONS = {
   },
   films: {
     label: "Films (Liked)",
-    description: "Optional - Movies you marked as favorites",
+    description: "Optional - Enables favorite films breakdown",
     uploadedDescription: "Your curated collection of favorites",
     required: false,
   },
   watchlist: {
     label: "Watchlist",
-    description: "Optional - Films on your radar to watch",
+    description: "Optional - Enables watchlist progress tracking",
     uploadedDescription: "Your queue of movies to discover",
     required: false,
   },
   profile: {
     label: "User Profile",
-    description: "Optional - Your username, name, and favorite films",
+    description: "Optional - Shows your username and profile info",
     uploadedDescription: "Your profile data loaded",
     required: false,
   },
@@ -342,6 +342,30 @@ export function UploadModal({
       const profile = validFiles.find(
         (f) => f.type === "profile"
       )?.profileData;
+
+      // Check for empty optional files and warn user
+      const emptyOptionalFiles: string[] = [];
+
+      if (diary && diary.length === 0) {
+        emptyOptionalFiles.push("diary.csv (viewing dates and timeline won't be available)");
+      }
+      if (ratings && ratings.length === 0) {
+        emptyOptionalFiles.push("ratings.csv (rating distribution charts won't show data)");
+      }
+      if (films && films.length === 0) {
+        emptyOptionalFiles.push("films.csv (favorite films list will be empty)");
+      }
+      if (watchlist && watchlist.length === 0) {
+        emptyOptionalFiles.push("watchlist.csv (watchlist progress charts won't appear)");
+      }
+
+      // Show warning if there are empty optional files
+      if (emptyOptionalFiles.length > 0) {
+        toast.warning("Some uploaded files are empty", {
+          description: `${emptyOptionalFiles.join(", ")} will not contribute to your analytics.`,
+          duration: 5000,
+        });
+      }
 
       const dataset = mergeMovieSources(
         watched,
