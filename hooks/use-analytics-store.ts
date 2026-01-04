@@ -22,6 +22,7 @@ interface PersistedState {
   analytics: AnalyticsOverview | null
   uploadedFiles: string[] // Store filenames only, not File objects
   lastUpdated: string | null // ISO date string
+  isDemoMode: boolean // Track if sample/demo data is loaded
 }
 
 /**
@@ -125,6 +126,7 @@ export const useAnalyticsStore = create<AnalyticsStoreType>()(
       analytics: null,
       uploadedFiles: [],
       lastUpdated: null,
+      isDemoMode: false,
       loading: false,
       error: null,
 
@@ -268,6 +270,7 @@ export const useAnalyticsStore = create<AnalyticsStoreType>()(
           analytics: null,
           uploadedFiles: [],
           lastUpdated: null,
+          isDemoMode: false,
           error: null,
         })
       },
@@ -329,6 +332,7 @@ export const useAnalyticsStore = create<AnalyticsStoreType>()(
         analytics: state.analytics,
         uploadedFiles: state.uploadedFiles,
         lastUpdated: state.lastUpdated,
+        isDemoMode: state.isDemoMode,
       }),
 
       // Deserialize function to reconstruct Date objects

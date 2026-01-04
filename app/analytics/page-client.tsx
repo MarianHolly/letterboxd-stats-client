@@ -41,6 +41,7 @@ export function AnalyticsPageClient({ defaultSidebarOpen }: AnalyticsPageClientP
       analytics,
       uploadedFiles: [],
       lastUpdated: new Date().toISOString(),
+      isDemoMode: false, // Reset demo mode when real data is uploaded
       loading: false,
       error: null,
     });
