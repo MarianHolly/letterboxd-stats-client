@@ -127,7 +127,7 @@ export default function GuidePage() {
   return (
     <main className="min-h-screen bg-white dark:bg-slate-950">
       {/* Hero Section */}
-      <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-900/30">
+      <section className="flex flex-col justify-center py-28 md:py-36 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-900/30">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-sm font-medium mb-6">
             <Circle className="h-2 w-2 fill-indigo-500" />
