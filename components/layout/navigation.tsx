@@ -69,10 +69,10 @@ export default function Navigation() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-3 py-1.5 rounded-sm text-sm font-medium transition-all duration-200 border ${
+                className={`px-3 py-1.5 rounded-sm text-sm font-medium transition-all duration-250 border ${
                   isActive(link.href)
                     ? "border-border-medium dark:border-border text-foreground dark:text-slate-50"
-                    : "border-transparent text-muted-foreground dark:text-slate-400 hover:border-border dark:hover:border-border-light"
+                    : "border-transparent text-muted-foreground dark:text-slate-400 hover:text-foreground dark:hover:text-slate-100 hover:border-border dark:hover:border-border-light"
                 }`}
               >
                 {link.label}
