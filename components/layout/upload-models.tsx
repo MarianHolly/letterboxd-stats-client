@@ -1088,7 +1088,7 @@ export function UploadModal({
                 What you'll get:
               </p>
               <ul className="text-sm space-y-2 ml-4">
-                <li>✓ All 26+ interactive charts</li>
+                <li>✓ All 18+ interactive charts & statistics</li>
                 <li>✓ Complete analytics dashboard</li>
                 <li>✓ Full exploration experience</li>
                 <li>✓ No data stored or tracked</li>

@@ -85,13 +85,13 @@ export const SAMPLE_DATASETS = [
   {
     id: 'profile_01',
     name: 'Contemporary Cinema',
-    description: '91 films - Modern and classic movies with complete viewing history',
-    stats: '91 watched • Diary included • Ratings & favorites',
+    description: '1,656 films - Modern and classic movies with complete viewing history, comprehensive ratings, extensive watchlist, and marked favorites',
+    stats: '1,656 watched • Diary included • Ratings & favorites',
   },
   {
     id: 'profile_02',
     name: 'Cinema Historian',
-    description: '1,482 films - Extensive collection spanning cinema history',
-    stats: '1,482 watched • Large watchlist • Comprehensive ratings',
+    description: '1,999 films - Spanning silent era to contemporary cinema with comprehensive viewing history, extensive watchlist, detailed ratings across all decades, and complete favorite selections',
+    stats: '1,999 watched • Large watchlist • Comprehensive ratings',
   },
 ]

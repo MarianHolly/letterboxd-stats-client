@@ -207,7 +207,7 @@ export default function GuidePage() {
                 Explore
               </h3>
               <p className="text-base text-foreground/60 dark:text-foreground/50 leading-relaxed font-light">
-                Instantly see 26+ interactive charts and statistics analyzing your cinematic identity. Discover patterns in your viewing habits, favorite decades, rating tendencies, and much more—all beautifully visualized.
+                Instantly see 18+ interactive charts and statistics analyzing your cinematic identity. Discover patterns in your viewing habits, favorite decades, rating tendencies, and much more—all beautifully visualized.
               </p>
             </ScrollTrigger>
           </div>
@@ -352,7 +352,7 @@ export default function GuidePage() {
                 </h2>
               </div>
               <p className="text-foreground/60 text-base leading-relaxed max-w-md">
-                Your data transforms into 26+ interactive charts organized across six analytical categories. Each category reveals different aspects of your cinematic identity.
+                Your data transforms into 18+ interactive charts and statistics organized across six analytical categories. Each category reveals different aspects of your cinematic identity.
               </p>
             </div>
 
@@ -526,10 +526,10 @@ export default function GuidePage() {
                   <Download size={20} className="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
                   <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-foreground mb-1">
-                      Profile 01: Classic Cinema Lover
+                      Profile 01: Contemporary Cinema
                     </h4>
                     <p className="text-sm text-foreground/60 mb-3">
-                      91 watched films, complete diary with dates and ratings, watchlist items, and favorites
+                      1,656 watched films spanning modern and classic movies with complete viewing history, comprehensive ratings, extensive watchlist, and marked favorites. Full analytics dashboard with all charts populated with rich data.
                     </p>
                     <div className="flex flex-wrap gap-2">
                       <a
@@ -591,7 +591,7 @@ export default function GuidePage() {
                       Profile 02: Cinema Historian
                     </h4>
                     <p className="text-sm text-foreground/60 mb-3">
-                      1,482 watched films, extensive watchlist, comprehensive ratings spanning cinema history
+                      1,999 watched films spanning silent era to contemporary cinema with comprehensive viewing history, extensive watchlist, detailed ratings across all decades, and complete favorite selections. Recommended for full feature showcase—all analytics fully populate with rich historical context and complete decade breakdowns.
                     </p>
                     <div className="flex flex-wrap gap-2">
                       <a

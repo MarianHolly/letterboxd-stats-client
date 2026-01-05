@@ -192,7 +192,7 @@ export default function AboutPage() {
                 Insights That Empower
               </h2>
               <p className="text-base text-foreground/70 dark:text-foreground/60 leading-relaxed mb-4">
-                Letterboxd Stats unlocks your data with 26+ interactive charts revealing viewing patterns, rating tendencies, decade preferences, and temporal trends.
+                Letterboxd Stats unlocks your data with 18+ interactive charts and statistics revealing viewing patterns, rating tendencies, decade preferences, and temporal trends.
               </p>
               <p className="text-base text-foreground/70 dark:text-foreground/60 leading-relaxed">
                 Discover which eras resonate with you, when you watch most actively, how your taste evolves—all visualized beautifully, processed privately, and completely free.
