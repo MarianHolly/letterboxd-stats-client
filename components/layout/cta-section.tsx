@@ -18,7 +18,7 @@ const CTASection = () => {
           <Link href="/analytics">
             <Button
               size="lg"
-              className="bg-slate-950 hover:bg-slate-900 text-white rounded-sm font-semibold px-8 py-6 shadow-lg border border-slate-300 dark:border-slate-700 hover:cursor-pointer"
+              className="bg-slate-950 hover:bg-slate-900 text-white rounded-sm font-semibold px-8 py-6 shadow-lg border border-border dark:border-border-light hover:cursor-pointer"
             >
               Start Analyzing Free
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -28,7 +28,7 @@ const CTASection = () => {
             <Button
               size="lg"
               variant="outline"
-              className="border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800/50 rounded-sm font-semibold px-8 py-6 hover:cursor-pointer"
+              className="border border-border dark:border-border-light text-foreground dark:text-slate-100 hover:bg-muted dark:hover:bg-slate-800/50 rounded-sm font-semibold px-8 py-6 hover:cursor-pointer"
             >
               Learn How It Works
             </Button>

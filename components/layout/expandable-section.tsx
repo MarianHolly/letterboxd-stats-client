@@ -25,10 +25,10 @@ export function ExpandableSection({
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden">
+    <div className="border border-border dark:border-border-light rounded-lg overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-6 py-4 flex items-center justify-between gap-4 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-900/60 transition-colors text-left"
+        className="w-full px-6 py-4 flex items-center justify-between gap-4 bg-secondary dark:bg-slate-900/40 hover:bg-muted dark:hover:bg-slate-900/60 transition-colors text-left"
       >
         <div className="flex items-center gap-3 flex-1">
           {icon && <div className="flex-shrink-0">{icon}</div>}
@@ -50,7 +50,7 @@ export function ExpandableSection({
       </button>
 
       {isOpen && (
-        <div className="px-6 py-4 bg-white dark:bg-slate-950/50 border-t border-slate-200 dark:border-slate-800">
+        <div className="px-6 py-4 bg-card dark:bg-slate-950/50 border-t border-border dark:border-border-light">
           {children}
         </div>
       )}

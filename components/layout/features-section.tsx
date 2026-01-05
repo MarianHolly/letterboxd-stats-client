@@ -42,7 +42,7 @@ const FeaturesSection = () => {
           {features.map((feature, idx) => (
             <div
               key={idx}
-              className="border px-3 py-6 rounded-md dark:hover:bg-slate-900/50"
+              className="border border-border dark:border-border-light px-3 py-6 rounded-md dark:hover:bg-slate-900/30"
             >
               <span className="text-5xl md:text-6xl tracking-tight font-semibold text-foreground">
                 {feature.stat}

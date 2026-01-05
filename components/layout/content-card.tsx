@@ -25,9 +25,9 @@ export function ContentCard({
 }: ContentCardProps) {
   const variantClasses = {
     default:
-      "border border-slate-200 dark:border-slate-800 rounded-lg p-6 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors",
+      "border border-border dark:border-border rounded-lg p-6 hover:bg-secondary dark:hover:bg-slate-900/30 transition-colors",
     bordered:
-      "border-2 border-slate-300 dark:border-slate-700 rounded-lg p-6 hover:border-slate-400 dark:hover:border-slate-600 transition-colors",
+      "border-2 border-border-medium dark:border-border-dark rounded-lg p-6 hover:border-border-dark dark:hover:border-border-medium transition-colors",
     highlighted:
       "border border-indigo-200 dark:border-indigo-900/30 bg-indigo-50/30 dark:bg-indigo-950/10 rounded-lg p-6",
   };
@@ -37,7 +37,7 @@ export function ContentCard({
       <div className="flex gap-4">
         {number && (
           <div className="flex items-center justify-center flex-shrink-0">
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-sm bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-900 dark:text-slate-100">
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-sm bg-muted dark:bg-white/10 flex items-center justify-center font-bold text-foreground dark:text-slate-100">
               {number}
             </div>
           </div>

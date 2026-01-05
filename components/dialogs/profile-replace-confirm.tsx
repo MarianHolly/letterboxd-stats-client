@@ -38,7 +38,7 @@ export function ProfileReplaceConfirm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={`!max-w-sm ${
-          isDark ? 'bg-slate-950 border-white/10' : 'bg-white border-slate-200'
+          isDark ? 'bg-slate-950 border-border' : 'bg-white border-border'
         } border`}
       >
         <DialogHeader className="space-y-3">
@@ -66,8 +66,8 @@ export function ProfileReplaceConfirm({
             <div
               className={`p-3 rounded-sm border ${
                 isDark
-                  ? 'border-white/10 bg-white/5'
-                  : 'border-slate-200 bg-slate-50'
+                  ? 'border-border-light bg-white/5'
+                  : 'border-border bg-secondary'
               }`}
             >
               <p
@@ -140,8 +140,8 @@ export function ProfileReplaceConfirm({
               variant="outline"
               className={`w-full rounded-sm font-medium py-2 ${
                 isDark
-                  ? 'border-white/20 text-white hover:bg-white/10'
-                  : 'border-slate-300 text-slate-900 hover:bg-slate-100'
+                  ? 'border-border-light text-white hover:bg-white/10'
+                  : 'border-border text-foreground hover:bg-muted'
               }`}
             >
               Keep Current
@@ -151,8 +151,8 @@ export function ProfileReplaceConfirm({
               variant="outline"
               className={`w-full rounded-sm font-medium py-2 ${
                 isDark
-                  ? 'border-white/20 text-white hover:bg-white/10'
-                  : 'border-slate-300 text-slate-900 hover:bg-slate-100'
+                  ? 'border-border-light text-white hover:bg-white/10'
+                  : 'border-border text-foreground hover:bg-muted'
               }`}
             >
               Cancel

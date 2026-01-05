@@ -49,7 +49,7 @@ const FAQSection = () => {
   ];
 
   return (
-    <section className="py-20 md:py-32 border-t border-slate-300 dark:border-slate-700">
+    <section className="py-20 md:py-32 border-t border-border dark:border-border-light">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col-reverse md:flex-row items-start gap-x-16 gap-y-10 md:gap-y-0">
           {/* Left: Accordion */}
@@ -63,9 +63,9 @@ const FAQSection = () => {
                 <AccordionItem
                   key={index}
                   value={`question-${index}`}
-                  className="border-b border-slate-300 dark:border-slate-700 last:border-b-0"
+                  className="border-b border-border dark:border-border-light last:border-b-0"
                 >
-                  <AccordionTrigger className="py-4 text-left text-lg font-semibold text-slate-900 dark:text-slate-100 hover:text-slate-700 dark:hover:text-slate-300 [&[data-state=open]>svg]:rotate-180">
+                  <AccordionTrigger className="py-4 text-left text-lg font-semibold text-foreground dark:text-slate-100 hover:text-muted-foreground dark:hover:text-slate-300 [&[data-state=open]>svg]:rotate-180">
                     {question}
                   </AccordionTrigger>
                   <AccordionContent className="pb-4 text-base text-foreground/70 dark:text-foreground/60 leading-relaxed">
@@ -76,13 +76,13 @@ const FAQSection = () => {
             </Accordion>
 
             {/* Help CTA */}
-            <div className="mt-12 pt-8 border-t border-slate-300 dark:border-slate-700 flex flex-row items-center justify-between gap-4">
-              <p className="text-slate-600 dark:text-slate-400 font-medium">
+            <div className="mt-12 pt-8 border-t border-border dark:border-border-light flex flex-row items-center justify-between gap-4">
+              <p className="text-muted-foreground dark:text-slate-400 font-medium">
                 Can't find what you're looking for?
               </p>
               <a
                 href="/contact"
-                className="inline-flex text-slate-900 dark:text-slate-100 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/50 dark:hover:text-slate-300 font-semibold transition-colors py-1 px-3 border border-slate-300 dark:border-slate-700 rounded-md"
+                className="inline-flex text-foreground dark:text-slate-100 hover:text-muted-foreground hover:bg-muted dark:hover:bg-slate-800/50 dark:hover:text-slate-300 font-semibold transition-colors py-1 px-3 border border-border dark:border-border-light rounded-md"
               >
                 Get in touch with us →
               </a>
