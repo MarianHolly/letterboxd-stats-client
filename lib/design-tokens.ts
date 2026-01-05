@@ -214,6 +214,29 @@ export const borderRadius = {
   full: '9999px',
 } as const;
 
+// Component-specific border radius (design tokens approach)
+export const componentRadius = {
+  // Cards and containers
+  card: 'rounded-lg',      // 14px - larger surfaces
+  section: 'rounded-lg',   // 14px - major sections
+
+  // Buttons and interactive elements
+  button: 'rounded-md',    // 10px - primary buttons
+  smallButton: 'rounded-sm', // 4px - compact buttons
+
+  // Inputs and form elements
+  input: 'rounded-sm',     // 4px - form inputs
+  select: 'rounded-sm',    // 4px - form selects
+
+  // Special elements
+  avatar: 'rounded-full',  // circular avatars
+  badge: 'rounded-full',   // circular badges
+  pill: 'rounded-full',    // pill-shaped elements
+
+  // Default for UI components
+  default: 'rounded-md',   // 10px - fallback
+} as const;
+
 // ============================================================================
 // SHADOWS
 // ============================================================================
@@ -317,15 +340,28 @@ export const components = {
   },
 
   card: {
-    light: {
-      bg: colors.card.light,
-      border: colors.border.light,
-      text: colors.foreground.light,
+    // Card styling standard
+    borderRadius: 'rounded-lg',  // 14px - consistent with large surfaces
+    shadow: 'shadow-sm',         // subtle shadow for depth
+    padding: {
+      base: 'py-6',              // vertical padding
+      content: 'px-6',           // horizontal padding for CardContent
+      header: 'px-6',            // horizontal padding for CardHeader
+      footer: 'px-6',            // horizontal padding for CardFooter
     },
-    dark: {
-      bg: colors.card.dark,
-      border: colors.border.dark,
-      text: colors.foreground.dark,
+    gap: 'gap-6',                // space between sections
+
+    colors: {
+      light: {
+        bg: colors.card.light,
+        border: colors.border.light,
+        text: colors.foreground.light,
+      },
+      dark: {
+        bg: colors.card.dark,
+        border: colors.border.dark,
+        text: colors.foreground.dark,
+      },
     },
   },
 } as const;
@@ -460,6 +496,7 @@ export const designTokens = {
   spacingScale,
   typography,
   borderRadius,
+  componentRadius,
   shadows,
   components,
   // Utility functions
