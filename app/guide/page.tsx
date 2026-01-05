@@ -214,13 +214,13 @@ export default function GuidePage() {
       </section>
 
       {/* CSV Files Reference */}
-      <section className="py-20 md:py-32 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-300 dark:border-slate-700">
+      <section className="py-20 md:py-32 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-300 dark:border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mb-12">
             <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground mb-6">
               Understanding Your Data Export
             </h2>
-            <p className="text-lg text-foreground/60 dark:text-foreground/65 leading-relaxed mb-8">
+            <p className="text-lg text-foreground/60 dark:text-foreground/60 leading-relaxed mb-8">
               When you export your data from{" "}
               <a
                 href="https://letterboxd.com/settings/data/"
@@ -234,7 +234,7 @@ export default function GuidePage() {
             </p>
 
             {/* ZIP Contents Overview */}
-            <div className="p-6 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950/50 mb-8">
+            <div className="p-6 rounded-lg border border-slate-300 dark:border-border bg-white dark:bg-card mb-8">
               <h3 className="font-semibold text-foreground mb-4">ZIP File Contents:</h3>
               <div className="space-y-4">
                 <div>
@@ -249,11 +249,11 @@ export default function GuidePage() {
                     deleted/, likes/, lists/, ...
                   </p>
                 </div>
-                <div className="pt-3 border-t border-slate-200 dark:border-slate-800">
+                <div className="pt-3 border-t border-slate-200 dark:border-border">
                   <p className="text-sm text-foreground/70 dark:text-foreground/60">
                     <strong>Note:</strong> Liked films are stored in the{" "}
-                    <code className="bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded">likes/</code> folder as{" "}
-                    <code className="bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded">films.csv</code>
+                    <code className="bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded">likes/</code> folder as{" "}
+                    <code className="bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded">films.csv</code>
                   </p>
                 </div>
               </div>
@@ -264,7 +264,7 @@ export default function GuidePage() {
             <h3 className="text-2xl font-semibold text-foreground mb-6">
               Supported Files for Upload
             </h3>
-            <p className="text-base text-foreground/60 dark:text-foreground/65 leading-relaxed mb-6">
+            <p className="text-base text-foreground/60 dark:text-foreground/60 leading-relaxed mb-6">
               You can upload any of the following CSV files. We recommend uploading{" "}
               <strong className="text-foreground">watched.csv</strong> or{" "}
               <strong className="text-foreground">diary.csv</strong> for the most complete analytics.
