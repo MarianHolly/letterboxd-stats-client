@@ -146,7 +146,7 @@ const HeroSection = () => {
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-950/5 dark:bg-white/[0.03] border border-slate-950/10 dark:border-white/[0.08] mb-8 md:mb-12"
           >
             <Circle className="h-2 w-2 fill-rose-500/80" />
-            <span className="text-sm text-slate-600 dark:text-white/60 tracking-wide">
+            <span className="text-sm text-muted-foreground dark:text-white/60 tracking-wide">
               Free Letterboxd Analytics
             </span>
           </motion.div>
@@ -157,7 +157,7 @@ const HeroSection = () => {
             initial="hidden"
             animate="visible"
           >
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-6 md:mb-8 tracking-tight text-slate-950 dark:text-white">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-6 md:mb-8 tracking-tight text-foreground dark:text-white">
               Discover Your True{" "}
               <span className="bg-gradient-to-br from-indigo-600 to-rose-600 bg-clip-text text-transparent">
                 Cinematic
@@ -172,7 +172,7 @@ const HeroSection = () => {
             initial="hidden"
             animate="visible"
           >
-            <p className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-white/40 mb-8 md:mb-12 leading-relaxed font-light tracking-wide max-w-2xl mx-auto px-4">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground dark:text-white/40 mb-8 md:mb-12 leading-relaxed font-light tracking-wide max-w-2xl mx-auto px-4">
               Upload your Letterboxd data and unlock beautiful, interactive
               analytics. Discover viewing trends, genre preferences, favorite
               directors, and more—completely free.
@@ -191,8 +191,8 @@ const HeroSection = () => {
                 size="lg"
                 className="
                 text-white bg-slate-950 hover:bg-slate-900/95
-                dark:text-white dark:border dark:border-slate-700 hover:dark:bg-slate-900 
-                rounded-sm font-semibold px-8 py-6 rounded-sm text-lg transition-all duration-200 shadow-lg hover:cursor-pointer flex items-center"
+                dark:text-white dark:border dark:border-border hover:dark:bg-slate-900
+                rounded-sm font-semibold px-8 py-6 text-lg transition-all duration-200 shadow-lg hover:cursor-pointer flex items-center"
               >
                 Begin My Discovery
                 <ArrowRight className="ml-2 h-4 w-4" />

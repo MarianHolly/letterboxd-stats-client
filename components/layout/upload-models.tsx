@@ -567,20 +567,20 @@ export function UploadModal({
       <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         className={`!max-w-sm sm:!max-w-xl md:!max-w-2xl lg:!max-w-4xl ${
-          isDark ? "bg-slate-950 border-white/10" : "bg-white border-slate-200"
+          isDark ? "bg-slate-950 border-border" : "bg-white border-border"
         } border flex flex-col max-h-[90vh]`}
       >
         <DialogHeader className="flex-shrink-0 overflow-hidden">
           <DialogTitle
             className={`text-2xl ${
-              isDark ? "text-white" : "text-slate-900"
+              isDark ? "text-white" : "text-foreground"
             } truncate`}
           >
             Upload Your Letterboxd Data
           </DialogTitle>
           <p
             className={`text-sm mt-2 ${
-              isDark ? "text-white/60" : "text-slate-600"
+              isDark ? "text-white/60" : "text-muted-foreground"
             } line-clamp-2`}
           >
             Upload your CSV exports from Letterboxd. Upload at least one file to
@@ -645,23 +645,23 @@ export function UploadModal({
                   isDragActive
                     ? isDark
                       ? "border-slate-400 bg-slate-500/10"
-                      : "border-slate-400 bg-slate-50"
+                      : "border-border-medium bg-secondary"
                     : isDark
                     ? "border-white/20 bg-white/5 hover:border-white/40 hover:bg-white/10"
-                    : "border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100"
+                    : "border-border bg-muted hover:border-border-medium hover:bg-secondary"
                 )}
               >
                 <input {...getInputProps()} />
                 <div className="flex flex-col items-center justify-center space-y-3">
                   <Upload
                     className={`w-8 h-8 ${
-                      isDark ? "text-slate-400" : "text-slate-600"
+                      isDark ? "text-slate-400" : "text-muted-foreground"
                     }`}
                   />
                   <div className="text-center">
                     <p
                       className={`font-medium ${
-                        isDark ? "text-white" : "text-slate-900"
+                        isDark ? "text-white" : "text-foreground"
                       }`}
                     >
                       {isDragActive
@@ -746,8 +746,8 @@ export function UploadModal({
                                   ? "bg-red-500/10 border-red-500/50"
                                   : "bg-red-50 border-red-300")
                               : isDark
-                              ? "border-2 bg-white/5 border-white/10"
-                              : "border-2 bg-slate-50 border-slate-300"
+                              ? "border-2 bg-white/5 border-border-light"
+                              : "border-2 bg-slate-50 border-slate-200"
                           }`}
                         >
                           <div className="flex items-center justify-between gap-2">

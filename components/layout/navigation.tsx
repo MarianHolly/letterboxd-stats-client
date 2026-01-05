@@ -40,14 +40,14 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="fixed top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <nav className="fixed top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border dark:border-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo / Brand */}
           <div className="flex items-center gap-2 pr-8 flex-shrink-0">
             <Link
               href="/"
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-200"
             >
               <div className="p-2 rounded-sm bg-gradient-to-br from-indigo-600 to-rose-600">
                 <BarChart3 className="w-4 h-4 text-white" />
@@ -71,8 +71,8 @@ export default function Navigation() {
                 href={link.href}
                 className={`px-3 py-1.5 rounded-sm text-sm font-medium transition-all duration-200 border ${
                   isActive(link.href)
-                    ? "border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-50"
-                    : "border-transparent text-slate-600 dark:text-slate-400 hover:border-slate-200 dark:hover:border-slate-800"
+                    ? "border-border-medium dark:border-border text-foreground dark:text-slate-50"
+                    : "border-transparent text-muted-foreground dark:text-slate-400 hover:border-border dark:hover:border-border-light"
                 }`}
               >
                 {link.label}
@@ -86,7 +86,7 @@ export default function Navigation() {
             <Link href="/analytics">
               <Button
                 size="sm"
-                className="bg-slate-950 hover:bg-slate-900 text-white dark:bg-slate-50 dark:hover:bg-slate-100 dark:text-slate-950 rounded-sm font-semibold px-4 py-1.5 border-0 cursor-pointer"
+                className="bg-slate-950 hover:bg-slate-900 text-white dark:bg-slate-50 dark:hover:bg-slate-100 dark:text-slate-950 font-semibold px-4 py-1.5 border-0 cursor-pointer transition-colors duration-200"
               >
                 Analytics
               </Button>
@@ -98,7 +98,7 @@ export default function Navigation() {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-1.5 rounded-sm border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors"
+              className="md:hidden p-1.5 rounded-sm border border-border-medium dark:border-border text-muted-foreground dark:text-slate-400 hover:bg-secondary dark:hover:bg-slate-900/30 transition-colors duration-200"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? (
@@ -112,7 +112,7 @@ export default function Navigation() {
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-200 dark:border-slate-800 pb-4 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="md:hidden border-t border-border dark:border-border pb-4 animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="space-y-1 pt-4">
               {navLinks.map((link) => (
                 <Link
@@ -120,8 +120,8 @@ export default function Navigation() {
                   href={link.href}
                   className={`block px-3 py-1.5 rounded-sm text-sm font-medium transition-all duration-200 border ${
                     isActive(link.href)
-                      ? "border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-50"
-                      : "border-transparent text-slate-600 dark:text-slate-400 hover:border-slate-200 dark:hover:border-slate-800"
+                      ? "border-border-medium dark:border-border text-foreground dark:text-slate-50"
+                      : "border-transparent text-muted-foreground dark:text-slate-400 hover:border-border dark:hover:border-border-light"
                   }`}
                 >
                   {link.label}

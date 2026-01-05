@@ -86,10 +86,10 @@ const StepsSection = () => {
             <Link href="/analytics">
               <Button
                 variant="ghost"
-                className="inline-flex text-slate-900 dark:text-slate-100 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/50 dark:hover:text-slate-300 font-semibold transition-colors py-1 px-3 border border-slate-300 dark:border-slate-700 rounded-md"
+                className="inline-flex text-foreground dark:text-slate-100 hover:text-muted-foreground hover:bg-muted dark:hover:bg-slate-800/50 dark:hover:text-slate-300 font-semibold transition-colors py-1 px-3 border border-border dark:border-border-light rounded-md"
               >
                 <ArrowRight
-                  className="text-slate-900 dark:text-slate-100"
+                  className="text-foreground dark:text-slate-100"
                   size={18}
                 />
                 Start Analyzing
@@ -102,13 +102,13 @@ const StepsSection = () => {
             {steps.map((step, index) => (
               <li
                 key={index}
-                className="relative flex flex-col justify-between gap-6 border-t border-slate-300 dark:border-slate-700 py-8 md:flex-row md:gap-8 lg:py-12"
+                className="relative flex flex-col justify-between gap-6 border-t border-border dark:border-border-light py-8 md:flex-row md:gap-8 lg:py-12"
               >
                 {/* Decorative Illustration */}
-                <Illustration className="absolute right-0 top-4 text-slate-300 dark:text-slate-700" />
+                <Illustration className="absolute right-0 top-4 text-border-medium dark:border-border-light" />
 
                 {/* Step Number */}
-                <div className="flex items-center justify-center rounded-sm bg-slate-100 dark:bg-slate-800 h-14 w-14 flex-shrink-0 font-bold tracking-tighter text-slate-900 dark:text-slate-100 text-lg">
+                <div className="flex items-center justify-center rounded-sm bg-muted dark:bg-slate-800 h-14 w-14 flex-shrink-0 font-bold tracking-tighter text-foreground dark:text-slate-100 text-lg">
                   {step.step}
                 </div>
 

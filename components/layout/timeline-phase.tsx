@@ -114,7 +114,7 @@ export function TimelinePhase({
             {items.map((item, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-3 p-3 rounded bg-white dark:bg-slate-950/30 border border-slate-100 dark:border-slate-800"
+                className="flex items-start gap-3 p-3 rounded bg-card dark:bg-slate-950/30 border border-border dark:border-border-light"
               >
                 <div className="flex-shrink-0 mt-1">
                   <svg
