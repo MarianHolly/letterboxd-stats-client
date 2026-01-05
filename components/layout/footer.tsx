@@ -7,7 +7,7 @@ import Link from "next/link";
 
 interface FooterLink {
   title: string;
-  href: string;
+  href: string | null;
   description?: string;
 }
 
@@ -28,16 +28,16 @@ const footerSections: FooterSection[] = [
   {
     title: "Resources",
     links: [
-      { title: "FAQ", href: "/guide#faq", description: "Common questions" },
+      { title: "FAQ", href: null, description: "Common questions" },
       { title: "Contact & Support", href: "/contact", description: "Report bugs & suggest features" },
-      { title: "GitHub", href: "https://github.com", description: "View source code" },
+      { title: "GitHub", href: null, description: "View source code" },
     ],
   },
   {
     title: "Legal",
     links: [
-      { title: "Privacy Policy", href: "#privacy", description: "Your data matters" },
-      { title: "Terms of Service", href: "#terms", description: "Our terms" },
+      { title: "Privacy Policy", href: null, description: "Your data matters" },
+      { title: "Terms of Service", href: null, description: "Our terms" },
     ],
   },
 ];
@@ -90,12 +90,18 @@ const Footer = () => {
                 <ul className="space-y-3">
                   {section.links.map(({ title, href }) => (
                     <li key={title}>
-                      <Link
-                        href={href}
-                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        {title}
-                      </Link>
+                      {href ? (
+                        <Link
+                          href={href}
+                          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          {title}
+                        </Link>
+                      ) : (
+                        <span className="text-sm text-muted-foreground/40 cursor-not-allowed">
+                          {title}
+                        </span>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -119,24 +125,20 @@ const Footer = () => {
             <div className="flex flex-col sm:flex-row items-center gap-6">
               {/* Social links */}
               <div className="flex items-center gap-4 text-muted-foreground">
-                <Link
-                  href="https://github.com/yourusername/letterboxd-stats-client"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-foreground transition-colors duration-200"
+                <span
+                  className="text-muted-foreground/40 cursor-not-allowed"
                   aria-label="GitHub Repository"
-                  title="View source code on GitHub"
+                  title="GitHub link coming soon"
                 >
                   <Github className="h-5 w-5" />
-                </Link>
-                <Link
-                  href="mailto:hello@letterboxdstats.com"
-                  className="hover:text-foreground transition-colors duration-200"
+                </span>
+                <span
+                  className="text-muted-foreground/40 cursor-not-allowed"
                   aria-label="Send email"
-                  title="Send us an email"
+                  title="Email contact coming soon"
                 >
                   <Mail className="h-5 w-5" />
-                </Link>
+                </span>
               </div>
 
               {/* Status badge */}
