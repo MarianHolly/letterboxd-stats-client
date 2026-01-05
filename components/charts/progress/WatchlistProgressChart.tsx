@@ -73,28 +73,28 @@ export function WatchlistProgressChart({ decadeData, fiveYearData }: WatchlistPr
     : 0;
 
   return (
-    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full flex flex-col">
+    <Card className="border border-border dark:border-border-light bg-card dark:bg-transparent h-full flex flex-col">
       {/* Fixed Height Header */}
       <CardHeader className="flex-shrink-0">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div className="flex-1">
-            <CardTitle className="text-black dark:text-white">
+            <CardTitle className="text-foreground dark:text-white">
               Viewing Progress by {viewMode === 'decade' ? 'Decade' : '5-Year Period'}
             </CardTitle>
-            <CardDescription className="text-slate-600 dark:text-white/60">
+            <CardDescription className="text-muted-foreground dark:text-white/60">
               Completed viewings vs. planned watches by era
             </CardDescription>
           </div>
 
           {/* Toggle Button */}
           {fiveYearData && fiveYearData.length > 0 && (
-            <div className="flex gap-1 p-1 bg-slate-100 dark:bg-white/5 rounded-lg">
+            <div className="flex gap-1 p-1 bg-muted dark:bg-white/5 rounded-lg">
               <button
                 onClick={() => setViewMode('decade')}
                 className={`px-3 py-1.5 text-xs font-medium rounded transition-all ${
                   viewMode === 'decade'
-                    ? 'bg-white dark:bg-white/10 text-black dark:text-white shadow-sm'
-                    : 'text-slate-600 dark:text-white/60 hover:text-black dark:hover:text-white'
+                    ? 'bg-card dark:bg-white/10 text-foreground dark:text-white shadow-sm'
+                    : 'text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white'
                 }`}
               >
                 Decade
@@ -103,8 +103,8 @@ export function WatchlistProgressChart({ decadeData, fiveYearData }: WatchlistPr
                 onClick={() => setViewMode('fiveYear')}
                 className={`px-3 py-1.5 text-xs font-medium rounded transition-all ${
                   viewMode === 'fiveYear'
-                    ? 'bg-white dark:bg-white/10 text-black dark:text-white shadow-sm'
-                    : 'text-slate-600 dark:text-white/60 hover:text-black dark:hover:text-white'
+                    ? 'bg-card dark:bg-white/10 text-foreground dark:text-white shadow-sm'
+                    : 'text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white'
                 }`}
               >
                 5-Year
@@ -137,19 +137,19 @@ export function WatchlistProgressChart({ decadeData, fiveYearData }: WatchlistPr
             <CartesianGrid
               strokeDasharray="3 3"
               vertical={false}
-              className="stroke-slate-200 dark:stroke-white/10"
+              className="stroke-border dark:stroke-white/10"
             />
             <XAxis
               dataKey="decade"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              className="text-slate-600 dark:text-white/60"
+              className="text-muted-foreground dark:text-white/60"
             />
             <YAxis
               tickLine={false}
               axisLine={false}
-              className="text-slate-600 dark:text-white/60"
+              className="text-muted-foreground dark:text-white/60"
             />
             <ChartTooltip
               cursor={false}
@@ -187,23 +187,23 @@ export function WatchlistProgressChart({ decadeData, fiveYearData }: WatchlistPr
         </ChartContainer>
 
         {/* Fixed Height Footer - Stays at Bottom */}
-        <div className="flex-shrink-0 mt-4 pt-4 border-t border-slate-200 dark:border-white/10">
+        <div className="flex-shrink-0 mt-4 pt-4 border-t border-border dark:border-border-light">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 text-sm">
             <div className="flex flex-wrap gap-4 sm:gap-6">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: chartConfig.watched.color }} />
-                <span className="text-slate-600 dark:text-white/60">
+                <span className="text-muted-foreground dark:text-white/60">
                   {totals.watched.toLocaleString()} Watched
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: chartConfig.watchlist.color }} />
-                <span className="text-slate-600 dark:text-white/60">
+                <span className="text-muted-foreground dark:text-white/60">
                   {totals.watchlist.toLocaleString()} Watchlist
                 </span>
               </div>
             </div>
-            <div className="text-slate-600 dark:text-white/60">
+            <div className="text-muted-foreground dark:text-white/60">
               {completionRate}% Completed
             </div>
           </div>

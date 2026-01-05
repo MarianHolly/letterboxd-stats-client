@@ -33,7 +33,7 @@ export function ChartPlaceholder({
       className={`${height} flex items-center justify-center border-2 border-dashed cursor-pointer transition-all duration-200 ${
         isDark
           ? "border-slate-700 bg-slate-900/50 hover:border-blue-600 hover:bg-slate-900/80"
-          : "border-slate-300 bg-slate-50/50 hover:border-blue-500 hover:bg-slate-100"
+          : "border-border-medium bg-secondary/50 hover:border-blue-500 hover:bg-muted"
       }`}
     >
       <CardContent className="p-8 text-center w-full">

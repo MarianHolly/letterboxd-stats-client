@@ -42,7 +42,7 @@ export function FilmsByDecadeBar({ decadeData, fiveYearData }: FilmsByDecadeBarP
 
   if (!data || data.length === 0) {
     return (
-      <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
+      <Card className="border border-border dark:border-border-light bg-card dark:bg-transparent h-full">
         <CardHeader className="pb-4">
           <CardTitle className="text-base font-semibold">Films by Decade</CardTitle>
         </CardHeader>
@@ -56,7 +56,7 @@ export function FilmsByDecadeBar({ decadeData, fiveYearData }: FilmsByDecadeBarP
   }
 
   return (
-    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
+    <Card className="border border-border dark:border-border-light bg-card dark:bg-transparent h-full">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div>
@@ -73,7 +73,7 @@ export function FilmsByDecadeBar({ decadeData, fiveYearData }: FilmsByDecadeBarP
               className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
                 viewMode === "decade"
                   ? "bg-[#ec4899] text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  : "bg-muted dark:bg-slate-800 text-muted-foreground dark:text-slate-300 hover:bg-input dark:hover:bg-slate-700"
               }`}
             >
               Decade
@@ -83,7 +83,7 @@ export function FilmsByDecadeBar({ decadeData, fiveYearData }: FilmsByDecadeBarP
               className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
                 viewMode === "fiveYear"
                   ? "bg-[#ec4899] text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  : "bg-muted dark:bg-slate-800 text-muted-foreground dark:text-slate-300 hover:bg-input dark:hover:bg-slate-700"
               }`}
             >
               5 Years

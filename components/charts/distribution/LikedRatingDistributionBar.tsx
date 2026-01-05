@@ -36,7 +36,7 @@ const chartConfig = {
 export function LikedRatingDistributionBar({ data }: LikedRatingDistributionBarProps) {
   if (!data || data.length === 0) {
     return (
-      <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+      <Card className="border border-border dark:border-border-light bg-card dark:bg-transparent">
         <CardHeader className="pb-4">
           <CardTitle className="text-base font-semibold">Favorites Rating Distribution</CardTitle>
         </CardHeader>
@@ -50,7 +50,7 @@ export function LikedRatingDistributionBar({ data }: LikedRatingDistributionBarP
   }
 
   return (
-    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+    <Card className="border border-border dark:border-border-light bg-card dark:bg-transparent">
       <CardHeader className="pb-4">
         <CardTitle className="text-base font-semibold">Favorites Rating Distribution</CardTitle>
         <p className="text-xs text-muted-foreground mt-1">

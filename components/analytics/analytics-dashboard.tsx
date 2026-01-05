@@ -187,7 +187,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* INTRO SECTION - Shown when no profile data */}
         {/* ============================================================================ */}
         {!dataset?.userProfile && (
-          <div className="space-y-6 pb-20 border-b-2 border-slate-200 dark:border-white/10">
+          <div className="space-y-6 pb-20 border-b-2 border-slate-200 dark:border-border">
             <SectionLayout.Header
               title="Welcome to Your Cinematic Identity"
               subtitle="Discover the data behind your film taste"
@@ -199,7 +199,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* ============================================================================ */}
         {/* STATS OVERVIEW - KPI Cards */}
         {/* ============================================================================ */}
-        <div className="mb-2 border-b-2 border-slate-200 dark:border-white/10">
+        <div className="mb-2 border-b-2 border-slate-200 dark:border-border">
           <StatsOverview
             analytics={analytics}
             profile={dataset?.userProfile}
@@ -480,7 +480,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                         fiveYearData={watchlistByFiveYearData}
                       />
                     ) : (
-                      <Card className="h-full flex items-center justify-center border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+                      <Card className="h-full flex items-center justify-center border border-slate-200 dark:border-border bg-white dark:bg-transparent">
                         <CardContent className="text-center py-12">
                           <div className="text-muted-foreground">
                             <Film className="h-12 w-12 mx-auto mb-4 opacity-20" />
@@ -568,7 +568,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
         {/* DEVELOPMENT NOTICE */}
         {/* ============================================================================ */}
         <div className="mt-12 pb-12 md:pb-20">
-          <div className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/30 p-8 md:p-12">
+          <div className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-border bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/30 p-8 md:p-12">
             {/* Background decoration */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-amber-500/10 to-orange-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
@@ -589,7 +589,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
               {/* Future Steps */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-3xl mx-auto mb-8">
                 {/* Step 1 */}
-                <div className="flex gap-4 p-4 rounded-xl bg-white/60 dark:bg-white/5 border border-slate-200/50 dark:border-white/5">
+                <div className="flex gap-4 p-4 rounded-xl bg-white/60 dark:bg-white/5 border border-slate-200/50 dark:border-border-light">
                   <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center">
                     <span className="text-indigo-600 dark:text-indigo-400 font-bold">1</span>
                   </div>
@@ -602,7 +602,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
                 </div>
 
                 {/* Step 2 */}
-                <div className="flex gap-4 p-4 rounded-xl bg-white/60 dark:bg-white/5 border border-slate-200/50 dark:border-white/5">
+                <div className="flex gap-4 p-4 rounded-xl bg-white/60 dark:bg-white/5 border border-slate-200/50 dark:border-border-light">
                   <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-500/20 flex items-center justify-center">
                     <span className="text-purple-600 dark:text-purple-400 font-bold">2</span>
                   </div>

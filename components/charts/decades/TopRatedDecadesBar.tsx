@@ -77,7 +77,7 @@ export function TopRatedDecadesBar({ data }: TopRatedDecadesBarProps) {
 
   if (!data || data.length === 0) {
     return (
-      <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+      <Card className="border border-border dark:border-border-light bg-card dark:bg-transparent">
         <CardHeader>
           <CardTitle className="text-base font-semibold">Top-Rated Decades</CardTitle>
         </CardHeader>
@@ -101,7 +101,7 @@ export function TopRatedDecadesBar({ data }: TopRatedDecadesBarProps) {
 
   if (filteredData.length === 0) {
     return (
-      <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+      <Card className="border border-border dark:border-border-light bg-card dark:bg-transparent">
         <CardHeader>
           <CardTitle className="text-base font-semibold">Top-Rated Decades</CardTitle>
         </CardHeader>
@@ -122,7 +122,7 @@ export function TopRatedDecadesBar({ data }: TopRatedDecadesBarProps) {
   }, filteredData[0])
 
   return (
-    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+    <Card className="border border-border dark:border-border-light bg-card dark:bg-transparent">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-semibold">Top-Rated Decades</CardTitle>
@@ -153,7 +153,7 @@ export function TopRatedDecadesBar({ data }: TopRatedDecadesBarProps) {
               className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
                 viewMode === mode
                   ? "bg-[#EFBF04] text-black"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  : "bg-muted dark:bg-slate-800 text-muted-foreground dark:text-slate-300 hover:bg-input dark:hover:bg-slate-700"
               }`}
             >
               {viewConfig[mode].label}

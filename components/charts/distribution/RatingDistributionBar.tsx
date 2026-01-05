@@ -37,7 +37,7 @@ export function RatingDistributionBar({ data }: RatingDistributionBarProps) {
   const sortedData = [...data].sort((a, b) => parseFloat(a.rating) - parseFloat(b.rating))
 
   return (
-    <Card className="border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent h-full">
+    <Card className="border border-border dark:border-border-light bg-card dark:bg-transparent h-full">
       <CardHeader className="pb-4">
         <CardTitle className="text-base font-semibold">Your Rating Distribution</CardTitle>
         <p className="hidden md:block text-xs text-muted-foreground mt-1">
