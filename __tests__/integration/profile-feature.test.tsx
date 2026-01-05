@@ -3,7 +3,6 @@
  * Tests the complete user journey of uploading profile.csv and viewing profile stats
  */
 
-import { test, expect } from '@jest/globals'
 import { render, screen, waitFor } from '@testing-library/react'
 import { StatsOverview } from '@/components/analytics/stats-overview'
 import type { AnalyticsOverview, UserProfile } from '@/lib/types'

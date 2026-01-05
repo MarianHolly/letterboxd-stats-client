@@ -3,7 +3,6 @@
  * Tests the complete data flow from CSV parsing through analytics computation
  */
 
-import { describe, it, expect, beforeEach } from '@jest/globals'
 import { parseCSVContent } from '../../lib/csv-parser'
 import { mergeMovieSources } from '../../lib/data-merger'
 import { computeAnalytics } from '../../lib/analytics-engine'

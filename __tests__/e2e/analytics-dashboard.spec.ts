@@ -3,7 +3,7 @@
  * Tests the full user journey from upload to viewing analytics
  */
 
-import { test, expect } from '@jest/globals'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { UploadModal } from '@/components/layout/upload-models'
@@ -13,7 +13,7 @@ import { StatsDistribution } from '@/components/analytics/stats-distribution'
 import { AnalyticsEmptyState } from '@/components/analytics/analytics-empty-state'
 
 // Mock the Zustand store
-jest.mock('@/hooks/use-analytics-store', () => ({
+vi.mock('@/hooks/use-analytics-store', () => ({
   useAnalyticsStore: (selector: (state: any) => any) => {
     const mockState = {
       dataset: null,

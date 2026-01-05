@@ -3,7 +3,7 @@
  * Tests the user journey of uploading multiple CSV files with merge priority
  */
 
-import { test, expect } from '@jest/globals'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { UploadModal } from '@/components/layout/upload-models'
@@ -11,7 +11,7 @@ import { mockWatchedCSV, mockDiaryCSV, mockRatingsCSV, mockFilmsCSV, mockWatchli
 import type { MovieDataset } from '@/lib/types'
 
 // Mock the dropzone library
-jest.mock('react-dropzone', () => ({
+vi.mock('react-dropzone', () => ({
   useDropzone: ({
     onDrop,
   }: {

@@ -3,14 +3,14 @@
  * Tests the complete user journey of uploading CSV files and verifying the UI
  */
 
-import { test, expect } from '@jest/globals'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { UploadModal } from '@/components/layout/upload-models'
 import type { MovieDataset } from '@/lib/types'
 
 // Mock the dropzone library
-jest.mock('react-dropzone', () => ({
+vi.mock('react-dropzone', () => ({
   useDropzone: ({
     onDrop,
   }: {

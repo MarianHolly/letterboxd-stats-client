@@ -3,7 +3,6 @@
  * Tests CSV merging, conflict resolution, and deduplication
  */
 
-import { describe, it, expect, beforeEach } from '@jest/globals'
 import {
   mergeMovieSources,
   deduplicateMovies,
