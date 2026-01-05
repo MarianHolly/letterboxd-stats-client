@@ -184,7 +184,7 @@ const HeroSection = () => {
             variants={fadeUpVariants}
             initial="hidden"
             animate="visible"
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
+            className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8"
           >
             <Link href="/analytics">
               <Button
@@ -196,6 +196,18 @@ const HeroSection = () => {
               >
                 Begin My Discovery
                 <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+            <Link href="/analytics?demo=true">
+              <Button
+                size="lg"
+                variant="outline"
+                className="
+                border-slate-300 text-slate-900 hover:bg-slate-100
+                dark:border-slate-700 dark:text-white dark:hover:bg-slate-900/50
+                rounded-sm font-semibold px-8 py-6 text-lg transition-all duration-200"
+              >
+                Try Demo
               </Button>
             </Link>
           </motion.div>

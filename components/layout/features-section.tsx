@@ -1,56 +1,63 @@
 const FeaturesSection = () => {
   const features = [
     {
+      stat: "18+",
+      title: "Interactive Charts",
+      description:
+        "Rating distributions, timeline heatmaps, decade analysis, director trends, genre breakdowns, monthly patterns, and more.",
+    },
+    {
       stat: "100%",
-      title: "Privacy-First",
+      title: "Client-Side",
       description:
-        "Your data is processed entirely on your device. We never send, store, or share your information with any server.",
-    },
-    {
-      stat: "4",
-      title: "Key Analytics",
-      description:
-        "Overview stats, rating distribution, decade breakdown, and yearly watching trends in one powerful dashboard.",
-    },
-    {
-      stat: "∞",
-      title: "Unlimited Uploads",
-      description:
-        "Re-upload your data anytime to see updated insights as you watch more films. No limits, no restrictions.",
+        "All processing happens in your browser. No servers, no data collection, no tracking. Ever.",
     },
     {
       stat: "$0",
       title: "Always Free",
       description:
-        "Open source and community-driven. No hidden costs, subscriptions, or premium features. Ever.",
+        "No subscriptions, no premium tiers, no hidden costs. Open source and transparent.",
+    },
+    {
+      stat: "0s",
+      title: "Setup Time",
+      description:
+        "No login, no account creation, no email verification. Start analyzing in seconds.",
     },
   ];
 
   return (
-    <section className="py-20 md:py-32">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
-        <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
-          Why Choose Letterboxd Stats?
-        </h2>
-        <p className="mt-6 text-lg max-w-2xl text-foreground/60 dark:text-foreground/65">
-          A privacy-first analytics tool that transforms your Letterboxd viewing
-          history into beautiful, actionable insights—no data collection, no
-          complications.
-        </p>
+    <section className="py-24 md:py-40 border-t border-border">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-32 items-start mb-20">
+          {/* Left: Heading */}
+          <div>
+            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground mb-6">
+              Built Different
+            </h2>
+            <p className="text-lg text-foreground/65 leading-relaxed">
+              A privacy-first analytics platform that transforms your Letterboxd viewing history into beautiful, actionable insights. No compromises.
+            </p>
+          </div>
 
-        <div className="mt-20 sm:mt-28 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-10 lg:gap-x-16 gap-y-20">
+          {/* Right: Spacer */}
+          <div />
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, idx) => (
             <div
               key={idx}
-              className="border border-border dark:border-border-light px-3 py-6 rounded-md dark:hover:bg-slate-900/30"
+              className="group p-8 border border-border rounded-sm hover:border-border-medium transition-all duration-300 hover:bg-slate-50 dark:hover:bg-slate-900/50 flex flex-col"
             >
-              <span className="text-5xl md:text-6xl tracking-tight font-semibold text-foreground">
+              <span className="text-4xl md:text-5xl font-bold text-foreground/80 group-hover:text-foreground transition-colors mb-6">
                 {feature.stat}
               </span>
-              <p className="mt-6 font-semibold text-xl text-foreground">
+              <p className="font-semibold text-lg text-foreground mb-3">
                 {feature.title}
               </p>
-              <p className="mt-2 text-foreground/60 dark:text-foreground/65 leading-relaxed">
+              <p className="text-sm text-foreground/60 leading-relaxed">
                 {feature.description}
               </p>
             </div>
