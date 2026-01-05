@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { ScrollTrigger } from "@/components/layout/scroll-trigger";
 import ChartExamples from "@/components/guide/chart-examples";
 
 export default function GuidePage() {
@@ -157,21 +158,21 @@ export default function GuidePage() {
       {/* Getting Started Steps */}
       <section className="py-20 md:py-32 border-t border-slate-300 dark:border-slate-700">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <ScrollTrigger className="text-center mb-16" type="fadeUp">
             <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground mb-6">
               How It Works
             </h2>
             <p className="text-lg text-foreground/60 dark:text-foreground/65 leading-relaxed max-w-2xl mx-auto">
               Get your analytics up and running in three simple steps.
             </p>
-          </div>
+          </ScrollTrigger>
 
           {/* Reverse Triangle Layout */}
           <div className="max-w-5xl mx-auto">
             {/* First Row: 2 columns */}
             <div className="grid md:grid-cols-2 gap-8 lg:gap-12 mb-8 lg:mb-12">
               {/* Export */}
-              <div className="text-center">
+              <ScrollTrigger className="text-center" type="slideInLeft">
                 <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
                   Export
                 </h3>
@@ -187,28 +188,28 @@ export default function GuidePage() {
                   </a>
                   , download your data export as a ZIP file, and extract it to access your CSV files. This contains your complete viewing history, ratings, and watchlist data.
                 </p>
-              </div>
+              </ScrollTrigger>
 
               {/* Upload */}
-              <div className="text-center">
+              <ScrollTrigger className="text-center" type="slideInRight">
                 <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
                   Upload
                 </h3>
                 <p className="text-base text-foreground/60 dark:text-foreground/50 leading-relaxed font-light">
                   Drag and drop your extracted CSV files into the analytics dashboard. Upload one or multiple files—we'll automatically validate, merge, and process them. All processing happens locally in your browser.
                 </p>
-              </div>
+              </ScrollTrigger>
             </div>
 
             {/* Second Row: 1 column centered */}
-            <div className="max-w-md mx-auto text-center">
+            <ScrollTrigger className="max-w-md mx-auto text-center" type="scaleUp">
               <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
                 Explore
               </h3>
               <p className="text-base text-foreground/60 dark:text-foreground/50 leading-relaxed font-light">
                 Instantly see 26+ interactive charts and statistics analyzing your cinematic identity. Discover patterns in your viewing habits, favorite decades, rating tendencies, and much more—all beautifully visualized.
               </p>
-            </div>
+            </ScrollTrigger>
           </div>
         </div>
       </section>
