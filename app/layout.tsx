@@ -17,10 +17,44 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Letterboxd Stats",
-  description: "Transform your Letterboxd viewing history into beautiful, interactive analytics",
+  title: "Letterboxd Stats - Interactive Film Analytics",
+  description: "Transform your Letterboxd viewing history into beautiful, interactive analytics. Discover patterns, trends, and insights from your cinema journey with 18+ charts and visualizations.",
+  keywords: ["letterboxd", "analytics", "film", "movies", "statistics", "data visualization"],
+  authors: [{ name: "Maria" }],
+  creator: "Maria",
   icons: {
     icon: "/icon",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://letterboxd-stats.vercel.app",
+    siteName: "Letterboxd Stats",
+    title: "Letterboxd Stats - Interactive Film Analytics",
+    description: "Unlock insights from your Letterboxd data. Visualize your viewing patterns, rating trends, and cinematic preferences.",
+    images: [
+      {
+        url: "https://letterboxd-stats.vercel.app/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Letterboxd Stats - Interactive Film Analytics",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Letterboxd Stats - Interactive Film Analytics",
+    description: "Unlock insights from your Letterboxd data with beautiful, interactive analytics.",
+    images: ["https://letterboxd-stats.vercel.app/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
   },
 };
 
@@ -31,6 +65,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased
         bg-white dark:bg-slate-950 flex flex-col min-h-screen overflow-x-hidden`}
