@@ -13,7 +13,7 @@ const FeaturesSection = () => {
         "All processing happens in your browser. No servers, no data collection, no tracking. Ever.",
     },
     {
-      stat: "$0",
+      stat: "€0",
       title: "Always Free",
       description:
         "No subscriptions, no premium tiers, no hidden costs. Open source and transparent.",
