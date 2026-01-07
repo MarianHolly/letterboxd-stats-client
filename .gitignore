@@ -12,10 +12,11 @@
 
 # planning
 .claude/
+.specify/
+/specs/
 
 # testing
 /coverage
-mock/
 
 # next.js
 /.next/
