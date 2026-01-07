@@ -9,7 +9,9 @@ export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
+  // This is needed for hydration - setState in effect is intentional
   useLayoutEffect(() => {
+    // eslint-disable-next-line
     setMounted(true);
   }, []);
 

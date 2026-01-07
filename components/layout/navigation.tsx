@@ -25,6 +25,7 @@ export default function Navigation() {
 
   // Close mobile menu when route changes
   useLayoutEffect(() => {
+    // eslint-disable-next-line
     setIsMobileMenuOpen(false);
   }, [pathname]);
 

@@ -160,6 +160,7 @@ export function FavoriteDecadesBar({ data }: FavoriteDecadesBarProps) {
                   offset={8}
                   className="fill-foreground"
                   fontSize={11}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   content={(props: any) => {
                     const { x, y, width, index } = props as { x: number; y: number; width: number; index: number }
                     const percentage = chartData[index]?.percentage
@@ -188,6 +189,7 @@ export function FavoriteDecadesBar({ data }: FavoriteDecadesBarProps) {
                     offset={8}
                     className="fill-foreground"
                     fontSize={11}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     content={(props: any) => {
                       const { x, y, width, index } = props as { x: number; y: number; width: number; index: number }
                       const percentage = chartData[index]?.percentage

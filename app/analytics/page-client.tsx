@@ -26,7 +26,9 @@ export function AnalyticsPageClient({ defaultSidebarOpen }: AnalyticsPageClientP
   const [isHydrated, setIsHydrated] = useState(false);
   const clearData = useAnalyticsStore((state) => state.clearData);
 
+  // This is needed for hydration - setState in effect is intentional
   useLayoutEffect(() => {
+    // eslint-disable-next-line
     setIsHydrated(true);
   }, []);
 

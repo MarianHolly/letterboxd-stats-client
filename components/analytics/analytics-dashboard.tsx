@@ -87,8 +87,9 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   // Handle hydration
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
+  // This is needed for hydration - setState in effect is intentional
   useEffect(() => {
+    // eslint-disable-next-line
     setIsHydrated(true);
   }, []);
 

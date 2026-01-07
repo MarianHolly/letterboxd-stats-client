@@ -320,6 +320,7 @@ export function ReleaseYearDistributionBar({ data }: ReleaseYearDistributionBarP
               />
               <ChartTooltip
                 cursor={{ fill: "rgba(0,0,0,0.01)" }}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 content={(props: any) => {
                   const { active, payload } = props;
                   if (active && payload && payload.length > 0) {
