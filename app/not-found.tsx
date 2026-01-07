@@ -15,7 +15,7 @@ export default function NotFound() {
         </p>
 
         <p className="text-lg text-slate-700 dark:text-slate-300 mb-8 max-w-md mx-auto">
-          The page you're looking for doesn't exist. Let's get you back on track.
+          The page you&apos;re looking for doesn&apos;t exist. Let&apos;s get you back on track.
         </p>
 
         <Link

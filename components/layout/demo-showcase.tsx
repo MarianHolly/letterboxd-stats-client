@@ -155,7 +155,7 @@ const DemoShowcase = () => {
               size="lg"
               className="border-border-medium hover:bg-slate-50 dark:hover:bg-slate-900/50 font-semibold px-8 py-6 rounded-sm transition-all duration-200"
             >
-              Try "Contemporary Cinema"
+              Try &quot;Contemporary Cinema&quot;
             </Button>
           </Link>
         </motion.div>

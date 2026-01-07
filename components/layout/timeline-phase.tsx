@@ -29,7 +29,6 @@ export function TimelinePhase({
   items,
   icon,
   color = "indigo",
-  accentColor,
 }: TimelinePhaseProps) {
   const colorMap = {
     emerald: {
@@ -108,7 +107,7 @@ export function TimelinePhase({
       {items.length > 0 && (
         <div className="mt-6">
           <h4 className="text-sm font-semibold text-foreground/70 uppercase tracking-wide mb-4">
-            What's Included
+            What&apos;s Included
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {items.map((item, idx) => (

@@ -118,7 +118,7 @@ export default function ChartExamples() {
             </h3>
           </div>
           <p className="text-base text-foreground/70 dark:text-foreground/60 leading-relaxed">
-            Explore your viewing history across cinema's entire timeline. This interactive chart reveals which eras dominate your taste—with era-based filtering, historical reference lines, and a gradient that makes decades come alive. Notice how the color shifts from classic films to contemporary releases.
+            Explore your viewing history across cinema&apos;s entire timeline. This interactive chart reveals which eras dominate your taste—with era-based filtering, historical reference lines, and a gradient that makes decades come alive. Notice how the color shifts from classic films to contemporary releases.
           </p>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
