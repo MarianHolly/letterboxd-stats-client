@@ -341,6 +341,7 @@ describe('CSV Parser', () => {
     })
 
     it('should handle missing file', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await parseLetterboxdCSV(null as any)
 
       expect(result.success).toBe(false)
