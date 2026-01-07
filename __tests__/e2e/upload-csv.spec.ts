@@ -33,7 +33,7 @@ vi.mock('react-dropzone', () => ({
 
 describe('CSV Upload E2E Tests', () => {
   describe('Upload Modal Rendering', () => {
-    test('should render upload modal when open prop is true', () => {
+    it('should render upload modal when open prop is true', () => {
       const { container } = render(
         <UploadModal open={true} onOpenChange={jest.fn()} />
       )
@@ -44,7 +44,7 @@ describe('CSV Upload E2E Tests', () => {
       ).toBeInTheDocument()
     })
 
-    test('should display file type descriptions', () => {
+    it('should display file type descriptions', () => {
       render(<UploadModal open={true} onOpenChange={jest.fn()} />)
 
       expect(screen.getByText('Watched Movies')).toBeInTheDocument()
@@ -54,7 +54,7 @@ describe('CSV Upload E2E Tests', () => {
       expect(screen.getByText('Watchlist')).toBeInTheDocument()
     })
 
-    test('should display upload button', () => {
+    it('should display upload button', () => {
       render(<UploadModal open={true} onOpenChange={jest.fn()} />)
 
       const continueButton = screen.getByRole('button', {
@@ -66,7 +66,7 @@ describe('CSV Upload E2E Tests', () => {
   })
 
   describe('File Upload Handling', () => {
-    test('should show error for unknown file type', async () => {
+    it('should show error for unknown file type', async () => {
       const mockOnOpenChange = jest.fn()
       const { rerender } = render(
         <UploadModal open={true} onOpenChange={mockOnOpenChange} />
@@ -90,7 +90,7 @@ describe('CSV Upload E2E Tests', () => {
       })
     })
 
-    test('should accept and display valid CSV files', async () => {
+    it('should accept and display valid CSV files', async () => {
       const watchedCSVContent = `Date,Name,Year,Letterboxd URI
 2023-01-15,Test Movie,2020,https://boxd.it/test1`
 
@@ -124,7 +124,7 @@ describe('CSV Upload E2E Tests', () => {
       }
     })
 
-    test('should require watched.csv before allowing continue', async () => {
+    it('should require watched.csv before allowing continue', async () => {
       const mockOnOpenChange = jest.fn()
       render(
         <UploadModal open={true} onOpenChange={mockOnOpenChange} />
@@ -149,7 +149,7 @@ describe('CSV Upload E2E Tests', () => {
   })
 
   describe('Modal State Management', () => {
-    test('should close modal when onOpenChange called with false', () => {
+    it('should close modal when onOpenChange called with false', () => {
       const mockOnOpenChange = jest.fn()
       const { rerender } = render(
         <UploadModal open={true} onOpenChange={mockOnOpenChange} />
@@ -161,7 +161,7 @@ describe('CSV Upload E2E Tests', () => {
       expect(mockOnOpenChange).toHaveBeenCalledWith(false)
     })
 
-    test('should reset files when modal closes', async () => {
+    it('should reset files when modal closes', async () => {
       const mockOnOpenChange = jest.fn()
       const { rerender } = render(
         <UploadModal open={true} onOpenChange={mockOnOpenChange} />
@@ -180,7 +180,7 @@ describe('CSV Upload E2E Tests', () => {
       expect(screen.queryByText('watched.csv')).not.toBeInTheDocument()
     })
 
-    test('should show clear all button when files are uploaded', async () => {
+    it('should show clear all button when files are uploaded', async () => {
       const mockOnOpenChange = jest.fn()
       render(
         <UploadModal open={true} onOpenChange={mockOnOpenChange} />
@@ -213,7 +213,7 @@ describe('CSV Upload E2E Tests', () => {
   })
 
   describe('Error Handling', () => {
-    test('should display error message for malformed CSV', async () => {
+    it('should display error message for malformed CSV', async () => {
       const malformedCSV = `Invalid,CSV,Format
       This is not valid,1,2`
 
@@ -242,7 +242,7 @@ describe('CSV Upload E2E Tests', () => {
       }
     })
 
-    test('should prevent continuing with errors present', async () => {
+    it('should prevent continuing with errors present', async () => {
       const mockOnOpenChange = jest.fn()
       render(
         <UploadModal open={true} onOpenChange={mockOnOpenChange} />
@@ -262,7 +262,7 @@ describe('CSV Upload E2E Tests', () => {
   })
 
   describe('Accessibility', () => {
-    test('should have proper labels and ARIA attributes', () => {
+    it('should have proper labels and ARIA attributes', () => {
       render(<UploadModal open={true} onOpenChange={jest.fn()} />)
 
       const title = screen.getByText('Upload Your Letterboxd Data')
@@ -272,7 +272,7 @@ describe('CSV Upload E2E Tests', () => {
       expect(buttons.length).toBeGreaterThan(0)
     })
 
-    test('should be keyboard navigable', () => {
+    it('should be keyboard navigable', () => {
       render(<UploadModal open={true} onOpenChange={jest.fn()} />)
 
       const cancelButton = screen.getByRole('button', { name: /Cancel/i })
@@ -282,7 +282,7 @@ describe('CSV Upload E2E Tests', () => {
   })
 
   describe('File Removal', () => {
-    test('should remove file when X button clicked', async () => {
+    it('should remove file when X button clicked', async () => {
       const mockOnOpenChange = jest.fn()
       render(
         <UploadModal open={true} onOpenChange={mockOnOpenChange} />

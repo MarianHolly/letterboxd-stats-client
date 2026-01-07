@@ -34,7 +34,7 @@ vi.mock('react-dropzone', () => ({
 
 describe('Multiple CSV Merge E2E Tests', () => {
   describe('Two-file merge (watched + diary)', () => {
-    test('should merge watched.csv and diary.csv with diary data enriching watched', async () => {
+    it('should merge watched.csv and diary.csv with diary data enriching watched', async () => {
       const onUploadComplete = jest.fn()
       const user = userEvent.setup()
 
@@ -56,7 +56,7 @@ describe('Multiple CSV Merge E2E Tests', () => {
       })
     })
 
-    test('should show file type indicators for multiple files', () => {
+    it('should show file type indicators for multiple files', () => {
       render(<UploadModal open={true} onOpenChange={jest.fn()} />)
 
       expect(screen.getByText('Watched Movies')).toBeInTheDocument()
@@ -68,7 +68,7 @@ describe('Multiple CSV Merge E2E Tests', () => {
   })
 
   describe('Three-file merge (watched + diary + ratings)', () => {
-    test('should handle merge with conflict resolution (ratings > diary)', async () => {
+    it('should handle merge with conflict resolution (ratings > diary)', async () => {
       const onUploadComplete = jest.fn()
 
       const { container } = render(
@@ -88,7 +88,7 @@ describe('Multiple CSV Merge E2E Tests', () => {
   })
 
   describe('All five files merge', () => {
-    test('should handle upload of all 5 CSV types', () => {
+    it('should handle upload of all 5 CSV types', () => {
       render(<UploadModal open={true} onOpenChange={jest.fn()} />)
 
       // All file types should be shown as available
@@ -99,7 +99,7 @@ describe('Multiple CSV Merge E2E Tests', () => {
       expect(screen.getByText('Watchlist')).toBeInTheDocument()
     })
 
-    test('should separate watchlist from watched movies', () => {
+    it('should separate watchlist from watched movies', () => {
       render(<UploadModal open={true} onOpenChange={jest.fn()} />)
 
       // Watchlist should be shown as separate optional file
@@ -108,7 +108,7 @@ describe('Multiple CSV Merge E2E Tests', () => {
   })
 
   describe('Re-uploading same file type', () => {
-    test('should allow replacing previously uploaded file', async () => {
+    it('should allow replacing previously uploaded file', async () => {
       const user = userEvent.setup()
       const onUploadComplete = jest.fn()
 
@@ -126,7 +126,7 @@ describe('Multiple CSV Merge E2E Tests', () => {
   })
 
   describe('Merge priority validation', () => {
-    test('should apply correct merge priority: ratings > diary > watched > films', () => {
+    it('should apply correct merge priority: ratings > diary > watched > films', () => {
       render(<UploadModal open={true} onOpenChange={jest.fn()} />)
 
       // Verify all file types are available for merging
@@ -141,13 +141,13 @@ describe('Multiple CSV Merge E2E Tests', () => {
   })
 
   describe('File upload error handling', () => {
-    test('should display error message for invalid CSV file', async () => {
+    it('should display error message for invalid CSV file', async () => {
       render(<UploadModal open={true} onOpenChange={jest.fn()} />)
 
       expect(screen.getByText('Upload Your Letterboxd Data')).toBeInTheDocument()
     })
 
-    test('should allow retry after failed upload', async () => {
+    it('should allow retry after failed upload', async () => {
       render(<UploadModal open={true} onOpenChange={jest.fn()} />)
 
       expect(screen.getByText('Upload Your Letterboxd Data')).toBeInTheDocument()
@@ -155,7 +155,7 @@ describe('Multiple CSV Merge E2E Tests', () => {
   })
 
   describe('Rewatch aggregation in merge', () => {
-    test('should aggregate rewatches from diary.csv when same movie appears multiple times', () => {
+    it('should aggregate rewatches from diary.csv when same movie appears multiple times', () => {
       render(<UploadModal open={true} onOpenChange={jest.fn()} />)
 
       // Modal should be ready to handle multiple entries of same movie
