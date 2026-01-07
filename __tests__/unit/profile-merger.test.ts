@@ -4,7 +4,7 @@
  */
 
 import { mergeMovieSources } from '@/lib/data-merger'
-import type { Movie, UserProfile, MovieDataset } from '@/lib/types'
+import type { Movie, UserProfile } from '@/lib/types'
 
 // ============================================================================
 // TEST DATA FIXTURES

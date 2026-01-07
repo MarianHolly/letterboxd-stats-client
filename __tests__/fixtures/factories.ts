@@ -12,7 +12,6 @@ import type { Movie, MovieDataset, UserProfile } from '@/lib/types'
  * createMockMovie({ title: 'Custom', rating: 4.5 }) // Override specific fields
  */
 export function createMockMovie(overrides?: Partial<Movie>): Movie {
-  const now = new Date()
   const defaults: Movie = {
     id: `https://boxd.it/${Math.random().toString(36).substr(2, 6)}`,
     title: 'Test Movie',

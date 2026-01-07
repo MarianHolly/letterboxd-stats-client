@@ -6,7 +6,6 @@
 import { parseCSVContent } from '../../lib/csv-parser'
 import { mergeMovieSources } from '../../lib/data-merger'
 import { computeAnalytics } from '../../lib/analytics-engine'
-import type { Movie, AnalyticsOverview } from '../../lib/types'
 
 // ============================================================================
 // TEST CSV DATA

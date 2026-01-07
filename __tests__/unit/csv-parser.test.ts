@@ -4,7 +4,6 @@
  */
 
 import { detectCSVType, validateCSV, parseCSVContent, parseLetterboxdCSV } from '@/lib/csv-parser'
-import type { ParseResult, Movie } from '@/lib/types'
 import {
   MOCK_WATCHED_CSV,
   MOCK_DIARY_CSV,

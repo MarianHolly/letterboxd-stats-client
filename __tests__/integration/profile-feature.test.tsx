@@ -3,7 +3,7 @@
  * Tests the complete user journey of uploading profile.csv and viewing profile stats
  */
 
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { StatsOverview } from '@/components/analytics/stats-overview'
 import type { AnalyticsOverview, UserProfile } from '@/lib/types'
 

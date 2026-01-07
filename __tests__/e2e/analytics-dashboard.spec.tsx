@@ -4,16 +4,14 @@
  */
 
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { UploadModal } from '@/components/layout/upload-models'
-import { AnalyticsDashboard } from '@/components/analytics/analytics-dashboard'
+import { render, screen } from '@testing-library/react'
 import { StatsOverview } from '@/components/analytics/stats-overview'
 import { StatsDistribution } from '@/components/analytics/stats-distribution'
 import { AnalyticsEmptyState } from '@/components/analytics/analytics-empty-state'
 
 // Mock the Zustand store
 vi.mock('@/hooks/use-analytics-store', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   useAnalyticsStore: (selector: (state: any) => any) => {
     const mockState = {
       dataset: null,
@@ -471,7 +469,7 @@ describe('Analytics Dashboard E2E Tests', () => {
     it('should allow clearing data', async () => {
       const user = userEvent.setup()
 
-      const { container } = render(
+      render(
         <div>
           <button>Clear Data</button>
         </div>
@@ -502,9 +500,7 @@ describe('Analytics Dashboard E2E Tests', () => {
     })
 
     it('should allow recovery from error state', async () => {
-      const user = userEvent.setup()
-
-      const { rerender } = render(
+      render(
         <div>
           <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6">
             <h3 className="font-semibold text-destructive mb-2">Error</h3>

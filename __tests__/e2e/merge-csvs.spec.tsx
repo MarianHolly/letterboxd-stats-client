@@ -5,18 +5,11 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { UploadModal } from '@/components/layout/upload-models'
-import { mockWatchedCSV, mockDiaryCSV, mockRatingsCSV, mockFilmsCSV, mockWatchlistCSV } from '@/__tests__/fixtures/mock-csvs'
-import type { MovieDataset } from '@/lib/types'
 
 // Mock the dropzone library
 vi.mock('react-dropzone', () => ({
-  useDropzone: ({
-    onDrop,
-  }: {
-    onDrop: (files: File[]) => void
-  }) => ({
+  useDropzone: () => ({
     getRootProps: () => ({
       onDrop: (e: DragEvent) => {
         e.preventDefault()
@@ -36,9 +29,8 @@ describe('Multiple CSV Merge E2E Tests', () => {
   describe('Two-file merge (watched + diary)', () => {
     it('should merge watched.csv and diary.csv with diary data enriching watched', async () => {
       const onUploadComplete = jest.fn()
-      const user = userEvent.setup()
 
-      const { container } = render(
+      render(
         <UploadModal
           open={true}
           onOpenChange={jest.fn()}
@@ -71,7 +63,7 @@ describe('Multiple CSV Merge E2E Tests', () => {
     it('should handle merge with conflict resolution (ratings > diary)', async () => {
       const onUploadComplete = jest.fn()
 
-      const { container } = render(
+      render(
         <UploadModal
           open={true}
           onOpenChange={jest.fn()}
@@ -109,7 +101,6 @@ describe('Multiple CSV Merge E2E Tests', () => {
 
   describe('Re-uploading same file type', () => {
     it('should allow replacing previously uploaded file', async () => {
-      const user = userEvent.setup()
       const onUploadComplete = jest.fn()
 
       render(

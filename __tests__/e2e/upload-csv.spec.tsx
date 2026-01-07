@@ -4,18 +4,12 @@
  */
 
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { UploadModal } from '@/components/layout/upload-models'
-import type { MovieDataset } from '@/lib/types'
 
 // Mock the dropzone library
 vi.mock('react-dropzone', () => ({
-  useDropzone: ({
-    onDrop,
-  }: {
-    onDrop: (files: File[]) => void
-  }) => ({
+  useDropzone: () => ({
     getRootProps: () => ({
       onDrop: (e: DragEvent) => {
         e.preventDefault()
@@ -34,7 +28,7 @@ vi.mock('react-dropzone', () => ({
 describe('CSV Upload E2E Tests', () => {
   describe('Upload Modal Rendering', () => {
     it('should render upload modal when open prop is true', () => {
-      const { container } = render(
+      render(
         <UploadModal open={true} onOpenChange={jest.fn()} />
       )
 
@@ -151,7 +145,7 @@ describe('CSV Upload E2E Tests', () => {
   describe('Modal State Management', () => {
     it('should close modal when onOpenChange called with false', () => {
       const mockOnOpenChange = jest.fn()
-      const { rerender } = render(
+      render(
         <UploadModal open={true} onOpenChange={mockOnOpenChange} />
       )
 
