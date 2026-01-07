@@ -139,6 +139,9 @@ export function AnalyticsSidebar({
       "the-canon",
     ];
 
+    // Store observer instance for cleanup
+    let observerInstance: IntersectionObserver | null = null;
+
     // Wait for DOM to be fully rendered
     const timer = setTimeout(() => {
       // Find the scrollable container (AnalyticsDashboard div)
@@ -178,6 +181,8 @@ export function AnalyticsSidebar({
         }
       );
 
+      observerInstance = observer;
+
       // Observe all sections
       sections.forEach((section) => {
         const element = document.getElementById(section);
@@ -185,18 +190,12 @@ export function AnalyticsSidebar({
           observer.observe(element);
         }
       });
-
-      // Store observer for cleanup
-      const observerInstance = observer;
-
-      // Cleanup
-      return () => {
-        observerInstance.disconnect();
-      };
     }, 100);
 
+    // Cleanup both timer and observer
     return () => {
       clearTimeout(timer);
+      observerInstance?.disconnect();
     };
   }, []);
 
