@@ -39,7 +39,7 @@ interface UploadedFile {
   errorCategory?: ErrorCategory;
   errorGuidance?: string;
   parsedData?: Movie[];
-  profileData?: any;
+  profileData?: UserProfile;
   isReplaced?: boolean;
   replacedPreviousFile?: boolean;
 }
@@ -1011,7 +1011,7 @@ export function UploadModal({
           >
             <p>
               No Letterboxd account? No problem! Explore the analytics with a
-              sample film collection to see what's possible.
+              sample film collection to see what&apos;s possible.
             </p>
 
             {/* Profile Selector */}
@@ -1085,7 +1085,7 @@ export function UploadModal({
                   isDark ? "text-purple-300" : "text-purple-900"
                 }`}
               >
-                What you'll get:
+                What you&apos;ll get:
               </p>
               <ul className="text-sm space-y-2 ml-4">
                 <li>✓ All 18+ interactive charts & statistics</li>

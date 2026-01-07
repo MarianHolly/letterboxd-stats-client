@@ -278,7 +278,7 @@ export function ViewingTimelineArea({ data }: ViewingTimelineAreaProps) {
               content={
                 <ChartTooltipContent
                   className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-lg"
-                  formatter={(value: unknown) => {
+                  formatter={(value: any) => {
                     return [typeof value === 'number' ? `${value} movies` : value, 'Count'];
                   }}
                 />

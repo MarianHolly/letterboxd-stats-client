@@ -160,8 +160,8 @@ export function FavoriteDecadesBar({ data }: FavoriteDecadesBarProps) {
                   offset={8}
                   className="fill-foreground"
                   fontSize={11}
-                  content={({ x, y, width, index }: { x?: number | string; y?: number | string; width?: number | string; index?: number }) => {
-                    if (index === undefined) return null
+                  content={(props: any) => {
+                    const { x, y, width, index } = props as { x: number; y: number; width: number; index: number }
                     const percentage = chartData[index]?.percentage
                     if (!percentage) return null
                     return (
@@ -188,8 +188,8 @@ export function FavoriteDecadesBar({ data }: FavoriteDecadesBarProps) {
                     offset={8}
                     className="fill-foreground"
                     fontSize={11}
-                    content={({ x, y, width, index }: { x?: number | string; y?: number | string; width?: number | string; index?: number }) => {
-                      if (index === undefined) return null
+                    content={(props: any) => {
+                      const { x, y, width, index } = props as { x: number; y: number; width: number; index: number }
                       const percentage = chartData[index]?.percentage
                       if (!percentage) return null
                       return (

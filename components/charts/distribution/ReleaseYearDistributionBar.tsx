@@ -320,7 +320,8 @@ export function ReleaseYearDistributionBar({ data }: ReleaseYearDistributionBarP
               />
               <ChartTooltip
                 cursor={{ fill: "rgba(0,0,0,0.01)" }}
-                content={({ active, payload }: { active?: boolean | undefined; payload?: Array<{ payload: unknown }> | undefined }) => {
+                content={(props: any) => {
+                  const { active, payload } = props;
                   if (active && payload && payload.length > 0) {
                     const data = payload[0].payload;
                     return (
