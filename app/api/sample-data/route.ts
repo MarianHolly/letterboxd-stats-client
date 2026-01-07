@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const mockPath = path.join(process.cwd(), 'mock', profile)
+    const samplePath = path.join(process.cwd(), 'sample', profile)
     const files = [
       'watched.csv',
       'diary.csv',
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     for (const file of files) {
       try {
-        const filePath = path.join(mockPath, file)
+        const filePath = path.join(samplePath, file)
         const content = await readFile(filePath, 'utf-8')
         // Store as base64 to safely transmit CSV content
         data[file] = Buffer.from(content).toString('base64')
