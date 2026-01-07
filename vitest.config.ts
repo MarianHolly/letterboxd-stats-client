@@ -2,9 +2,8 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-// Use type assertion to avoid version mismatch between vitest and vite
 export default defineConfig({
-  plugins: [react()] as any,
+  plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './'),

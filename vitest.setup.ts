@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { expect, afterEach, vi } from 'vitest';
+import { afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 
 // Cleanup after each test
@@ -28,14 +28,14 @@ global.IntersectionObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-})) as any;
+})) as unknown as typeof IntersectionObserver;
 
 // Mock ResizeObserver
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-})) as any;
+})) as unknown as typeof ResizeObserver;
 
 // Mock localStorage
 const localStorageMock = (() => {
