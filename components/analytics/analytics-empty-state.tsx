@@ -2,15 +2,14 @@
 
 import { Upload, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useTheme } from "next-themes"
+import { useThemeSafe } from "@/hooks/use-theme-safe"
 import { motion } from "motion/react"
 interface AnalyticsEmptyStateProps {
   onUploadClick?: () => void
 }
 
 export function AnalyticsEmptyState({ onUploadClick }: AnalyticsEmptyStateProps) {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
+  const { isDark } = useThemeSafe()
 
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden flex items-center justify-center px-4 bg-background">

@@ -2,8 +2,8 @@
 
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { useTheme } from "next-themes";
 import { toast } from "sonner";
+import { useThemeSafe } from "@/hooks/use-theme-safe";
 import {
   Dialog,
   DialogContent,
@@ -103,8 +103,7 @@ export function UploadModal({
   onOpenChange,
   onUploadComplete,
 }: UploadModalProps) {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
+  const { isDark } = useThemeSafe();
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [showInvalidWarning, setShowInvalidWarning] = useState(false);
   const [showProfileConfirm, setShowProfileConfirm] = useState(false);

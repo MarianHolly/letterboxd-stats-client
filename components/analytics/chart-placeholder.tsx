@@ -1,6 +1,6 @@
 "use client";
 
-import { useTheme } from "next-themes";
+import { useThemeSafe } from "@/hooks/use-theme-safe";
 import { AlertCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -24,8 +24,7 @@ export function ChartPlaceholder({
   height = "h-64",
   onUploadClick,
 }: ChartPlaceholderProps) {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
+  const { isDark } = useThemeSafe();
 
   return (
     <Card

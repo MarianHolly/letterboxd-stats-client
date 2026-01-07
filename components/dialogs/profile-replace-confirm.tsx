@@ -1,6 +1,6 @@
 'use client'
 
-import { useTheme } from 'next-themes'
+import { useThemeSafe } from '@/hooks/use-theme-safe'
 import {
   Dialog,
   DialogContent,
@@ -31,8 +31,7 @@ export function ProfileReplaceConfirm({
   onReplace,
   onCancel,
 }: ProfileReplaceConfirmProps) {
-  const { theme } = useTheme()
-  const isDark = theme === 'dark'
+  const { isDark } = useThemeSafe()
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
