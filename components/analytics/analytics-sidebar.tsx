@@ -8,16 +8,9 @@ import { cn } from "@/lib/utils";
 import {
   BarChart3,
   TrendingUp,
-  Film,
-  User2,
   Upload,
-  Settings,
-  PencilIcon,
   LogOut,
   Home,
-  Zap,
-  Star,
-  Calendar,
   Clock,
   Heart,
   ListChecks,
@@ -35,8 +28,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-
-import { Button } from "@/components/ui/button";
 
 export interface NavItem {
   title: string;
@@ -135,7 +126,6 @@ export function AnalyticsSidebar({
   ...props
 }: AnalyticsSidebarProps) {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = React.useState(false);
   const [activeSection, setActiveSection] = React.useState<string>("#cinematic-timeline");
 
   // Detect which section is currently in view using Intersection Observer
@@ -148,6 +138,9 @@ export function AnalyticsSidebar({
       "year-in-film",
       "the-canon",
     ];
+
+    // Store observer instance for cleanup
+    let observerInstance: IntersectionObserver | null = null;
 
     // Wait for DOM to be fully rendered
     const timer = setTimeout(() => {
@@ -188,6 +181,8 @@ export function AnalyticsSidebar({
         }
       );
 
+      observerInstance = observer;
+
       // Observe all sections
       sections.forEach((section) => {
         const element = document.getElementById(section);
@@ -195,18 +190,12 @@ export function AnalyticsSidebar({
           observer.observe(element);
         }
       });
-
-      // Store observer for cleanup
-      const observerInstance = observer;
-
-      // Cleanup
-      return () => {
-        observerInstance.disconnect();
-      };
     }, 100);
 
+    // Cleanup both timer and observer
     return () => {
       clearTimeout(timer);
+      observerInstance?.disconnect();
     };
   }, []);
 

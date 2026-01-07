@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Download, Upload, BarChart3, Lock, ArrowRight, FileJson, Circle } from "lucide-react";
+import { ArrowRight, FileJson, Circle, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -13,29 +13,6 @@ import { ScrollTrigger } from "@/components/layout/scroll-trigger";
 import ChartExamples from "@/components/guide/chart-examples";
 
 export default function GuidePage() {
-  const csvFiles = [
-    {
-      name: "diary.csv",
-      description: "Complete viewing history with ratings and dates",
-      recommended: true,
-    },
-    {
-      name: "ratings.csv",
-      description: "Films you've rated",
-      recommended: false,
-    },
-    {
-      name: "films.csv",
-      description: "All films watched",
-      recommended: false,
-    },
-    {
-      name: "watchlist.csv",
-      description: "Films in your watchlist",
-      recommended: false,
-    },
-  ];
-
   const faqItems = [
     {
       question: "What files do I need to upload?",
@@ -196,7 +173,7 @@ export default function GuidePage() {
                   Upload
                 </h3>
                 <p className="text-base text-foreground/60 dark:text-foreground/50 leading-relaxed font-light">
-                  Drag and drop your extracted CSV files into the analytics dashboard. Upload one or multiple files—we'll automatically validate, merge, and process them. All processing happens locally in your browser.
+                  Drag and drop your extracted CSV files into the analytics dashboard. Upload one or multiple files—we&apos;ll automatically validate, merge, and process them. All processing happens locally in your browser.
                 </p>
               </ScrollTrigger>
             </div>
@@ -231,7 +208,7 @@ export default function GuidePage() {
               >
                 Letterboxd Settings → Data
               </a>
-              , you'll receive a ZIP file containing your complete viewing history. After extracting the ZIP, you'll find various CSV files and folders organized as follows:
+              , you&apos;ll receive a ZIP file containing your complete viewing history. After extracting the ZIP, you&apos;ll find various CSV files and folders organized as follows:
             </p>
 
             {/* ZIP Contents Overview */}
@@ -306,7 +283,7 @@ export default function GuidePage() {
                 ratings.csv
               </code>
               <p className="text-sm text-foreground/70 dark:text-foreground/60">
-                Films you've rated with your ratings and rating dates.
+                Films you&apos;ve rated with your ratings and rating dates.
               </p>
             </div>
 
@@ -324,7 +301,7 @@ export default function GuidePage() {
                 likes/films.csv
               </code>
               <p className="text-sm text-foreground/70 dark:text-foreground/60">
-                Films you've marked as favorites (found in the likes folder).
+                Films you&apos;ve marked as favorites (found in the likes folder).
               </p>
             </div>
 
@@ -402,7 +379,7 @@ export default function GuidePage() {
               See It In Action
             </h2>
             <p className="text-lg text-foreground/60 dark:text-foreground/65 leading-relaxed max-w-2xl mx-auto">
-              Here's a preview of some key charts you'll see in your analytics dashboard. These examples show mock data—yours will reflect your unique viewing history.
+              Here&apos;s a preview of some key charts you&apos;ll see in your analytics dashboard. These examples show mock data—yours will reflect your unique viewing history.
             </p>
           </div>
 

@@ -5,8 +5,7 @@
 
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useAnalyticsStore } from '@/hooks/use-analytics-store'
-import { MOCK_WATCHED_CSV, MOCK_DIARY_CSV, MOCK_RATINGS_CSV, MOCK_FILMS_CSV, MOCK_WATCHLIST_CSV } from '../fixtures/mock-csvs'
-import type { Movie } from '@/lib/types'
+import { MOCK_WATCHED_CSV, MOCK_DIARY_CSV, MOCK_RATINGS_CSV, MOCK_FILMS_CSV } from '../fixtures/mock-csvs'
 
 // ============================================================================
 // STORE INITIALIZATION TESTS

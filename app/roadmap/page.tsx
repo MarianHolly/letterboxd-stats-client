@@ -183,7 +183,7 @@ export default function RoadmapPage() {
             Have an idea or feedback?
           </h2>
           <p className="text-lg text-foreground/70 dark:text-foreground/60 mb-8">
-            This project is shaped by the community. We'd love to hear from you.
+            This project is shaped by the community. We&apos;d love to hear from you.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/contact">

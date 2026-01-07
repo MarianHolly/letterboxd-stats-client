@@ -4,7 +4,6 @@
  */
 
 import { detectCSVType, validateCSV, parseCSVContent, parseLetterboxdCSV } from '@/lib/csv-parser'
-import type { ParseResult, Movie } from '@/lib/types'
 import {
   MOCK_WATCHED_CSV,
   MOCK_DIARY_CSV,
@@ -341,6 +340,7 @@ describe('CSV Parser', () => {
     })
 
     it('should handle missing file', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await parseLetterboxdCSV(null as any)
 
       expect(result.success).toBe(false)

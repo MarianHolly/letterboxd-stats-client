@@ -13,7 +13,6 @@ import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart";
 
 interface AnnualSummaryBarProps {
@@ -104,7 +103,7 @@ export function AnnualSummaryBar({ data }: AnnualSummaryBarProps) {
               <LabelList
                 dataKey="change"
                 position="top"
-                content={({ x, y, width, value, index }) => {
+                content={({ x, y, width, index }) => {
                   const item = data[index as number];
                   if (!item || item.change === null) return null;
 

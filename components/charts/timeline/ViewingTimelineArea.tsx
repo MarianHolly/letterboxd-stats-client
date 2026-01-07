@@ -31,7 +31,6 @@ interface ViewingTimelineAreaProps {
   }>;
 }
 
-type TimeRange = 'all' | 'last12';
 type SmoothingLevel = 'none' | 'two-month' | 'three-month';
 
 const chartConfig = {
@@ -72,16 +71,6 @@ function smoothData(
   }
 
   return smoothed;
-}
-
-/**
- * Filters data to show only last N months
- */
-function filterLastMonths(
-  data: Array<{ month: string; count: number }>,
-  months: number
-): Array<{ month: string; count: number }> {
-  return data.slice(-months);
 }
 
 /**
@@ -289,6 +278,7 @@ export function ViewingTimelineArea({ data }: ViewingTimelineAreaProps) {
               content={
                 <ChartTooltipContent
                   className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-lg"
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   formatter={(value: any) => {
                     return [typeof value === 'number' ? `${value} movies` : value, 'Count'];
                   }}

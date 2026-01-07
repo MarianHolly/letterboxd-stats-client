@@ -39,7 +39,7 @@ interface UploadedFile {
   errorCategory?: ErrorCategory;
   errorGuidance?: string;
   parsedData?: Movie[];
-  profileData?: any;
+  profileData?: UserProfile;
   isReplaced?: boolean;
   replacedPreviousFile?: boolean;
 }
@@ -259,7 +259,6 @@ export function UploadModal({
         );
 
         if (existingIndex !== -1) {
-          const oldFile = updated[existingIndex];
           replacedFiles.push(newFile.type);
 
           // Mark old file as replaced
@@ -307,7 +306,7 @@ export function UploadModal({
         duration: 5000,
       });
     });
-  }, []);
+  }, [currentProfile]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -554,14 +553,6 @@ export function UploadModal({
     }
   };
 
-  const groupedFiles = uploadedFiles.reduce((acc, file, index) => {
-    if (!acc[file.type]) {
-      acc[file.type] = [];
-    }
-    acc[file.type].push({ ...file, index });
-    return acc;
-  }, {} as Record<string, (UploadedFile & { index: number })[]>);
-
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -722,9 +713,6 @@ export function UploadModal({
                     const fileEntry = uploadedFiles.find(
                       (f) => f.type === key && !f.isReplaced
                     );
-                    const hasFile = fileEntry && fileEntry.status !== "error";
-                    const hasError = fileEntry?.status === "error";
-
                     // Show uploaded file content if file exists
                     if (fileEntry) {
                       const isRequired = info.required;
@@ -1011,7 +999,7 @@ export function UploadModal({
           >
             <p>
               No Letterboxd account? No problem! Explore the analytics with a
-              sample film collection to see what's possible.
+              sample film collection to see what&apos;s possible.
             </p>
 
             {/* Profile Selector */}
@@ -1085,7 +1073,7 @@ export function UploadModal({
                   isDark ? "text-purple-300" : "text-purple-900"
                 }`}
               >
-                What you'll get:
+                What you&apos;ll get:
               </p>
               <ul className="text-sm space-y-2 ml-4">
                 <li>✓ All 18+ interactive charts & statistics</li>

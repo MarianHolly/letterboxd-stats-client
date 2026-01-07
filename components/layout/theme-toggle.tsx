@@ -3,13 +3,15 @@
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
+  // This is needed for hydration - setState in effect is intentional
+  useLayoutEffect(() => {
+    // eslint-disable-next-line
     setMounted(true);
   }, []);
 

@@ -3,9 +3,8 @@
  * Tests profile upload, persistence, and store actions
  */
 
-import { describe, it, expect, beforeEach } from '@jest/globals'
 import { useAnalyticsStore } from '@/hooks/use-analytics-store'
-import type { UserProfile, Movie, MovieDataset } from '@/lib/types'
+import type { UserProfile, Movie } from '@/lib/types'
 import { mergeMovieSources } from '@/lib/data-merger'
 
 // Helper to create test data

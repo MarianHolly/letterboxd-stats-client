@@ -1,4 +1,3 @@
-import Link from "next/link";
 
 const AboutSection = () => {
   return (
@@ -7,12 +6,12 @@ const AboutSection = () => {
         {/* Main Content */}
         <div className="flex flex-col items-center text-center mb-20">
           <h1 className="text-5xl md:text-6xl font-semibold tracking-tight text-foreground mb-8 max-w-3xl">
-            You've tracked the films. Now, understand the <em>why</em>.
+            You&apos;ve tracked the films. Now, understand the <em>why</em>.
           </h1>
           <p className="text-lg text-foreground/70 dark:text-foreground/65 leading-relaxed max-w-2xl mb-6">
             We take your raw Letterboxd history—your ratings, your diary
             entries—and transform them into a definitive cinematic profile. Our
-            charts don't just count movies; they show you the{" "}
+            charts don&apos;t just count movies; they show you the{" "}
             <strong>patterns, preferences, and unexplored landscapes</strong> of
             your taste.
           </p>

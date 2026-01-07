@@ -453,7 +453,7 @@ function parseCSV(content: string, fileType: CSVType): ParseResult<Movie[]> {
       return {
         success: false,
         data: [],
-        errors: parsed.errors.map((err: any) => ({
+        errors: parsed.errors.map((err: { row?: number; field?: string; message?: string }) => ({
           row: err.row || 0,
           field: err.field || 'unknown',
           value: '',

@@ -12,7 +12,6 @@ import { Badge } from "@/components/ui/badge"
 import {
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
 

@@ -50,10 +50,7 @@ import {
   transformMonthlyData,
   transformDiaryStats,
   computeReleaseYearInsight,
-  computeViewingInsight,
-  transformLikesByDecade,
   transformRatingDistribution,
-  transformRatingByDecade,
   transformTastePreferenceStats,
   transformMostLikedDecade,
   transformBestRatedDecade,
@@ -90,7 +87,9 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   // Handle hydration
   const [isHydrated, setIsHydrated] = useState(false);
 
+  // This is needed for hydration - setState in effect is intentional
   useEffect(() => {
+    // eslint-disable-next-line
     setIsHydrated(true);
   }, []);
 
@@ -140,20 +139,17 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
   // SECTION 2A: Watching Timeline
   const monthlyData = transformMonthlyData(movies);
   const diaryStats = monthlyData.length > 0 ? transformDiaryStats(monthlyData, movies) : undefined;
-  const viewingInsight = analytics && diaryStats ? computeViewingInsight(analytics, monthlyData, diaryStats) : "";
   const yearlyComparisonData = transformYearlyComparison(movies);
   const yearlyTotalsData = transformYearlyTotals(movies);
 
   // SECTION 3A: Likes Analysis
   const hasMoviesLiked = movies.some((m: Movie) => m.liked === true);
-  const likesByDecade = hasMoviesLiked ? transformLikesByDecade(movies) : [];
 
   // SECTION 3B: Rating Patterns
   const hasRatings = analytics && analytics.moviesRated > 0;
   const ratingDistribution = hasRatings
     ? transformRatingDistribution(analytics?.ratingDistribution || {})
     : [];
-  const ratingByDecade = hasRatings ? transformRatingByDecade(movies) : [];
 
   // SECTION 3: Overall Taste & Preference Stats
   const tastePreferenceStats = (hasMoviesLiked || hasRatings)
@@ -583,7 +579,7 @@ export function AnalyticsDashboard({ onUploadClick }: AnalyticsDashboardProps) {
               </div>
 
               <p className="text-center text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
-                This project is continuously evolving. Here's what's coming next:
+                This project is continuously evolving. Here&apos;s what&apos;s coming next:
               </p>
 
               {/* Future Steps */}

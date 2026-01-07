@@ -3,9 +3,8 @@
  * Tests merging profile data with movie datasets
  */
 
-import { describe, it, expect } from '@jest/globals'
 import { mergeMovieSources } from '@/lib/data-merger'
-import type { Movie, UserProfile, MovieDataset } from '@/lib/types'
+import type { Movie, UserProfile } from '@/lib/types'
 
 // ============================================================================
 // TEST DATA FIXTURES

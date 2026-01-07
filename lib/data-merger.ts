@@ -148,14 +148,23 @@ export function resolveConflicts(
 
 /**
  * Aggregate rewatches from multiple diary entries
- * Groups entries by title+year (not URI, since diary uses entry URIs)
+ * Groups by ID first (when available), then by title+year for entries without IDs
  *
  * Handles two cases:
  * 1. Multiple entries for same movie = each entry is a watch/rewatch
  * 2. Single entry with Rewatch: Yes = explicitly marked as rewatch, count = 1
  */
 function aggregateRewatches(diaryMovies: Movie[]): Movie[] {
-  const grouped = groupBy(diaryMovies, (movie) => getMovieKey(movie))
+  // Group by ID first (preferred), then fall back to title+year
+  const groupKey = (movie: Movie): string => {
+    // Use ID as primary key if available, otherwise use title+year
+    if (movie.id) {
+      return `id:${movie.id}`
+    }
+    return `key:${getMovieKey(movie)}`
+  }
+
+  const grouped = groupBy(diaryMovies, groupKey)
   const aggregated: Movie[] = []
 
   grouped.forEach((entries) => {
@@ -164,7 +173,8 @@ function aggregateRewatches(diaryMovies: Movie[]): Movie[] {
     const base = { ...entries[0] }
 
     if (entries.length > 1) {
-      // Multiple entries for same movie = rewatches
+      // Multiple entries for same movie (by ID or title+year) = rewatches
+      // Count all entries as watches (first + rewatches)
       base.rewatch = true
       base.rewatchCount = entries.length - 1
 
@@ -229,9 +239,13 @@ export function mergeMovieSources(
   if (films && films.length > 0) {
     uploadedFiles.push('films')
     const filmsMap = new Map(films.map((m) => [getMovieKey(m), m]))
+    const filmsMapById = new Map(films.map((m) => [m.id, m]))
 
     merged = merged.map((movie) => {
-      const filmsEntry = filmsMap.get(getMovieKey(movie))
+      let filmsEntry = filmsMap.get(getMovieKey(movie))
+      if (!filmsEntry && movie.id) {
+        filmsEntry = filmsMapById.get(movie.id)
+      }
       if (filmsEntry && filmsEntry.liked) {
         return { ...movie, liked: true }
       }
@@ -247,9 +261,15 @@ export function mergeMovieSources(
     const aggregated = aggregateRewatches(diary)
     // Use title+year key instead of URI since diary uses diary entry URIs
     const diaryMap = new Map(aggregated.map((m) => [getMovieKey(m), m]))
+    // Also create id-based map for matching
+    const diaryMapById = new Map(aggregated.map((m) => [m.id, m]))
 
     merged = merged.map((movie) => {
-      const diaryEntry = diaryMap.get(getMovieKey(movie))
+      // Try to match by title+year first, then by id as fallback
+      let diaryEntry = diaryMap.get(getMovieKey(movie))
+      if (!diaryEntry && movie.id) {
+        diaryEntry = diaryMapById.get(movie.id)
+      }
       if (diaryEntry) {
         return resolveConflicts(movie, diaryEntry, 'diary')
       }
@@ -265,9 +285,13 @@ export function mergeMovieSources(
   if (ratings && ratings.length > 0) {
     uploadedFiles.push('ratings')
     const ratingsMap = new Map(ratings.map((m) => [getMovieKey(m), m]))
+    const ratingsMapById = new Map(ratings.map((m) => [m.id, m]))
 
     merged = merged.map((movie) => {
-      const ratingEntry = ratingsMap.get(getMovieKey(movie))
+      let ratingEntry = ratingsMap.get(getMovieKey(movie))
+      if (!ratingEntry && movie.id) {
+        ratingEntry = ratingsMapById.get(movie.id)
+      }
       if (ratingEntry) {
         return resolveConflicts(movie, ratingEntry, 'ratings')
       }

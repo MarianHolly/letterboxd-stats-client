@@ -1,10 +1,9 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { Upload, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
-
+import { motion } from "motion/react"
 interface AnalyticsEmptyStateProps {
   onUploadClick?: () => void
 }

@@ -31,7 +31,7 @@ export default function ContactPage() {
               Get in Touch
             </h1>
             <p className="text-lg text-foreground/70 dark:text-foreground/65 max-w-2xl mx-auto">
-              Found a bug? Have a feature request? We'd love to hear from you.
+              Found a bug? Have a feature request? We&apos;d love to hear from you.
             </p>
           </div>
 

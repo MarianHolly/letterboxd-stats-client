@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -78,7 +76,7 @@ const FAQSection = () => {
             {/* Help CTA */}
             <div className="mt-12 pt-8 border-t border-border dark:border-border-light flex flex-row items-center justify-between gap-4">
               <p className="text-muted-foreground dark:text-slate-400 font-medium">
-                Can't find what you're looking for?
+                Can&apos;t find what you&apos;re looking for?
               </p>
               <a
                 href="/contact"

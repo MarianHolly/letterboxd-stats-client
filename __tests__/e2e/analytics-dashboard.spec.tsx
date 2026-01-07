@@ -3,17 +3,15 @@
  * Tests the full user journey from upload to viewing analytics
  */
 
-import { test, expect } from '@jest/globals'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { UploadModal } from '@/components/layout/upload-models'
-import { AnalyticsDashboard } from '@/components/analytics/analytics-dashboard'
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
 import { StatsOverview } from '@/components/analytics/stats-overview'
 import { StatsDistribution } from '@/components/analytics/stats-distribution'
 import { AnalyticsEmptyState } from '@/components/analytics/analytics-empty-state'
 
 // Mock the Zustand store
-jest.mock('@/hooks/use-analytics-store', () => ({
+vi.mock('@/hooks/use-analytics-store', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   useAnalyticsStore: (selector: (state: any) => any) => {
     const mockState = {
       dataset: null,
@@ -31,7 +29,7 @@ jest.mock('@/hooks/use-analytics-store', () => ({
 
 describe('Analytics Dashboard E2E Tests', () => {
   describe('Dashboard navigation and layout', () => {
-    test('should render analytics page header', () => {
+    it('should render analytics page header', () => {
       render(
         <div>
           <h1>Your true cinematic identity</h1>
@@ -47,7 +45,7 @@ describe('Analytics Dashboard E2E Tests', () => {
       ).toBeInTheDocument()
     })
 
-    test('should have accessible navigation', () => {
+    it('should have accessible navigation', () => {
       const { container } = render(
         <div>
           <header>
@@ -62,7 +60,7 @@ describe('Analytics Dashboard E2E Tests', () => {
   })
 
   describe('Empty state display', () => {
-    test('should show empty state when no data uploaded', () => {
+    it('should show empty state when no data uploaded', () => {
       render(
         <AnalyticsEmptyState onUploadClick={jest.fn()} />
       )
@@ -71,7 +69,7 @@ describe('Analytics Dashboard E2E Tests', () => {
       expect(screen.getByText(/upload/i)).toBeInTheDocument()
     })
 
-    test('should have working upload button in empty state', async () => {
+    it('should have working upload button in empty state', async () => {
       const onUploadClick = jest.fn()
       const user = userEvent.setup()
 
@@ -87,7 +85,7 @@ describe('Analytics Dashboard E2E Tests', () => {
   })
 
   describe('Stats overview display', () => {
-    test('should display all stat cards when data available', () => {
+    it('should display all stat cards when data available', () => {
       const mockAnalytics = {
         totalMoviesWatched: 150,
         moviesRated: 145,
@@ -119,7 +117,7 @@ describe('Analytics Dashboard E2E Tests', () => {
       expect(container.querySelectorAll('[class*="card"]')).toHaveLength(0) // Will have actual card elements
     })
 
-    test('should show loading skeleton while computing analytics', () => {
+    it('should show loading skeleton while computing analytics', () => {
       const mockAnalytics = {
         totalMoviesWatched: 0,
         moviesRated: 0,
@@ -153,7 +151,7 @@ describe('Analytics Dashboard E2E Tests', () => {
   })
 
   describe('Distribution charts display', () => {
-    test('should render rating distribution chart', () => {
+    it('should render rating distribution chart', () => {
       const mockAnalytics = {
         totalMoviesWatched: 150,
         moviesRated: 145,
@@ -200,7 +198,7 @@ describe('Analytics Dashboard E2E Tests', () => {
       expect(container).toBeInTheDocument()
     })
 
-    test('should render decade breakdown chart', () => {
+    it('should render decade breakdown chart', () => {
       const mockAnalytics = {
         totalMoviesWatched: 150,
         moviesRated: 145,
@@ -235,7 +233,7 @@ describe('Analytics Dashboard E2E Tests', () => {
       expect(container).toBeInTheDocument()
     })
 
-    test('should render yearly watching table', () => {
+    it('should render yearly watching table', () => {
       const mockAnalytics = {
         totalMoviesWatched: 150,
         moviesRated: 145,
@@ -272,7 +270,7 @@ describe('Analytics Dashboard E2E Tests', () => {
   })
 
   describe('Responsive design', () => {
-    test('should render correctly on mobile viewport', () => {
+    it('should render correctly on mobile viewport', () => {
       // Set mobile viewport
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -310,7 +308,7 @@ describe('Analytics Dashboard E2E Tests', () => {
       expect(container).toBeInTheDocument()
     })
 
-    test('should render correctly on tablet viewport', () => {
+    it('should render correctly on tablet viewport', () => {
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         configurable: true,
@@ -347,7 +345,7 @@ describe('Analytics Dashboard E2E Tests', () => {
       expect(container).toBeInTheDocument()
     })
 
-    test('should render correctly on desktop viewport', () => {
+    it('should render correctly on desktop viewport', () => {
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         configurable: true,
@@ -386,7 +384,7 @@ describe('Analytics Dashboard E2E Tests', () => {
   })
 
   describe('Dark and light mode support', () => {
-    test('should support light mode styling', () => {
+    it('should support light mode styling', () => {
       const mockAnalytics = {
         totalMoviesWatched: 150,
         moviesRated: 145,
@@ -417,7 +415,7 @@ describe('Analytics Dashboard E2E Tests', () => {
       expect(container).toBeInTheDocument()
     })
 
-    test('should support dark mode styling', () => {
+    it('should support dark mode styling', () => {
       document.documentElement.classList.add('dark')
 
       const mockAnalytics = {
@@ -454,7 +452,7 @@ describe('Analytics Dashboard E2E Tests', () => {
   })
 
   describe('Interactive elements', () => {
-    test('should have working upload button', async () => {
+    it('should have working upload button', async () => {
       const user = userEvent.setup()
       const onUploadClick = jest.fn()
 
@@ -468,10 +466,10 @@ describe('Analytics Dashboard E2E Tests', () => {
       expect(onUploadClick).toHaveBeenCalled()
     })
 
-    test('should allow clearing data', async () => {
+    it('should allow clearing data', async () => {
       const user = userEvent.setup()
 
-      const { container } = render(
+      render(
         <div>
           <button>Clear Data</button>
         </div>
@@ -485,7 +483,7 @@ describe('Analytics Dashboard E2E Tests', () => {
   })
 
   describe('Error handling', () => {
-    test('should display error message if analytics computation fails', () => {
+    it('should display error message if analytics computation fails', () => {
       const errorMessage = 'Failed to compute analytics'
 
       render(
@@ -501,10 +499,8 @@ describe('Analytics Dashboard E2E Tests', () => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument()
     })
 
-    test('should allow recovery from error state', async () => {
-      const user = userEvent.setup()
-
-      const { rerender } = render(
+    it('should allow recovery from error state', async () => {
+      render(
         <div>
           <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6">
             <h3 className="font-semibold text-destructive mb-2">Error</h3>

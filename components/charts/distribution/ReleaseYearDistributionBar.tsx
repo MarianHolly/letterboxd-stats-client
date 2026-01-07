@@ -30,7 +30,6 @@ import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart"
 
 interface ReleaseYearDistributionBarProps {
@@ -88,17 +87,6 @@ const GRADIENT_END = { h: 300, s: 85, l: 45 };   // Magenta - vibrant
 // ============================================================================
 
 /**
- * Determine which era a year belongs to
- */
-function getEraForYear(year: number): keyof typeof ERA_BOUNDARIES | null {
-  if (year >= ERA_BOUNDARIES.CLASSIC.min && year <= ERA_BOUNDARIES.CLASSIC.max) return "CLASSIC";
-  if (year >= ERA_BOUNDARIES.GOLDEN.min && year <= ERA_BOUNDARIES.GOLDEN.max) return "GOLDEN";
-  if (year >= ERA_BOUNDARIES.MODERN.min && year <= ERA_BOUNDARIES.MODERN.max) return "MODERN";
-  if (year >= ERA_BOUNDARIES.CONTEMPORARY.min && year <= ERA_BOUNDARIES.CONTEMPORARY.max) return "CONTEMPORARY";
-  return null;
-}
-
-/**
  * Calculate unified gradient color across entire timeline (1900-2099)
  * Creates smooth blue-to-violet gradient spanning all years
  * Eras are separated visually by divider lines, not color changes
@@ -127,7 +115,7 @@ export function ReleaseYearDistributionBar({ data }: ReleaseYearDistributionBarP
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
 
   // Process data by year with era filtering
-  const { processedData, eraTotals, allData } = React.useMemo(() => {
+  const { processedData, eraTotals } = React.useMemo(() => {
     const entries = Object.entries(data)
       .map(([year, count]) => ({ year: parseInt(year), count }))
       .sort((a, b) => a.year - b.year);
@@ -332,7 +320,9 @@ export function ReleaseYearDistributionBar({ data }: ReleaseYearDistributionBarP
               />
               <ChartTooltip
                 cursor={{ fill: "rgba(0,0,0,0.01)" }}
-                content={({ active, payload }: any) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                content={(props: any) => {
+                  const { active, payload } = props;
                   if (active && payload && payload.length > 0) {
                     const data = payload[0].payload;
                     return (

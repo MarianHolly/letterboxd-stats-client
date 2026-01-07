@@ -178,7 +178,7 @@ export default function AboutPage() {
                 Letterboxd is incredible for tracking what you watch, but your viewing history remains just a list—static, scattered, difficult to analyze.
               </p>
               <p className="text-base text-foreground/70 dark:text-foreground/60 leading-relaxed">
-                Without analytics, you miss patterns in your taste, trends in your viewing habits, and insights about your cinematic identity. The data exists, but it's locked away.
+                Without analytics, you miss patterns in your taste, trends in your viewing habits, and insights about your cinematic identity. The data exists, but it&apos;s locked away.
               </p>
             </div>
 
@@ -241,7 +241,7 @@ export default function AboutPage() {
               Pure client-side architecture powered by modern web technologies. No backend, no database, no API calls—everything runs in your browser for maximum privacy and performance.
             </p>
             <p className="text-base text-foreground/60 dark:text-foreground/65">
-              This is both a showcase of technical capabilities and a demonstration of what's possible with modern web development.
+              This is both a showcase of technical capabilities and a demonstration of what&apos;s possible with modern web development.
             </p>
           </div>
 
@@ -312,13 +312,13 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-sm font-medium mb-6">
             <Sparkles size={16} />
-            What's Next
+            What&apos;s Next
           </div>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-6">
             The Future of Letterboxd Stats
           </h2>
           <p className="text-lg text-foreground/70 dark:text-foreground/60 leading-relaxed mb-8 max-w-2xl mx-auto">
-            We're actively developing new features. Next up: enriched data with genre/director insights, AI-powered recommendations, and advanced analytics to help you discover films aligned with your unique taste.
+            We&apos;re actively developing new features. Next up: enriched data with genre/director insights, AI-powered recommendations, and advanced analytics to help you discover films aligned with your unique taste.
           </p>
           <Link href="/roadmap">
             <Button className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-md px-8 py-3 font-semibold inline-flex items-center gap-2">

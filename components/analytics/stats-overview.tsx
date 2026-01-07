@@ -2,7 +2,6 @@
 
 import type { AnalyticsOverview, UserProfile } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatProfileFullName } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 
 // ============================================================================
@@ -20,7 +19,6 @@ interface StatCardProps {
 function StatCard({
   title,
   value,
-  description,
   variant = "default",
   isLoading = false,
 }: StatCardProps) {
@@ -117,13 +115,16 @@ export function StatsOverview({
     );
   }
 
-  // Format user's name
-  const displayName = profile
-    ? formatProfileFullName(
-        profile.firstName,
-        profile.lastName,
-        profile.username
-      )
+  // Format user's name for display
+  const firstName = profile?.firstName;
+  const lastName = profile?.lastName;
+  const username = profile?.username;
+
+  // Create display name with possessive form
+  const displayName = firstName && lastName
+    ? `${firstName} ${lastName}'s all-time stats`
+    : username
+    ? `${username}'s all-time stats`
     : null;
 
   return (
@@ -133,23 +134,29 @@ export function StatsOverview({
         <div className="space-y-8 text-center mt-16 mb-8">
           <div className="space-y-4">
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">
-              Cinematic Profile
+              Cinematic Identity
             </p>
 
-            <h1 className="text-6xl md:text-8xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">
               {displayName}
             </h1>
 
             <p className="text-base text-slate-600 dark:text-slate-300 font-light">
               @{profile.username}
             </p>
+
+            {profile.bio && (
+              <p className="text-sm text-slate-600 dark:text-slate-400 font-light max-w-2xl mx-auto">
+                {profile.bio}
+              </p>
+            )}
           </div>
 
           <Separator className="my-12 max-w-md mx-auto" />
         </div>
       )}
 
-      {/* Stats Grid - Single Row */}
+      {/* Stats Grid - Single Row with 6 cards */}
       <div className="flex flex-wrap gap-12 justify-center pb-8">
         {/* Total Movies Watched */}
         <StatCard
@@ -172,12 +179,22 @@ export function StatsOverview({
           variant="primary"
         />
 
-        {/* Movies Liked */}
+        {/* Favorite Movies */}
         <StatCard
           title="Favorite Movies"
           value={`${analytics.moviesLiked}`}
           variant={analytics.likeRatio >= 50 ? "success" : "default"}
         />
+
+        {/* Hours Watched - Coming Soon */}
+        <div className="text-center flex-shrink-0">
+          <span className="inline-block px-2 mb-4 py-1 text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300 rounded">
+            Coming Soon
+          </span>
+          <p className="text-xs font-light text-slate-500 dark:text-slate-500 uppercase tracking-widest mb-4">
+            Hours Watched
+          </p>
+        </div>
 
         {/* Countries - Coming Soon */}
         <div className="text-center flex-shrink-0">
@@ -188,27 +205,6 @@ export function StatsOverview({
             Countries
           </p>
         </div>
-
-        {/* Earliest Entry Date */}
-        {analytics.earliestWatchDate &&
-          (() => {
-            const date = new Date(analytics.earliestWatchDate);
-            const month = date.toLocaleDateString("en-US", { month: "short" });
-            const year = date.getFullYear();
-
-            return (
-              <div className="text-center flex-shrink-0">
-                <div className="text-indigo-600 dark:text-indigo-400 leading-tight">
-                  <div className="text-xl md:text-2xl font-bold">
-                    <span className="font-normal">{month}</span> {year}
-                  </div>
-                </div>
-                <p className="text-xs font-light text-slate-500 dark:text-slate-500 uppercase tracking-widest mt-2">
-                  Earliest Entry
-                </p>
-              </div>
-            );
-          })()}
       </div>
     </section>
   );
