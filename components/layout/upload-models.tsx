@@ -259,7 +259,6 @@ export function UploadModal({
         );
 
         if (existingIndex !== -1) {
-          const oldFile = updated[existingIndex];
           replacedFiles.push(newFile.type);
 
           // Mark old file as replaced
@@ -307,7 +306,7 @@ export function UploadModal({
         duration: 5000,
       });
     });
-  }, []);
+  }, [currentProfile]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -554,14 +553,6 @@ export function UploadModal({
     }
   };
 
-  const groupedFiles = uploadedFiles.reduce((acc, file, index) => {
-    if (!acc[file.type]) {
-      acc[file.type] = [];
-    }
-    acc[file.type].push({ ...file, index });
-    return acc;
-  }, {} as Record<string, (UploadedFile & { index: number })[]>);
-
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -722,9 +713,6 @@ export function UploadModal({
                     const fileEntry = uploadedFiles.find(
                       (f) => f.type === key && !f.isReplaced
                     );
-                    const hasFile = fileEntry && fileEntry.status !== "error";
-                    const hasError = fileEntry?.status === "error";
-
                     // Show uploaded file content if file exists
                     if (fileEntry) {
                       const isRequired = info.required;
