@@ -77,7 +77,7 @@ export function YearOverYearArea({ data }: YearOverYearAreaProps) {
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
 
             {/* Dynamically render Area for each year */}
-            {years.map((year, index) => (
+            {years.map((year) => (
               <Area
                 key={year}
                 dataKey={year}
