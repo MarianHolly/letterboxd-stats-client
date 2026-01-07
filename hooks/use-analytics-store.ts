@@ -270,7 +270,7 @@ export const useAnalyticsStore = create<AnalyticsStoreType>()(
       /**
        * Remove a single uploaded file and recompute analytics
        */
-      removeFile: async (_filename: string) => {
+      removeFile: async () => {
         set({ loading: true, error: null })
 
         try {
