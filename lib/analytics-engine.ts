@@ -7,7 +7,7 @@
  */
 
 import type { Movie, AnalyticsOverview } from './types'
-import { average, median, groupBy, countBy, sum } from './utils'
+import { average, median, groupBy, countBy } from './utils'
 
 // ============================================================================
 // OVERVIEW STATISTICS

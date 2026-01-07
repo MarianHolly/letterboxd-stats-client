@@ -5,9 +5,9 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Movie, MovieDataset, AnalyticsOverview, AnalyticsStore, UserProfile } from '@/lib/types'
+import type { Movie, MovieDataset, AnalyticsOverview, UserProfile } from '@/lib/types'
 import { parseLetterboxdCSV, parseProfileCSV } from '@/lib/csv-parser'
-import { mergeMovieSources, deduplicateMovies } from '@/lib/data-merger'
+import { mergeMovieSources } from '@/lib/data-merger'
 import { computeAnalytics } from '@/lib/analytics-engine'
 
 // ============================================================================
@@ -49,14 +49,6 @@ type AnalyticsStoreType = StoreState & StoreActions
 // ============================================================================
 // STORAGE UTILS
 // ============================================================================
-
-/**
- * Get approximate size of object in bytes
- */
-function getStorageSize(obj: any): number {
-  const str = JSON.stringify(obj)
-  return new Blob([str]).size
-}
 
 /**
  * Get current localStorage usage in bytes
@@ -278,7 +270,7 @@ export const useAnalyticsStore = create<AnalyticsStoreType>()(
       /**
        * Remove a single uploaded file and recompute analytics
        */
-      removeFile: async (filename: string) => {
+      removeFile: async (_filename: string) => {
         set({ loading: true, error: null })
 
         try {

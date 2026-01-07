@@ -173,11 +173,6 @@ export function transformMonthlyData(
 ): Array<{ month: string; count: number }> {
   const monthMap: Record<string, number> = {}
 
-  // Debug: Track rewatch statistics
-  let totalInitialWatches = 0
-  let totalRewatchesFromDates = 0
-  let totalRewatchesFromCount = 0
-
   movies.forEach((movie) => {
     // Only process movies with watchedDate from diary.csv
     // Do NOT use dateMarkedWatched fallback - we only want diary entries
@@ -199,7 +194,6 @@ export function transformMonthlyData(
           year: 'numeric',
         })
         monthMap[monthKey] = (monthMap[monthKey] || 0) + 1
-        totalInitialWatches++
       } catch (error) {
         // Skip movies with date parsing errors
         console.warn('Error parsing date for movie:', movie.title, error)
@@ -222,7 +216,6 @@ export function transformMonthlyData(
             year: 'numeric',
           })
           monthMap[monthKey] = (monthMap[monthKey] || 0) + 1
-          totalRewatchesFromDates++
         } catch (error) {
           console.warn('Error parsing rewatch date for movie:', movie.title, error)
         }
@@ -237,7 +230,6 @@ export function transformMonthlyData(
           year: 'numeric',
         })
         monthMap[monthKey] = (monthMap[monthKey] || 0) + movie.rewatchCount
-        totalRewatchesFromCount += movie.rewatchCount
       } catch (error) {
         console.warn('Error counting rewatches for movie:', movie.title, error)
       }
@@ -1183,7 +1175,6 @@ export function transformYearlyComparison(
         if (isNaN(dateObj.getTime())) return
 
         const year = dateObj.getFullYear()
-        const monthIndex = dateObj.getMonth()
         const monthName = dateObj.toLocaleDateString('en-US', { month: 'short' })
 
         if (!yearMonthMap[year]) yearMonthMap[year] = {}
@@ -1236,12 +1227,6 @@ export function transformYearlyComparison(
       // If it's the current year, only include if we have data for all months up to current month
       if (year === currentYear) {
         const yearData = yearMonthMap[year]
-        const monthsWithData = Object.keys(yearData).length
-
-        // Check if we have data for at least the current month
-        // If it's early in the year and we only have 1-2 months of data, we might want to include it
-        // But if we're in December and only have data up to April, exclude it
-        const expectedMonths = currentMonth + 1 // +1 because month is 0-indexed
 
         // Only include current year if we have recent data (within last 3 months)
         const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
