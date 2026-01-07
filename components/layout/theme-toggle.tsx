@@ -28,7 +28,7 @@ export default function ThemeToggle() {
       variant="outline"
       size="icon"
       onClick={handleToggle}
-      className="border-white/20 hover:bg-white/10 cursor-pointer"
+      className="border-white/20 hover:bg-white/10 cursor-pointer rounded-full hover:border-white/40 hover:border-2"
     >
       {theme === "dark" ? (
         <Moon className="h-[1.2rem] w-[1.2rem]" />

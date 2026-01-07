@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, BarChart3 } from "lucide-react";
 import ThemeToggle from "./theme-toggle";
-import { Button } from "@/components/ui/button";
+import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 
 interface NavLink {
   label: string;
@@ -85,12 +85,14 @@ export default function Navigation() {
           <div className="flex items-center gap-2 ml-auto">
             {/* Analytics Button */}
             <Link href="/analytics">
-              <Button
-                size="sm"
-                className="bg-slate-950 hover:bg-slate-900 text-white dark:bg-slate-50 dark:hover:bg-slate-100 dark:text-slate-950 font-semibold px-4 py-1.5 border-0 cursor-pointer transition-colors duration-200"
+              <HoverBorderGradient
+                containerClassName="rounded-full cursor-pointer"
+                as="button"
+                className="dark:bg-slate-950 bg-slate-950 text-white dark:text-white flex items-center space-x-2 text-sm font-semibold"
+                duration={1}
               >
                 Analytics
-              </Button>
+              </HoverBorderGradient>
             </Link>
 
             {/* Theme Toggle */}
