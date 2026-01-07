@@ -12,7 +12,6 @@ import { Badge } from "@/components/ui/badge"
 import {
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
 
@@ -161,7 +160,8 @@ export function FavoriteDecadesBar({ data }: FavoriteDecadesBarProps) {
                   offset={8}
                   className="fill-foreground"
                   fontSize={11}
-                  content={({ x, y, width, value, index }: any) => {
+                  content={({ x, y, width, index }: { x?: number | string; y?: number | string; width?: number | string; index?: number }) => {
+                    if (index === undefined) return null
                     const percentage = chartData[index]?.percentage
                     if (!percentage) return null
                     return (
@@ -188,7 +188,8 @@ export function FavoriteDecadesBar({ data }: FavoriteDecadesBarProps) {
                     offset={8}
                     className="fill-foreground"
                     fontSize={11}
-                    content={({ x, y, width, value, index }: any) => {
+                    content={({ x, y, width, index }: { x?: number | string; y?: number | string; width?: number | string; index?: number }) => {
+                      if (index === undefined) return null
                       const percentage = chartData[index]?.percentage
                       if (!percentage) return null
                       return (

@@ -2,7 +2,6 @@
 
 import type { AnalyticsOverview, UserProfile } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatProfileFullName } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 
 // ============================================================================
@@ -20,7 +19,6 @@ interface StatCardProps {
 function StatCard({
   title,
   value,
-  description,
   variant = "default",
   isLoading = false,
 }: StatCardProps) {
