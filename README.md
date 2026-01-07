@@ -4,7 +4,7 @@ A **production-grade, client-side analytics application** that processes large d
 
 Transform your Letterboxd viewing history into 18+ interactive, responsive charts and insights—all while maintaining complete privacy and optimal performance.
 
-**[→ Live Demo](https://letterboxd-stats.vercel.app)**
+**[→ Live Demo](https://letterboxd-stats-zeta.vercel.app/)**
 
 ## Why This Project?
 
@@ -42,7 +42,7 @@ All processing happens in your browser. Your data never leaves your device.
 
 ## Try It Now
 
-[**Live Demo →**](https://letterboxd-stats.vercel.app)
+[**Live Demo →**](https://letterboxd-stats-zeta.vercel.app/)
 
 Or run locally:
 
@@ -55,7 +55,7 @@ npm run dev
 ## How to Use
 
 ### Try the Live App (No Installation Needed)
-1. Visit **[letterboxd-stats.vercel.app](https://letterboxd-stats.vercel.app)**
+1. Visit **[letterboxd-stats.vercel.app](https://letterboxd-stats-zeta.vercel.app/)**
 2. Click **"Try Sample Data"** to explore with 1,656+ pre-loaded films
 3. Or **upload your CSV file** from Letterboxd (Settings → Data Import & Export)
 
