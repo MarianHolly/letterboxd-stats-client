@@ -14,7 +14,6 @@
 .claude/
 .specify/
 /specs
-/mock
 
 # testing
 /coverage
