@@ -13,7 +13,8 @@
 # planning
 .claude/
 .specify/
-/specs/
+/specs
+/mock
 
 # testing
 /coverage
