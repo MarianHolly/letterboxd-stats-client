@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
           'Content-Disposition': `attachment; filename="${filename}"`,
         },
       })
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         { error: `File not found: ${filename}` },
         { status: 404 }
