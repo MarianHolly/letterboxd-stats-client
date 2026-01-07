@@ -415,10 +415,9 @@ export function semanticColor(
   role: keyof typeof colors.background | keyof typeof colors.foreground,
   isDark: boolean
 ): string {
-  const key = role as keyof typeof colors.background;
-  const colorObj = (colors as any)[role];
+  const colorObj = colors[role as keyof typeof colors] as { dark: string; light: string } | undefined;
 
-  if (!colorObj) {
+  if (!colorObj || typeof colorObj !== 'object' || !('dark' in colorObj)) {
     console.warn(`Color role "${role}" not found in design tokens`);
     return isDark ? colors.foreground.dark : colors.foreground.light;
   }

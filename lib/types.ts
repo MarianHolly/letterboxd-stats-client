@@ -115,13 +115,13 @@ export interface RatingsCSVRow extends WatchedCSVRow {
  * Raw row from films.csv
  * Movies marked as "liked"
  */
-export interface FilmsCSVRow extends WatchedCSVRow {}
+export type FilmsCSVRow = WatchedCSVRow;
 
 /**
  * Raw row from watchlist.csv
  * Movies to watch (not yet watched)
  */
-export interface WatchlistCSVRow extends WatchedCSVRow {}
+export type WatchlistCSVRow = WatchedCSVRow;
 
 /**
  * Raw row from profile.csv
