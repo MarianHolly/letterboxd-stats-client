@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useLayoutEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, BarChart3 } from "lucide-react";
@@ -24,7 +24,7 @@ export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Close mobile menu when route changes
-  useEffect(() => {
+  useLayoutEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 

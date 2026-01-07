@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useLayoutEffect } from "react";
 
 import { useAnalyticsStore } from "@/hooks/use-analytics-store";
 import { computeAnalytics } from "@/lib/analytics-engine";
@@ -24,10 +24,9 @@ export function AnalyticsPageClient({ defaultSidebarOpen }: AnalyticsPageClientP
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
-  const hasData = useAnalyticsStore((state) => state.hasData());
   const clearData = useAnalyticsStore((state) => state.clearData);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setIsHydrated(true);
   }, []);
 
